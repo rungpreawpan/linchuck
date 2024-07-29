@@ -8,6 +8,7 @@ class TextFontStyle extends StatelessWidget {
   final FontWeight? weight;
   final TextOverflow? overflow;
   final bool isUnderline;
+  final TextAlign textAlign;
 
   const TextFontStyle(
     this.data, {
@@ -17,6 +18,7 @@ class TextFontStyle extends StatelessWidget {
     this.weight,
     this.overflow,
     this.isUnderline = false,
+    this.textAlign = TextAlign.start,
   });
 
   @override
@@ -31,6 +33,7 @@ class TextFontStyle extends StatelessWidget {
         overflow: overflow,
         decoration: isUnderline ? TextDecoration.underline : null,
       ),
+      textAlign: textAlign,
     );
   }
 }

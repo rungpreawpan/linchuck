@@ -29,6 +29,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   _redirect() async {
+    await _appInfoController.getDeviceInfo();
     await Future.delayed(const Duration(seconds: 2));
 
     const storage = FlutterSecureStorage();
@@ -76,6 +77,7 @@ class _SplashPageState extends State<SplashPage> {
     return Obx(() {
       return TextFontStyle(
         'v ${_appInfoController.appVersion.value}',
+        color: Colors.white,
         weight: FontWeight.bold,
       );
     });

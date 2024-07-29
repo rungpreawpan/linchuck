@@ -28,15 +28,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return SizedBox(
       width: Get.width / 3,
       child: Drawer(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _header(),
-              _content(),
-              _footer(),
-            ],
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: marginX2,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _header(),
+                _content(),
+                _footer(),
+              ],
+            ),
           ),
         ),
       ),

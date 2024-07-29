@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/model/data_model.dart';
+import 'package:lin_chuck/views/home/components/add_category_dialog.dart';
+import 'package:lin_chuck/views/home/components/menu_card.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/custom_drawer.dart';
-import 'package:lin_chuck/widget/receipt.dart';
+import 'package:lin_chuck/views/home/components/receipt.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,6 +30,8 @@ class _HomePageState extends State<HomePage> {
 
   _prepareData() async {
     await _homeController.getCategories();
+
+    setState(() {});
   }
 
   @override
@@ -60,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     return SizedBox(
       width: Get.width,
       child: const Padding(
-        padding: EdgeInsets.all(30.0),
+        padding: EdgeInsets.symmetric(vertical: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -100,17 +105,15 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           _appBar(),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _menu(),
-              Container(
-                color: Colors.grey,
-                height: 200,
-              ),
-              const SizedBox(width: 20.0),
-              const Receipt(),
-            ],
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _menu(),
+                const SizedBox(width: 20.0),
+                const Receipt(),
+              ],
+            ),
           ),
         ],
       ),
@@ -120,12 +123,23 @@ class _HomePageState extends State<HomePage> {
   _menu() {
     return Expanded(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _categories(),
           const SizedBox(height: 20.0),
-          Container(
-            color: Colors.black,
-            height: 100,
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: marginX2,
+                crossAxisSpacing: marginX2,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return const MenuCard();
+              },
+            ),
           ),
         ],
       ),
@@ -144,13 +158,15 @@ class _HomePageState extends State<HomePage> {
           if (index == _homeController.categoryList.length - 1) {
             return Row(
               children: [
-                _categoryButton(
+                CustomButton(
                   onTap: () {},
-                  title: item.name ?? '',
+                  title: '${item.name} (3)',
                 ),
                 const SizedBox(width: marginX2),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Get.dialog(const AddCategoryDialog());
+                  },
                   child: const Icon(
                     Icons.add_circle_rounded,
                     color: Colors.green,
@@ -160,37 +176,16 @@ class _HomePageState extends State<HomePage> {
               ],
             );
           } else {
-            return _categoryButton(
+            return CustomButton(
               onTap: () {},
-              title: item.name ?? '',
+              title: '${item.name} (3)',
+              //TODO: edit json
             );
           }
         },
         separatorBuilder: (context, index) {
           return const SizedBox(width: marginX2);
         },
-      ),
-    );
-  }
-
-  _categoryButton({
-    required Function() onTap,
-    required String title,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Center(
-          child: TextFontStyle(
-            title,
-            size: fontSizeM,
-          ),
-        ),
       ),
     );
   }

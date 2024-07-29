@@ -19,6 +19,7 @@ class CustomTextField extends StatelessWidget {
   final String? hintText;
   final double hintFontSize;
   final Color hintFontColor;
+  final String? helperText;
   final Widget? prefix;
   final Widget? suffix;
 
@@ -40,6 +41,7 @@ class CustomTextField extends StatelessWidget {
     this.hintText,
     this.hintFontSize = fontSizeM,
     this.hintFontColor = Colors.grey,
+    this.helperText,
     this.prefix,
     this.suffix,
   });
@@ -71,8 +73,22 @@ class CustomTextField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: const BorderSide(
-            width: 0.0,
-            style: BorderStyle.none,
+            color: Colors.black12,
+            width: 1.0,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(
+            color: Colors.black12,
+            width: 1.0,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(
+            color: Colors.black12,
+            width: 1.0,
           ),
         ),
         labelText: labelText,
@@ -85,6 +101,7 @@ class CustomTextField extends StatelessWidget {
           fontSize: hintFontSize,
           color: hintFontColor,
         ),
+        helperText: helperText,
         prefixIcon: prefix,
         suffixIcon: suffix,
       ),

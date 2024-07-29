@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "id": 0,
+      "name": "ความหวาน",
+      "options": [
+        {
+          "option_id": 0,
+          "option_name": "100% หวานปกติ"
+        },
+        {
+          "option_id": 1,
+          "option_name": "50% หวานน้อย"
+        },
+        {
+          "option_id": 2,
+          "option_name": "25% หวานน้อยมาก"
+        },
+        {
+          "option_id": 3,
+          "option_name": "0% ไม่หวาน"
+        }
+      ]
+    }
+  ]
+}
