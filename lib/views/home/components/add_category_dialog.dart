@@ -23,7 +23,7 @@ class AddCategoryDialog extends StatelessWidget {
       content: ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: 80.0,
-          minWidth: Get.width /3
+          minWidth: Get.width / 3,
         ),
         child: const Column(
           mainAxisSize: MainAxisSize.min,
