@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/add_edit_product_dialog.dart';
+import 'package:lin_chuck/views/home/components/edit_menu_dialog.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class MenuCard extends StatelessWidget {
@@ -42,7 +43,9 @@ class MenuCard extends StatelessWidget {
                 top: margin,
                 right: 4.0,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Get.dialog(const EditMenuDialog());
+                  },
                   child: const Padding(
                     padding: EdgeInsets.all(5.0),
                     child:  Icon(
