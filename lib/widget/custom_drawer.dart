@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/controller/app_info_controller.dart';
+import 'package:lin_chuck/views/employee/employee_page.dart';
+import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
@@ -82,6 +84,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _navigateButton(
+            onTap: () {
+              Get.to(() => const HomePage());
+            },
+            title: 'รายการสินค้า',
+          ),
+          _navigateButton(
             onTap: () {},
             title: 'ยอดขาย',
           ),
@@ -90,12 +98,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: 'ใบเสร็จ',
           ),
           _navigateButton(
-            onTap: () {},
+            onTap: () {
+              Get.to(() => const EmployeePage());
+            },
             title: 'พนักงาน',
-          ),
-          _navigateButton(
-            onTap: () {},
-            title: 'รายการสินค้า',
           ),
         ],
       ),

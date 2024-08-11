@@ -19,10 +19,10 @@ class CustomSubmitButton extends StatelessWidget {
   const CustomSubmitButton({
     super.key,
     required this.onTap,
-    this.buttonHeight = 60.0,
+    this.buttonHeight = 50.0,
     this.buttonWidth,
     this.backgroundColor = Colors.grey,
-    this.borderRadius = 30.0,
+    this.borderRadius = 25.0,
     this.showBorder = false,
     this.borderColor = Colors.grey,
     this.borderWidth = 1,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 
@@ -8,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final int? maxLength;
   final TextInputType inputType;
   final bool obscureText;
+  final void Function(String)? onChanged;
   final bool isEnabled;
   final bool? isDense;
   final bool filled;
@@ -30,6 +32,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLength,
     this.inputType = TextInputType.text,
     this.obscureText = false,
+    this.onChanged,
     this.isEnabled = true,
     this.isDense,
     this.filled = true,
@@ -53,6 +56,9 @@ class CustomTextField extends StatelessWidget {
       maxLines: maxLine,
       maxLength: maxLength,
       keyboardType: inputType,
+      inputFormatters: inputType == TextInputType.number
+          ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+          : [],
       textInputAction: TextInputAction.done,
       obscureText: obscureText,
       style: TextStyle(
@@ -60,6 +66,7 @@ class CustomTextField extends StatelessWidget {
         fontSize: fontSizeL,
         fontFamily: GoogleFonts.kanit().fontFamily,
       ),
+      onChanged: onChanged,
       decoration: InputDecoration(
         enabled: isEnabled,
         isDense: isDense,

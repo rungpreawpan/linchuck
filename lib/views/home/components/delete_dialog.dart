@@ -13,12 +13,7 @@ class DeleteDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      contentPadding: const EdgeInsets.only(
-        left: marginX2,
-        right: marginX2,
-        top: marginX2,
-        bottom: margin,
-      ),
+      contentPadding: const EdgeInsets.all(marginX2),
       content: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 80.0),
         child: Column(

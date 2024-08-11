@@ -4,11 +4,18 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/add_edit_product_dialog.dart';
 import 'package:lin_chuck/views/home/components/delete_dialog.dart';
+import 'package:lin_chuck/views/home/order_complete_page.dart';
+import 'package:lin_chuck/views/home/summary_order_page.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class Receipt extends StatelessWidget {
-  const Receipt({super.key});
+  final bool isSummaryPage;
+
+  const Receipt({
+    super.key,
+    this.isSummaryPage = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -113,23 +120,6 @@ class Receipt extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextFontStyle(
-              'ส่วนลด',
-              color: Colors.white,
-              size: fontSizeM,
-              weight: FontWeight.bold,
-            ),
-            TextFontStyle(
-              '0.-',
-              color: Colors.white,
-              size: fontSizeM,
-              weight: FontWeight.bold,
-            ),
-          ],
-        ),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextFontStyle(
               'รวม',
               color: Colors.white,
               size: fontSizeM,
@@ -147,8 +137,14 @@ class Receipt extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: CustomSubmitButton(
-            onTap: () {},
-            title: 'ชำระเงิน',
+            onTap: isSummaryPage
+                ? () {
+                    Get.to(() => const OrderCompletePage());
+                  }
+                : () {
+                    Get.to(() => const SummaryOrderPage(total: 2178));
+                  },
+            title: isSummaryPage ? 'บันทึกใบเสร็จ' : 'ชำระเงิน',
             backgroundColor: lYellow,
             fontColor: Colors.black,
           ),

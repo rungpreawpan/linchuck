@@ -4,6 +4,7 @@ import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/delete_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/options_model.dart';
+import 'package:lin_chuck/widget/count_button.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
@@ -17,6 +18,8 @@ class AddEditProductDialog extends StatefulWidget {
 
 class _AddEditProductDialogState extends State<AddEditProductDialog> {
   final HomeController _homeController = Get.find();
+
+  final TextEditingController _qtyController = TextEditingController();
 
   @override
   void initState() {
@@ -37,73 +40,38 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      contentPadding: const EdgeInsets.only(
-        left: marginX2,
-        right: marginX2,
-        top: marginX2,
-        bottom: margin,
-      ),
+      contentPadding: const EdgeInsets.all(marginX2),
       content: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 80.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const TextFontStyle(
-              '“เพิ่ม/แก้ไข” สินค้า',
-              color: Colors.black,
-              size: fontSizeL,
-              weight: FontWeight.bold,
-            ),
-            const SizedBox(height: 20.0),
-            _countButton(),
-            const SizedBox(height: 20.0),
-            _options(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const TextFontStyle(
+                '“เพิ่ม/แก้ไข” สินค้า',
+                color: Colors.black,
+                size: fontSizeL,
+                weight: FontWeight.bold,
+              ),
+              const SizedBox(height: 20.0),
+              // _countButton(),
+              CounterButton(
+                onDelete: () {
+                  Get.dialog(const DeleteDialog());
+                },
+                onAdd: () {
+                  //TODO: ควรจะต้องเช็คกับหลังบ้านว่ามีจำนวนเท่าไหร่
+                },
+                textEditingController: _qtyController,
+              ),
+              const SizedBox(height: 20.0),
+              _options(),
+              const SizedBox(height: 20.0),
+              _actionButton(),
+            ],
+          ),
         ),
       ),
-      actions: [
-        _actionButton(),
-      ],
-    );
-  }
-
-  _countButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        InkWell(
-          onTap: () {
-            Get.dialog(const DeleteDialog());
-          },
-          child: const CircleAvatar(
-            radius: 15.0,
-            backgroundColor: primaryColor,
-            child: Icon(
-              Icons.remove,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        const SizedBox(width: 20.0),
-        const SizedBox(
-          width: 100.0,
-          child: CustomTextField(),
-        ),
-        const SizedBox(width: 20.0),
-        InkWell(
-          onTap: () {
-            //TODO: ควรจะต้องเช็คกับหลังบ้านว่ามีจำนวนเท่าไหร่
-          },
-          child: const CircleAvatar(
-            radius: 15.0,
-            backgroundColor: primaryColor,
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

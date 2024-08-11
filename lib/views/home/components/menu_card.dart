@@ -22,13 +22,7 @@ class MenuCard extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 5,
-                      offset: const Offset(3, 3), // Shadow position
-                    ),
-                  ],
+                  boxShadow: customBoxShadow,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
@@ -46,10 +40,24 @@ class MenuCard extends StatelessWidget {
                   onTap: () {
                     Get.dialog(const EditMenuDialog());
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child:  Icon(
-                      Icons.more_vert_rounded,
+                  child: Container(
+                    height: 30.0,
+                    width: 30.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 10,
+                          offset: Offset(3, 3),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.more_vert_rounded,
+                      ),
                     ),
                   ),
                 ),

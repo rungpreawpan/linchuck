@@ -5,9 +5,11 @@ import 'package:lin_chuck/model/data_model.dart';
 import 'package:lin_chuck/views/home/components/add_category_dialog.dart';
 import 'package:lin_chuck/views/home/components/menu_card.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/widget/custom_app_bar.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/custom_drawer.dart';
 import 'package:lin_chuck/views/home/components/receipt.dart';
+import 'package:lin_chuck/widget/custom_side_bar.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class HomePage extends StatefulWidget {
@@ -53,48 +55,13 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Row(
           children: [
-            _sideBar(),
+            CustomSideBar(
+              onTap: () {
+                _drawerKey.currentState!.openDrawer();
+              },
+            ),
             _mainContent(),
           ],
-        ),
-      ),
-    );
-  }
-
-  _appBar() {
-    return SizedBox(
-      width: Get.width,
-      child: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFontStyle(
-              'รายการสินค้า',
-              size: 40.0,
-              weight: FontWeight.bold,
-            ),
-            Divider(color: Colors.black),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _sideBar() {
-    return SizedBox(
-      height: Get.height,
-      width: 60.0,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: InkWell(
-          onTap: () {
-            _drawerKey.currentState!.openDrawer();
-          },
-          child: const Icon(
-            Icons.menu,
-            color: Colors.black,
-          ),
         ),
       ),
     );
@@ -104,7 +71,7 @@ class _HomePageState extends State<HomePage> {
     return Expanded(
       child: Column(
         children: [
-          _appBar(),
+          const CustomAppBar(title: 'รายการสินค้า'),
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,

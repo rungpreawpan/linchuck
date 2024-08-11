@@ -16,3 +16,11 @@ const darkReceipt = Color.fromRGBO(3, 28, 120, 1);
 const lGreen = Color.fromRGBO(93, 176, 117, 1);
 const lAmber = Color.fromRGBO(248, 150, 76, 1);
 const lYellow = Color.fromRGBO(255, 193, 69, 1);
+
+List<BoxShadow> customBoxShadow = [
+  BoxShadow(
+    color: Colors.grey.shade300,
+    blurRadius: 5,
+    offset: const Offset(3, 3),
+  ),
+];

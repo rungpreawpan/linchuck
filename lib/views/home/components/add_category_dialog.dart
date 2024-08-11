@@ -14,60 +14,59 @@ class AddCategoryDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      contentPadding: const EdgeInsets.only(
-        left: marginX2,
-        right: marginX2,
-        top: marginX2,
-        bottom: margin,
-      ),
+      contentPadding: const EdgeInsets.all(marginX2),
       content: ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: 80.0,
           minWidth: Get.width / 3,
         ),
-        child: const Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFontStyle(
+            const TextFontStyle(
               'เพิ่มหมวดหมู่',
               color: Colors.black,
               size: fontSizeL,
               weight: FontWeight.bold,
             ),
-            SizedBox(height: 20.0),
-            CustomTextField(
+            const SizedBox(height: 20.0),
+            const CustomTextField(
+              labelText: 'หมวดหมู่',
               helperText: 'เช่น อาหารจานเดี่ยว ขนม เครื่องดื่ม',
               maxLength: 30,
             ),
+            const SizedBox(height: 20.0),
+            _actionButton(),
           ],
         ),
       ),
-      actions: [
-        Row(
-          children: [
-            Expanded(
-              child: CustomSubmitButton(
-                onTap: () {
-                  Get.back();
-                },
-                title: 'ยกเลิก',
-                backgroundColor: Colors.transparent,
-                showBorder: true,
-                borderColor: primaryColor,
-                fontColor: primaryColor,
-              ),
-            ),
-            const SizedBox(width: marginX2),
-            Expanded(
-              child: CustomSubmitButton(
-                onTap: () {
-                  Get.back();
-                },
-                title: 'ยืนยัน',
-                backgroundColor: primaryColor,
-              ),
-            ),
-          ],
+    );
+  }
+
+  _actionButton() {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomSubmitButton(
+            onTap: () {
+              Get.back();
+            },
+            title: 'ยกเลิก',
+            backgroundColor: Colors.transparent,
+            showBorder: true,
+            borderColor: primaryColor,
+            fontColor: primaryColor,
+          ),
+        ),
+        const SizedBox(width: marginX2),
+        Expanded(
+          child: CustomSubmitButton(
+            onTap: () {
+              Get.back();
+            },
+            title: 'ยืนยัน',
+            backgroundColor: primaryColor,
+          ),
         ),
       ],
     );
