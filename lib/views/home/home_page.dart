@@ -8,9 +8,8 @@ import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/widget/custom_app_bar.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/custom_drawer.dart';
-import 'package:lin_chuck/views/home/components/receipt.dart';
+import 'package:lin_chuck/views/home/components/order_list_card.dart';
 import 'package:lin_chuck/widget/custom_side_bar.dart';
-import 'package:lin_chuck/widget/text_font_style.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -78,7 +77,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 _menu(),
                 const SizedBox(width: 20.0),
-                const Receipt(),
+                const OrderListCard(),
               ],
             ),
           ),

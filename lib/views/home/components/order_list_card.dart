@@ -9,10 +9,10 @@ import 'package:lin_chuck/views/home/summary_order_page.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class Receipt extends StatelessWidget {
+class OrderListCard extends StatelessWidget {
   final bool isSummaryPage;
 
-  const Receipt({
+  const OrderListCard({
     super.key,
     this.isSummaryPage = false,
   });

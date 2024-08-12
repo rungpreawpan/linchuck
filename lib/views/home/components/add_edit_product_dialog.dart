@@ -54,7 +54,6 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
                 weight: FontWeight.bold,
               ),
               const SizedBox(height: 20.0),
-              // _countButton(),
               CounterButton(
                 onDelete: () {
                   Get.dialog(const DeleteDialog());

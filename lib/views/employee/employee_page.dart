@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/employee/add_employee_page.dart';
@@ -190,10 +191,14 @@ class _EmployeePageState extends State<EmployeePage> {
                   children: [
                     const SizedBox(width: marginX2),
                     InkWell(
-                      onTap: () {},
-                      child: const Icon(
-                        Icons.copy_all_rounded,
-                        color: Colors.grey,
+                      onTap: () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: '$title2 $title3 รหัส: $title4'),
+                        );
+                      },
+                      child: Icon(
+                        Icons.copy,
+                        color: Colors.grey.shade600,
                       ),
                     ),
                   ],

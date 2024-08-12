@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/employee/components/add_employee_dialog.dart';
 import 'package:lin_chuck/widget/custom_app_bar.dart';
 import 'package:lin_chuck/widget/custom_drawer.dart';
 import 'package:lin_chuck/widget/custom_side_bar.dart';
@@ -20,6 +20,8 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
 
   int employeeNo = 1;
+  int employeeListPage = 1;
+  int currentPage = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +61,11 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
           Expanded(
             child: Column(
               children: [
-                const CustomAppBar(
-                  showBackIcon: true,
-                  title: 'เพิ่มพนักงาน',
-                ),
+                const CustomAppBar(title: 'เพิ่มพนักงาน'),
                 _employeeList(),
+                const SizedBox(height: 20.0),
                 _page(),
+                const SizedBox(height: 20.0),
                 _confirmAndCancelButton(),
               ],
             ),
@@ -89,14 +90,21 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
             return Column(
               children: [
                 _employeeData(
+                  index: int.parse((index + 1).toString()),
                   firstnameController: firstnameController$index,
                   lastnameController: lastnameController$index,
                   deleteEmployee: () {
                     if (employeeNo != 1) {
                       employeeNo -= 1;
+
+                      if (employeeNo % 6 == 0) {
+                        employeeListPage -= 1;
+                      }
                     }
 
                     setState(() {});
+                    print(employeeNo);
+                    print(employeeListPage);
                   },
                 ),
                 const SizedBox(height: marginX2),
@@ -105,14 +113,21 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
             );
           } else {
             return _employeeData(
+              index: int.parse((index + 1).toString()),
               firstnameController: firstnameController$index,
               lastnameController: lastnameController$index,
               deleteEmployee: () {
                 if (employeeNo != 1) {
                   employeeNo -= 1;
+
+                  if (employeeNo % 6 == 0) {
+                    employeeListPage -= 1;
+                  }
                 }
 
                 setState(() {});
+                print(employeeNo);
+                print(employeeListPage);
               },
             );
           }
@@ -125,12 +140,18 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   }
 
   _employeeData({
+    required int index,
     required TextEditingController firstnameController,
     required TextEditingController lastnameController,
     required Function() deleteEmployee,
   }) {
     return Row(
       children: [
+        TextFontStyle(
+          '${index.toString()}.',
+          size: fontSizeL,
+        ),
+        const SizedBox(width: marginX2),
         Expanded(
           flex: 1,
           child: CustomTextField(
@@ -162,27 +183,34 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   _addEmployeeButton() {
     return Row(
       children: [
-        Row(
-          children: [
-            InkWell(
-              onTap: () {
-                employeeNo += 1;
-                setState(() {});
-              },
-              child: const Icon(
+        InkWell(
+          onTap: () {
+            employeeNo += 1;
+
+            if (employeeNo % 6 == 1) {
+              employeeListPage += 1;
+            }
+
+            setState(() {});
+            print(employeeNo);
+            print(employeeListPage);
+          },
+          child: const Row(
+            children: [
+              Icon(
                 Icons.add_circle_outline_rounded,
                 color: primaryColor,
                 size: fontSizeL,
               ),
-            ),
-            const SizedBox(width: margin),
-            const TextFontStyle(
-              'เพิ่มพนักงาน',
-              size: fontSizeM,
-              weight: FontWeight.bold,
-              color: primaryColor,
-            ),
-          ],
+              SizedBox(width: margin),
+              TextFontStyle(
+                'เพิ่มพนักงาน',
+                size: fontSizeM,
+                weight: FontWeight.bold,
+                color: primaryColor,
+              ),
+            ],
+          ),
         ),
         const TextFontStyle(
           ' หรือ ',
@@ -190,7 +218,9 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
           weight: FontWeight.bold,
         ),
         InkWell(
-          onTap: () {},
+          onTap: () {
+            Get.dialog(const AddEmployeeDialog());
+          },
           child: const TextFontStyle(
             'เพิ่มเป็นจำนวนมาก',
             size: fontSizeM,
@@ -207,8 +237,11 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: () {},
-          child: const Icon(Icons.arrow_back_ios_rounded),
+          onTap: currentPage != 1 ? () {} : null,
+          child: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: currentPage != 1 ? Colors.black : Colors.grey.shade300,
+          ),
         ),
         const SizedBox(width: 20.0),
         const TextFontStyle(
@@ -218,7 +251,10 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         const SizedBox(width: 20.0),
         InkWell(
           onTap: () {},
-          child: const Icon(Icons.arrow_forward_ios_rounded),
+          child: const Icon(
+            Icons.arrow_forward_ios_rounded,
+            // color: Colors.grey,
+          ),
         ),
       ],
     );
@@ -229,7 +265,9 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
       children: [
         Expanded(
           child: CustomSubmitButton(
-            onTap: () {},
+            onTap: () {
+              Get.back();
+            },
             title: 'ยกเลิก',
             showBorder: true,
             borderColor: primaryColor,
