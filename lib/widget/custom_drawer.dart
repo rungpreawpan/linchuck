@@ -7,6 +7,8 @@ import 'package:lin_chuck/views/employee/employee_page.dart';
 import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
 import 'package:lin_chuck/views/receipt/receipt_page.dart';
+import 'package:lin_chuck/views/sell/sell_page.dart';
+import 'package:lin_chuck/views/stock/stock_page.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -91,8 +93,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: 'รายการสินค้า',
           ),
           _navigateButton(
-            onTap: () {},
+            onTap: () {
+              Get.to(() => const SellPage());
+            },
             title: 'ยอดขาย',
+          ),
+          _navigateButton(
+            onTap: () {
+              Get.to(() => const StockPage());
+            },
+            title: 'คลังสินค้า',
           ),
           _navigateButton(
             onTap: () {

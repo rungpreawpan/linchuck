@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/employee/components/add_employee_dialog.dart';
-import 'package:lin_chuck/widget/custom_app_bar.dart';
-import 'package:lin_chuck/widget/custom_drawer.dart';
-import 'package:lin_chuck/widget/custom_side_bar.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
+import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class AddEmployeePage extends StatefulWidget {
@@ -17,62 +15,28 @@ class AddEmployeePage extends StatefulWidget {
 }
 
 class _AddEmployeePageState extends State<AddEmployeePage> {
-  final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
-
   int employeeNo = 1;
   int employeeListPage = 1;
   int currentPage = 1;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _drawerKey,
-      drawer: const CustomDrawer(),
-      body: _content(),
-    );
-  }
-
-  _content() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          right: 20.0,
-          top: 20.0,
-          bottom: 20.0,
-        ),
-        child: Row(
-          children: [
-            CustomSideBar(
-              onTap: () {
-                _drawerKey.currentState!.openDrawer();
-              },
-            ),
-            _mainContent(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _mainContent() {
-    return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              children: [
-                const CustomAppBar(title: 'เพิ่มพนักงาน'),
-                _employeeList(),
-                const SizedBox(height: 20.0),
-                _page(),
-                const SizedBox(height: 20.0),
-                _confirmAndCancelButton(),
-              ],
-            ),
+    return MainTemplate(
+      appBarTitle: 'เพิ่มพนักงาน',
+      contentWidget: [
+        Expanded(
+          child: Column(
+            children: [
+              _employeeList(),
+              const SizedBox(height: 20.0),
+              _page(),
+              const SizedBox(height: 20.0),
+              _confirmAndCancelButton(),
+            ],
           ),
-          const SizedBox(width: 30.0),
-        ],
-      ),
+        ),
+        const SizedBox(width: 30.0),
+      ],
     );
   }
 

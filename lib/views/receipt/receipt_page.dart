@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lin_chuck/widget/custom_app_bar.dart';
-import 'package:lin_chuck/widget/custom_drawer.dart';
-import 'package:lin_chuck/widget/custom_side_bar.dart';
+import 'package:get/get.dart';
+import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/receipt/receipt_detail_page.dart';
+import 'package:lin_chuck/widget/main_template.dart';
+import 'package:lin_chuck/widget/text_font_style.dart';
 
 class ReceiptPage extends StatefulWidget {
   const ReceiptPage({super.key});
@@ -11,50 +13,93 @@ class ReceiptPage extends StatefulWidget {
 }
 
 class _ReceiptPageState extends State<ReceiptPage> {
-  final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _drawerKey,
-      drawer: const CustomDrawer(),
-      body: _content(),
+    return MainTemplate(
+      appBarTitle: 'ใบเสร็จ',
+      contentWidget: [
+        Expanded(
+          child: ListView.separated(
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return _receiptListCard();
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(height: marginX2);
+            },
+          ),
+        ),
+      ],
     );
   }
 
-  _content() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          right: 20.0,
-          top: 20.0,
-          bottom: 20.0,
+  _receiptListCard() {
+    return InkWell(
+      onTap: () {
+        Get.to(
+          () => const ReceiptDetailPage(
+            date: '22.02.2022 - 12.00',
+            receiptNo: '123456',
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.only(right: 20.0),
+        margin: const EdgeInsets.only(right: 20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: customBoxShadow,
         ),
         child: Row(
           children: [
-            CustomSideBar(
-              onTap: () {
-                _drawerKey.currentState!.openDrawer();
-              },
+            Container(
+              width: 20.0,
+              height: 80.0,
+              decoration: const BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  bottomLeft: Radius.circular(10.0),
+                ),
+              ),
             ),
-            _mainContent(),
+            const Expanded(
+              child: Row(
+                children: [
+                  SizedBox(width: 20.0),
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    size: 50.0,
+                  ),
+                  SizedBox(width: 30.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFontStyle(
+                          'รหัสใบเสร็จ 123456',
+                          size: fontSizeM,
+                          weight: FontWeight.bold,
+                        ),
+                        TextFontStyle(
+                          '2000 บาท',
+                          color: primaryColor,
+                          size: fontSizeM,
+                          weight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                  ),
+                  TextFontStyle(
+                    '12:00',
+                    size: fontSizeM,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  _mainContent() {
-    return Expanded(
-      child: Column(
-        children: [
-          const CustomAppBar(title: 'ใบเสร็จ'),
-          Expanded(
-            child: Container(
-              color: Colors.grey,
-            ),
-          ),
-        ],
       ),
     );
   }

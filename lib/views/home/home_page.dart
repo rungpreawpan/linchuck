@@ -5,11 +5,9 @@ import 'package:lin_chuck/model/data_model.dart';
 import 'package:lin_chuck/views/home/components/add_category_dialog.dart';
 import 'package:lin_chuck/views/home/components/menu_card.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
-import 'package:lin_chuck/widget/custom_app_bar.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
-import 'package:lin_chuck/widget/custom_drawer.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
-import 'package:lin_chuck/widget/custom_side_bar.dart';
+import 'package:lin_chuck/widget/main_template.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeController _homeController = Get.put(HomeController());
-  final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
 
   @override
   void initState() {
@@ -37,52 +34,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _drawerKey,
-      drawer: const CustomDrawer(),
-      body: _content(),
-    );
-  }
-
-  _content() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          right: 20.0,
-          top: 20.0,
-          bottom: 20.0,
-        ),
-        child: Row(
-          children: [
-            CustomSideBar(
-              onTap: () {
-                _drawerKey.currentState!.openDrawer();
-              },
-            ),
-            _mainContent(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _mainContent() {
-    return Expanded(
-      child: Column(
-        children: [
-          const CustomAppBar(title: 'รายการสินค้า'),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _menu(),
-                const SizedBox(width: 20.0),
-                const OrderListCard(),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return MainTemplate(
+      appBarTitle: 'รายการสินค้า',
+      contentWidget: [
+        _menu(),
+        const SizedBox(width: 20.0),
+        const OrderListCard(),
+      ],
     );
   }
 

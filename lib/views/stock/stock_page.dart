@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/employee/add_employee_page.dart';
+import 'package:lin_chuck/views/stock/add_stock_page.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class EmployeePage extends StatefulWidget {
-  const EmployeePage({super.key});
+class StockPage extends StatefulWidget {
+  const StockPage({super.key});
 
   @override
-  State<EmployeePage> createState() => _EmployeePageState();
+  State<StockPage> createState() => _StockPageState();
 }
 
-class _EmployeePageState extends State<EmployeePage> {
+class _StockPageState extends State<StockPage> {
   @override
   Widget build(BuildContext context) {
     return MainTemplate(
-      appBarTitle: 'พนักงานทั้งหมด',
+      appBarTitle: 'คลังสินค้าทั้งหมด',
       contentWidget: [
         Expanded(
           child: Column(
@@ -25,11 +24,11 @@ class _EmployeePageState extends State<EmployeePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _addEmployeeButton(),
+                  _addStockButton(),
                 ],
               ),
               const SizedBox(height: marginX2),
-              _employeeList(),
+              _stockList(),
             ],
           ),
         ),
@@ -38,10 +37,10 @@ class _EmployeePageState extends State<EmployeePage> {
     );
   }
 
-  _addEmployeeButton() {
+  _addStockButton() {
     return InkWell(
       onTap: () {
-        Get.to(() => const AddEmployeePage());
+        Get.to(() => const AddStockPage());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -54,7 +53,7 @@ class _EmployeePageState extends State<EmployeePage> {
         ),
         child: const Center(
           child: TextFontStyle(
-            'เพิ่มพนักงาน',
+            'เพิ่มสินค้า',
             color: Colors.white,
             size: fontSizeM,
             weight: FontWeight.bold,
@@ -64,28 +63,28 @@ class _EmployeePageState extends State<EmployeePage> {
     );
   }
 
-  _employeeList() {
+  _stockList() {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _employeeRow(
+          _stockRow(
             isHeader: true,
-            title1: 'สถานะ',
-            title2: 'ชื่อ',
-            title3: 'นามสกุล',
-            title4: 'รหัส',
+            title1: 'ชื่อสินค้า',
+            title2: 'ราคา',
+            title3: 'วันที่สั่ง',
+            title4: 'วันที่หมดอายุ',
           ),
           const Divider(color: Colors.black),
           Expanded(
             child: ListView.separated(
               itemCount: 3,
               itemBuilder: (context, index) {
-                return _employeeRow(
-                  title1: 'ลงทะเบียนแล้ว',
-                  title2: 'จอห์น',
-                  title3: 'โดว์',
-                  title4: '123456',
+                return _stockRow(
+                  title1: 'สินค้า01',
+                  title2: '1000',
+                  title3: '31/08/2024',
+                  title4: '01/09/2024',
                 );
               },
               separatorBuilder: (context, index) {
@@ -98,7 +97,7 @@ class _EmployeePageState extends State<EmployeePage> {
     );
   }
 
-  _employeeRow({
+  _stockRow({
     bool isHeader = false,
     required String title1,
     required String title2,
@@ -107,16 +106,24 @@ class _EmployeePageState extends State<EmployeePage> {
   }) {
     return Row(
       children: [
+        SizedBox(
+          width: 150.0,
+          child: !isHeader ? Container(
+            height: 80.0,
+            width: 150.0,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ) : null,
+        ),
+        const SizedBox(width: 30.0),
         Expanded(
           child: TextFontStyle(
             title1,
             size: isHeader ? fontSizeL : fontSizeM,
             weight: isHeader ? FontWeight.bold : FontWeight.normal,
-            color: isHeader
-                ? Colors.black
-                : title1 == 'ลงทะเบียนแล้ว'
-                    ? Colors.green
-                    : Colors.red,
+            color: Colors.black,
           ),
         ),
         Expanded(
@@ -141,26 +148,6 @@ class _EmployeePageState extends State<EmployeePage> {
                 title4,
                 size: isHeader ? fontSizeL : fontSizeM,
                 weight: isHeader ? FontWeight.bold : FontWeight.normal,
-              ),
-              Visibility(
-                visible: !isHeader,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(width: marginX2),
-                    InkWell(
-                      onTap: () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: '$title2 $title3 รหัส: $title4'),
-                        );
-                      },
-                      child: Icon(
-                        Icons.copy,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),

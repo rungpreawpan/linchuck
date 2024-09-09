@@ -6,7 +6,6 @@ import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/options_model.dart';
 import 'package:lin_chuck/widget/count_button.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
-import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class AddEditProductDialog extends StatefulWidget {
