@@ -27,7 +27,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   _prepareData() async {
-    await _homeController.getCategories();
+    // await _homeController.getCategories();
+    await _homeController.getSweet();
+    await _homeController.getProductType();
+    await _homeController.getProduct();
 
     setState(() {});
   }

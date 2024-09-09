@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 const margin = 8.0;
 const marginX2 = 16.0;
 
+const fontSize2XS = 14.0;
+const fontSizeXS = 16.0;
 const fontSizeS = 18.0;
 const fontSizeM = 22.0;
 const fontSizeL = 24.0;
