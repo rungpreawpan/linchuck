@@ -1,13 +1,13 @@
 class ProductModel {
   int? id;
   String? name;
-  double? productPrice;
-  double? productCost;
+  int? productPrice;
+  int? productCost;
   int? quantity;
   int? productTypeId;
   String? productImage;
-  DateTime? orderDate;
-  DateTime? expireDate;
+  String? orderDate;
+  String? expireDate;
 
   ProductModel({
     this.id,
@@ -30,8 +30,8 @@ class ProductModel {
       quantity: json['product_quantity'] ?? 0,
       productTypeId: json['product_type_id'] ?? 0,
       productImage: json['product_image'] ?? '',
-      orderDate: json['order_date'] ?? DateTime.now(),
-      expireDate: json['expire_date'] ?? DateTime.now(),
+      orderDate: json['order_date'] ?? '',
+      expireDate: json['expire_date'] ?? '',
     );
   }
 }

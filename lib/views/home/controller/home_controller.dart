@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:lin_chuck/model/data_model.dart';
 import 'package:lin_chuck/service/request_service.dart';
 import 'package:lin_chuck/utils/alert.dart';
 import 'package:lin_chuck/views/home/model/options_model.dart';
@@ -12,8 +11,8 @@ import 'package:lin_chuck/views/home/model/sweet_model.dart';
 
 class HomeController extends GetxController {
   var isLoading = false.obs;
-  List categoryList = [];
-  List selectedCategoryList = [];
+  // List categoryList = [];
+  // List selectedCategoryList = [];
 
   List optionList = [];
   List selectedOptionList = [];
@@ -23,16 +22,16 @@ class HomeController extends GetxController {
   List<ProductTypeModel> productTypeList = [];
   List<ProductTypeModel> selectedProductTypeList = [];
 
-  getCategories() async {
-    String content =
-        await rootBundle.loadString('assets/data/sales_categories.json');
-
-    Map<String, dynamic> dataMap = jsonDecode(content);
-    List dataJSON = dataMap['data'];
-
-    categoryList =
-        List.from(dataJSON).map((e) => DataModel.fromJSON(e)).toList();
-  }
+  // getCategories() async {
+  //   String content =
+  //       await rootBundle.loadString('assets/data/sales_categories.json');
+  //
+  //   Map<String, dynamic> dataMap = jsonDecode(content);
+  //   List dataJSON = dataMap['data'];
+  //
+  //   categoryList =
+  //       List.from(dataJSON).map((e) => DataModel.fromJSON(e)).toList();
+  // }
 
   getOptions() async {
     String content = await rootBundle.loadString('assets/data/options.json');

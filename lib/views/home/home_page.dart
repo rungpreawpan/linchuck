@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/model/data_model.dart';
 import 'package:lin_chuck/views/home/components/add_category_dialog.dart';
 import 'package:lin_chuck/views/home/components/menu_card.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
 import 'package:lin_chuck/widget/main_template.dart';
@@ -19,6 +19,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final HomeController _homeController = Get.put(HomeController());
 
+  int currentIndex = 0;
+  List<ProductTypeModel> productTypeList = [];
+
   @override
   void initState() {
     super.initState();
@@ -27,12 +30,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   _prepareData() async {
-    // await _homeController.getCategories();
     await _homeController.getSweet();
     await _homeController.getProductType();
+    await _getProductType();
     await _homeController.getProduct();
 
+
     setState(() {});
+  }
+
+  _getProductType() {
+    productTypeList.clear();
+
+    ProductTypeModel data = ProductTypeModel(
+      id: 0,
+      name: 'ทั้งหมด',
+      quantity: _homeController.productTypeList.length,
+    );
+
+    productTypeList.add(data);
+
+    for (ProductTypeModel productType in _homeController.productTypeList) {
+      productTypeList.add(productType);
+    }
   }
 
   @override
@@ -52,7 +72,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _categories(),
+          _productType(),
           const SizedBox(height: 20.0),
           Expanded(
             child: GridView.builder(
@@ -73,21 +93,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _categories() {
+  _productType() {
     return SizedBox(
       height: 50.0,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _homeController.categoryList.length,
+        itemCount: productTypeList.length,
         itemBuilder: (context, index) {
-          DataModel item = _homeController.categoryList[index];
+          ProductTypeModel item = productTypeList[index];
 
-          if (index == _homeController.categoryList.length - 1) {
+          if (index == productTypeList.length - 1) {
             return Row(
               children: [
                 CustomButton(
-                  onTap: () {},
-                  title: '${item.name} (3)',
+                  onTap: () {
+                    currentIndex = index;
+                    setState(() {});
+                  },
+                  title: '${item.name} (${item.quantity})',
+                  isSelected: currentIndex == index,
                 ),
                 const SizedBox(width: marginX2),
                 InkWell(
@@ -104,9 +128,12 @@ class _HomePageState extends State<HomePage> {
             );
           } else {
             return CustomButton(
-              onTap: () {},
-              title: '${item.name} (3)',
-              //TODO: edit json
+              onTap: () {
+                currentIndex = index;
+                setState(() {});
+              },
+              title: '${item.name} (${item.quantity})',
+              isSelected: currentIndex == index,
             );
           }
         },

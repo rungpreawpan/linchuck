@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/model/data_model.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_list_button.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
@@ -25,7 +25,7 @@ class _SelectCategoryDialogState extends State<SelectCategoryDialog> {
   }
 
   _prepareData() async {
-    await _homeController.getCategories();
+    await _homeController.getProductType();
 
     setState(() {});
   }
@@ -59,15 +59,15 @@ class _SelectCategoryDialogState extends State<SelectCategoryDialog> {
                     const SizedBox(height: marginX2),
                     ListView.separated(
                       shrinkWrap: true,
-                      itemCount: _homeController.categoryList.length,
+                      itemCount: _homeController.productTypeList.length,
                       itemBuilder: (context, index) {
-                        DataModel item = _homeController.categoryList[index];
-                        bool isSelected = _homeController.selectedCategoryList.contains(item);
+                        ProductTypeModel item = _homeController.productTypeList[index];
+                        bool isSelected = _homeController.selectedProductTypeList.contains(item);
 
                         return CustomListButton(
                           onTap: () {
-                            _homeController.selectedCategoryList.clear();
-                            _homeController.selectedCategoryList.add(item);
+                            _homeController.selectedProductTypeList.clear();
+                            _homeController.selectedProductTypeList.add(item);
 
                             setState(() {});
                           },
