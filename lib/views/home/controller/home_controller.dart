@@ -56,7 +56,6 @@ class HomeController extends GetxController {
 
     try {
       isLoading.value = true;
-      await Future.delayed(const Duration(milliseconds: 500));
 
       var response = await RequestService().request(
         '/sweet',
@@ -86,7 +85,6 @@ class HomeController extends GetxController {
 
     try {
       isLoading.value = true;
-      await Future.delayed(const Duration(milliseconds: 500));
 
       var response = await RequestService().request(
         '/productType',
@@ -98,6 +96,58 @@ class HomeController extends GetxController {
         productTypeList = dataJSON
             .map<ProductTypeModel>((json) => ProductTypeModel.fromJSON(json))
             .toList();
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  editProductType(int id) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/productType/$id',
+        method: HttpMethod.post,
+      );
+
+      if (response != null) {
+        //TODO: show dialog
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  deleteProductType(int id) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/productType/$id',
+        method: HttpMethod.delete,
+      );
+
+      if (response != null) {
+        //TODO: show dialog
       }
     } finally {
       isLoading.value = false;
@@ -116,7 +166,6 @@ class HomeController extends GetxController {
 
     try {
       isLoading.value = true;
-      await Future.delayed(const Duration(milliseconds: 500));
 
       var response = await RequestService().request(
         '/product',
@@ -128,6 +177,58 @@ class HomeController extends GetxController {
         productList = dataJSON
             .map<ProductModel>((json) => ProductModel.fromJSON(json))
             .toList();
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  editProduct(int id) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/product/$id',
+        method: HttpMethod.post,
+      );
+
+      if (response != null) {
+        //TODO: show dialog
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  deleteProduct(int id) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/product/$id',
+        method: HttpMethod.delete,
+      );
+
+      if (response != null) {
+        //TODO: show dialog
       }
     } finally {
       isLoading.value = false;
