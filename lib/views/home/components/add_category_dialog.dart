@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class AddCategoryDialog extends StatelessWidget {
+class AddCategoryDialog extends StatefulWidget {
   const AddCategoryDialog({super.key});
+
+  @override
+  State<AddCategoryDialog> createState() => _AddCategoryDialogState();
+}
+
+class _AddCategoryDialogState extends State<AddCategoryDialog> {
+  final HomeController _homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +69,9 @@ class AddCategoryDialog extends StatelessWidget {
         const SizedBox(width: marginX2),
         Expanded(
           child: CustomSubmitButton(
-            onTap: () {
-              Get.back();
+            onTap: () async {
+              await _homeController.addProductType();
+              Get.back(result: true);
             },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,

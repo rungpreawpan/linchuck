@@ -4,6 +4,7 @@ import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/add_category_dialog.dart';
 import 'package:lin_chuck/views/home/components/menu_card.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
@@ -34,7 +35,6 @@ class _HomePageState extends State<HomePage> {
     await _homeController.getProductType();
     await _getProductType();
     await _homeController.getProduct();
-
 
     setState(() {});
   }
@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           _productType(),
           const SizedBox(height: 20.0),
+          //TODO: edit filter product type
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -82,9 +83,11 @@ class _HomePageState extends State<HomePage> {
                 crossAxisSpacing: marginX2,
                 childAspectRatio: 1.0,
               ),
-              itemCount: 5,
+              itemCount: _homeController.productList.length,
               itemBuilder: (context, index) {
-                return const MenuCard();
+                ProductModel item = _homeController.productList[index];
+
+                return MenuCard(product: item);
               },
             ),
           ),
@@ -115,8 +118,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(width: marginX2),
                 InkWell(
-                  onTap: () {
-                    Get.dialog(const AddCategoryDialog());
+                  onTap: () async {
+                    bool? result = await Get.dialog(const AddCategoryDialog());
+
+                    if (result != null) {
+                      setState(() {});
+                    }
                   },
                   child: const Icon(
                     Icons.add_circle_rounded,
@@ -132,7 +139,9 @@ class _HomePageState extends State<HomePage> {
                 currentIndex = index;
                 setState(() {});
               },
-              title: '${item.name} (${item.quantity})',
+              title: index != 0
+                  ? '${item.name} (${item.quantity})'
+                  : '${item.name} (${_homeController.productList.length})',
               isSelected: currentIndex == index,
             );
           }

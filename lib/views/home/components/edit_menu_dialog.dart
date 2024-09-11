@@ -55,14 +55,14 @@ class _EditMenuDialogState extends State<EditMenuDialog> {
   void initState() {
     super.initState();
 
-    _prepareData();
+    // _prepareData();
   }
 
-  _prepareData() async {
-    await _homeController.getOptions();
-
-    setState(() {});
-  }
+  // _prepareData() async {
+  //   await _homeController.getOptions();
+  //
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {

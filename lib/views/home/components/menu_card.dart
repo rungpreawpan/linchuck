@@ -3,15 +3,22 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/add_edit_product_dialog.dart';
 import 'package:lin_chuck/views/home/components/edit_menu_dialog.dart';
+import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class MenuCard extends StatelessWidget {
-  const MenuCard({super.key});
+  final ProductModel product;
+
+  const MenuCard({
+    super.key,
+    required this.product,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        //TODO: filter product type to show sweet
         Get.dialog(const AddEditProductDialog());
       },
       child: Column(
@@ -36,51 +43,57 @@ class MenuCard extends StatelessWidget {
               Positioned(
                 top: margin,
                 right: 4.0,
-                child: InkWell(
-                  onTap: () {
-                    Get.dialog(const EditMenuDialog());
-                  },
-                  child: Container(
-                    height: 30.0,
-                    width: 30.0,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 10,
-                          offset: Offset(3, 3),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.more_vert_rounded,
-                      ),
-                    ),
-                  ),
-                ),
+                child: _moreButton(),
               ),
             ],
           ),
           const SizedBox(height: marginX2),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextFontStyle(
-                'Cake ส้ม',
+                product.name ?? '',
                 size: 20.0,
                 color: primaryColor,
+                weight: FontWeight.bold,
               ),
               TextFontStyle(
-                '180.-',
+                product.productPrice.toString() ?? '',
                 size: 20.0,
                 color: Colors.red,
+                weight: FontWeight.bold,
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  _moreButton() {
+    return InkWell(
+      onTap: () {
+        Get.dialog(const EditMenuDialog());
+      },
+      child: Container(
+        height: 30.0,
+        width: 30.0,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 10,
+              offset: Offset(3, 3),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.more_vert_rounded,
+          ),
+        ),
       ),
     );
   }

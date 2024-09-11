@@ -1,47 +1,24 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/service/request_service.dart';
 import 'package:lin_chuck/utils/alert.dart';
-import 'package:lin_chuck/views/home/model/options_model.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/views/home/model/sweet_model.dart';
+import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 
 class HomeController extends GetxController {
   var isLoading = false.obs;
-  // List categoryList = [];
-  // List selectedCategoryList = [];
 
   List optionList = [];
   List selectedOptionList = [];
 
   List<SweetModel> sweetList = [];
+  SweetModel? selectedSweet;
+
   List<ProductModel> productList = [];
+
   List<ProductTypeModel> productTypeList = [];
   List<ProductTypeModel> selectedProductTypeList = [];
-
-  // getCategories() async {
-  //   String content =
-  //       await rootBundle.loadString('assets/data/sales_categories.json');
-  //
-  //   Map<String, dynamic> dataMap = jsonDecode(content);
-  //   List dataJSON = dataMap['data'];
-  //
-  //   categoryList =
-  //       List.from(dataJSON).map((e) => DataModel.fromJSON(e)).toList();
-  // }
-
-  getOptions() async {
-    String content = await rootBundle.loadString('assets/data/options.json');
-
-    Map<String, dynamic> dataMap = jsonDecode(content);
-    List dataJSON = dataMap['data'];
-
-    optionList =
-        List.from(dataJSON).map((e) => OptionsModel.fromJSON(e)).toList();
-  }
 
   getSweet() async {
     bool isOnline = await RequestService().checkInternetConnection();
@@ -95,6 +72,35 @@ class HomeController extends GetxController {
         productTypeList = dataJSON
             .map<ProductTypeModel>((json) => ProductTypeModel.fromJSON(json))
             .toList();
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  addProductType() async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/productType',
+        method: HttpMethod.post,
+        // data: {}, //TODO:
+      );
+
+      if (response != null) {
+        Get.dialog(
+          const CustomAlertDialog(title: 'เพิ่มประเภทสินค้าสำเร็จ'),
+        );
       }
     } finally {
       isLoading.value = false;
