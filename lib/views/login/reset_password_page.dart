@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/login/controller/forget_password_controller.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/template_bg.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class ResetPassword extends StatefulWidget {
-  const ResetPassword({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({super.key});
 
   @override
-  State<ResetPassword> createState() => _ResetPasswordState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _ResetPasswordState extends State<ResetPassword> {
-  final TextEditingController _passwordController = TextEditingController();
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final ForgetPasswordController _forgetPasswordController = Get.find();
+
   final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureNewPassword = true;
@@ -61,9 +66,9 @@ class _ResetPasswordState extends State<ResetPassword> {
     return Column(
       children: [
         CustomTextField(
-          textEditingController: _passwordController,
+          textEditingController: _newPasswordController,
           labelText: 'รหัสผ่านใหม่',
-          obscureText: true,
+          obscureText: _obscurePassword,
           suffix: InkWell(
             onTap: () {
               _obscurePassword = !_obscurePassword;
@@ -77,9 +82,9 @@ class _ResetPasswordState extends State<ResetPassword> {
         ),
         const SizedBox(height: marginX2),
         CustomTextField(
-          textEditingController: _newPasswordController,
+          textEditingController: _confirmPasswordController,
           labelText: 'ยืนยันรหัสผ่านใหม่',
-          obscureText: true,
+          obscureText: _obscureNewPassword,
           suffix: InkWell(
             onTap: () {
               _obscureNewPassword = !_obscureNewPassword;
@@ -99,7 +104,12 @@ class _ResetPasswordState extends State<ResetPassword> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 150.0),
       child: CustomSubmitButton(
-        onTap: () {},
+        onTap: () async {
+          await _forgetPasswordController.verifyPassword(
+            _newPasswordController.text,
+            _confirmPasswordController.text,
+          );
+        },
         title: 'รีเซ็ทรหัสผ่าน',
         backgroundColor: lAmber,
       ),

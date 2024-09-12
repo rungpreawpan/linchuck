@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/login/reset_password.dart';
+import 'package:lin_chuck/views/login/controller/forget_password_controller.dart';
+import 'package:lin_chuck/views/login/reset_password_page.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/template_bg.dart';
@@ -15,6 +16,9 @@ class ForgetPasswordPage extends StatefulWidget {
 }
 
 class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
+  final ForgetPasswordController _forgetPasswordController =
+      Get.put(ForgetPasswordController());
+
   final TextEditingController _emailController = TextEditingController();
 
   @override
@@ -80,8 +84,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 200.0),
       child: CustomSubmitButton(
-        onTap: () {
-          Get.to(() => const ResetPassword());
+        onTap: () async {
+          await _forgetPasswordController.verifyEmail(_emailController.text);
+
+          // Get.to(() => const ResetPassword());
         },
         title: 'รีเซ็ทรหัสผ่าน',
         backgroundColor: lAmber,
