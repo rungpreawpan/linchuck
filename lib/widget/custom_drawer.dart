@@ -145,10 +145,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: [
           InkWell(
             onTap: () async {
-              Get.off(() => const LoginPage());
-
               const storage = FlutterSecureStorage();
               await storage.delete(key: 'login');
+
+              Get.offAll(() => const LoginPage());
             },
             child: const Row(
               children: [

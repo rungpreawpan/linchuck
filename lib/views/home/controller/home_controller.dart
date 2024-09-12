@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:lin_chuck/service/request_service.dart';
 import 'package:lin_chuck/utils/alert.dart';
@@ -44,6 +46,8 @@ class HomeController extends GetxController {
             .map<SweetModel>((json) => SweetModel.fromJSON(json))
             .toList();
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -73,6 +77,8 @@ class HomeController extends GetxController {
             .map<ProductTypeModel>((json) => ProductTypeModel.fromJSON(json))
             .toList();
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -102,6 +108,8 @@ class HomeController extends GetxController {
           const CustomAlertDialog(title: 'เพิ่มประเภทสินค้าสำเร็จ'),
         );
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -128,6 +136,8 @@ class HomeController extends GetxController {
       if (response != null) {
         //TODO: show dialog
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -154,6 +164,8 @@ class HomeController extends GetxController {
       if (response != null) {
         //TODO: show dialog
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -183,6 +195,8 @@ class HomeController extends GetxController {
             .map<ProductModel>((json) => ProductModel.fromJSON(json))
             .toList();
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -209,6 +223,8 @@ class HomeController extends GetxController {
       if (response != null) {
         //TODO: show dialog
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -235,6 +251,8 @@ class HomeController extends GetxController {
       if (response != null) {
         //TODO: show dialog
       }
+    } catch (e) {
+      log(e.toString());
     } finally {
       isLoading.value = false;
     }

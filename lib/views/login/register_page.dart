@@ -2,8 +2,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/login/controller/register_controller.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
-import 'package:lin_chuck/views/login/register_success_page.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/template_bg.dart';
@@ -17,11 +17,13 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final RegisterController _registerController = RegisterController();
+
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
+  final TextEditingController _employeeCodeController = TextEditingController();
 
   bool _obscurePassword = true;
 
@@ -29,7 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
     'ผู้จัดการ',
     'พนักงาน',
   ];
-  String? selectedValue;
+
+  String? selectedRole;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: Center(
                               child: CircleAvatar(
                                 radius: 6.0,
-                                backgroundColor: item == selectedValue
+                                backgroundColor: item == selectedRole
                                     ? primaryColor
                                     : Colors.grey.shade200,
                               ),
@@ -143,9 +146,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 )
                 .toList(),
-            value: selectedValue,
+            value: selectedRole,
             onChanged: (String? value) {
-              selectedValue = value;
+              selectedRole = value;
               setState(() {});
             },
             buttonStyleData: ButtonStyleData(
@@ -180,8 +183,8 @@ class _RegisterPageState extends State<RegisterPage> {
         const SizedBox(width: marginX2),
         Expanded(
           child: CustomTextField(
-            isEnabled: selectedValue != null ? true : false,
-            textEditingController: _roleController,
+            isEnabled: selectedRole != null ? true : false,
+            textEditingController: _employeeCodeController,
             labelText: 'รหัสพนักงาน',
           ),
         ),
@@ -195,8 +198,25 @@ class _RegisterPageState extends State<RegisterPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 150.0),
           child: CustomSubmitButton(
-            onTap: () {
-              Get.to(() => const RegisterSuccessPage());
+            onTap: () async {
+              String role;
+
+              if (selectedRole == 'ผู้จัดการ') {
+                role = 'manager';
+              } else if (selectedRole == 'พนักงาน') {
+                role = 'employee';
+              } else {
+                role = '';
+              }
+
+              await _registerController.verifyRegister(
+                _firstnameController.text,
+                _lastnameController.text,
+                _emailController.text,
+                _passwordController.text,
+                role,
+                _employeeCodeController.text,
+              );
             },
             title: 'ลงทะเบียน',
             backgroundColor: lAmber,
@@ -213,7 +233,7 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(width: 5.0),
             InkWell(
               onTap: () {
-                Get.to(() => const LoginPage());
+                Get.offAll(() => const LoginPage());
               },
               child: const TextFontStyle(
                 'เข้าสู่ระบบ',

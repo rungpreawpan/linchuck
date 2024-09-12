@@ -20,7 +20,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final LoginController _loginController = Get.put(LoginController());
 
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       children: [
         CustomTextField(
-          textEditingController: _usernameController,
+          textEditingController: _emailController,
           labelText: 'อีเมล',
         ),
         const SizedBox(height: marginX2),
@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
           const storage = FlutterSecureStorage();
 
           await _loginController.verifyLogin(
-            _usernameController.text,
+            _emailController.text,
             _passwordController.text,
           );
 
