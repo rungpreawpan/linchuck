@@ -64,6 +64,7 @@ class HomeController extends GetxController {
     }
 
     try {
+      print('get product type');
       isLoading.value = true;
 
       var response = await RequestService().request(
@@ -84,7 +85,7 @@ class HomeController extends GetxController {
     }
   }
 
-  addProductType() async {
+  addProductType(String productType) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
     if (!isOnline) {
@@ -100,12 +101,18 @@ class HomeController extends GetxController {
       var response = await RequestService().request(
         '/productType',
         method: HttpMethod.post,
-        // data: {}, //TODO:
+        data: {'product_type': productType},
       );
 
       if (response != null) {
+        print(response);
         Get.dialog(
-          const CustomAlertDialog(title: 'เพิ่มประเภทสินค้าสำเร็จ'),
+          CustomAlertDialog(
+            title: 'เพิ่มประเภทสินค้าสำเร็จ',
+            onOk: () {
+              Get.back(result: true);
+            },
+          ),
         );
       }
     } catch (e) {

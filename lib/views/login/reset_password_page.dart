@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/login/controller/forget_password_controller.dart';
+import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/template_bg.dart';
@@ -26,31 +27,36 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TemplateBackground(
-      appBar: AppBar(
-        backgroundColor: secondaryColor,
-        elevation: 0.0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 200.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _logo(),
-            const SizedBox(height: 20.0),
-            const TextFontStyle(
-              'รีเซ็ทรหัสผ่านใหม่',
-              size: 40.0,
-              color: Colors.white,
-              weight: FontWeight.bold,
+    return Stack(
+      children: [
+        TemplateBackground(
+          appBar: AppBar(
+            backgroundColor: secondaryColor,
+            elevation: 0.0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 200.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _logo(),
+                const SizedBox(height: 20.0),
+                const TextFontStyle(
+                  'รีเซ็ทรหัสผ่านใหม่',
+                  size: 40.0,
+                  color: Colors.white,
+                  weight: FontWeight.bold,
+                ),
+                const SizedBox(height: 20.0),
+                _textField(),
+                const SizedBox(height: 40.0),
+                _resetButton(),
+              ],
             ),
-            const SizedBox(height: 20.0),
-            _textField(),
-            const SizedBox(height: 40.0),
-            _resetButton(),
-          ],
+          ),
         ),
-      ),
+        _loading(),
+      ],
     );
   }
 
@@ -114,5 +120,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         backgroundColor: lAmber,
       ),
     );
+  }
+
+  _loading() {
+    return Obx(() {
+      return Visibility(
+        visible: _forgetPasswordController.isLoading.value,
+        child: const CustomLoading(),
+      );
+    });
   }
 }

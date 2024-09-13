@@ -42,7 +42,7 @@ class RegisterSuccessPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 450.0),
             child: CustomSubmitButton(
               onTap: () {
-                Get.off(() => const LoginPage());
+                Get.offAll(() => const LoginPage());
               },
               title: 'เข้าสู่หน้าหลัก',
               backgroundColor: lGreen,

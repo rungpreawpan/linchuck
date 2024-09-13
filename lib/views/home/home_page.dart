@@ -8,6 +8,7 @@ import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
+import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 
 class HomePage extends StatefulWidget {
@@ -57,12 +58,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MainTemplate(
-      appBarTitle: 'รายการสินค้า',
-      contentWidget: [
-        _menu(),
-        const SizedBox(width: 20.0),
-        const OrderListCard(),
+    return Stack(
+      children: [
+        MainTemplate(
+          appBarTitle: 'รายการสินค้า',
+          contentWidget: [
+            _menu(),
+            const SizedBox(width: 20.0),
+            const OrderListCard(),
+          ],
+        ),
+        _loading(),
       ],
     );
   }
@@ -122,6 +128,7 @@ class _HomePageState extends State<HomePage> {
                     bool? result = await Get.dialog(const AddCategoryDialog());
 
                     if (result != null) {
+                      await _prepareData();
                       setState(() {});
                     }
                   },
@@ -151,5 +158,14 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+
+  _loading() {
+    return Obx(() {
+      return Visibility(
+        visible: _homeController.isLoading.value,
+        child: const CustomLoading(),
+      );
+    });
   }
 }

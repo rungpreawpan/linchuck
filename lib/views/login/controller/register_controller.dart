@@ -107,9 +107,9 @@ class RegisterController extends GetxController {
         },
       );
 
-      //TODO: edit condition
+      //TODO: edit response
       if (response != null) {
-        Get.off(() => const RegisterSuccessPage());
+        Get.offAll(() => const RegisterSuccessPage());
       }
     } catch (e) {
       log(e.toString());

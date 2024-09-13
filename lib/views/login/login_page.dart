@@ -5,6 +5,7 @@ import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/login/controller/login_controller.dart';
 import 'package:lin_chuck/views/login/forget_password_page.dart';
 import 'package:lin_chuck/views/login/register_page.dart';
+import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/template_bg.dart';
@@ -27,28 +28,33 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TemplateBackground(
-      appBar: AppBar(
-        backgroundColor: secondaryColor,
-        elevation: 0.0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 300.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _logo(),
-            const SizedBox(height: 30.0),
-            _textField(),
-            const SizedBox(height: 20.0),
-            _forgetButton(),
-            const SizedBox(height: 40.0),
-            _loginButton(),
-            const SizedBox(height: marginX2),
-            _registerButton(),
-          ],
+    return Stack(
+      children: [
+        TemplateBackground(
+          appBar: AppBar(
+            backgroundColor: secondaryColor,
+            elevation: 0.0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 300.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _logo(),
+                const SizedBox(height: 30.0),
+                _textField(),
+                const SizedBox(height: 20.0),
+                _forgetButton(),
+                const SizedBox(height: 40.0),
+                _loginButton(),
+                const SizedBox(height: marginX2),
+                _registerButton(),
+              ],
+            ),
+          ),
         ),
-      ),
+        _loading(),
+      ],
     );
   }
 
@@ -133,5 +139,14 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: lGreen,
       ),
     );
+  }
+
+  _loading() {
+    return Obx(() {
+      return Visibility(
+        visible: _loginController.isLoading.value,
+        child: const CustomLoading(),
+      );
+    });
   }
 }

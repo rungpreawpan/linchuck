@@ -15,6 +15,7 @@ class AddCategoryDialog extends StatefulWidget {
 
 class _AddCategoryDialogState extends State<AddCategoryDialog> {
   final HomeController _homeController = Get.find();
+  final TextEditingController _productTypeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,8 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
               weight: FontWeight.bold,
             ),
             const SizedBox(height: 20.0),
-            const CustomTextField(
+            CustomTextField(
+              textEditingController: _productTypeController,
               labelText: 'หมวดหมู่',
               helperText: 'เช่น อาหารจานเดี่ยว ขนม เครื่องดื่ม',
               maxLength: 30,
@@ -70,8 +72,12 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
         Expanded(
           child: CustomSubmitButton(
             onTap: () async {
-              await _homeController.addProductType();
-              Get.back(result: true);
+              bool? result = await _homeController
+                  .addProductType(_productTypeController.text);
+
+              if (result != null) {
+                Get.back(result: true);
+              }
             },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,

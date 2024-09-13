@@ -1,9 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/login/controller/register_controller.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
+import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/template_bg.dart';
@@ -36,26 +38,31 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TemplateBackground(
-      appBar: AppBar(
-        backgroundColor: secondaryColor,
-        elevation: 0.0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 250.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _logo(),
-            const SizedBox(height: 20.0),
-            _textField(),
-            const SizedBox(height: 20.0),
-            _selectPosition(),
-            const SizedBox(height: 40.0),
-            _registerButton(),
-          ],
+    return Stack(
+      children: [
+        TemplateBackground(
+          appBar: AppBar(
+            backgroundColor: secondaryColor,
+            elevation: 0.0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 250.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _logo(),
+                const SizedBox(height: 20.0),
+                _textField(),
+                const SizedBox(height: 20.0),
+                _selectPosition(),
+                const SizedBox(height: 40.0),
+                _registerButton(),
+              ],
+            ),
+          ),
         ),
-      ),
+        _loading(),
+      ],
     );
   }
 
@@ -244,5 +251,14 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ],
     );
+  }
+
+  _loading() {
+    return Obx(() {
+      return Visibility(
+        visible: _registerController.isLoading.value,
+        child: const CustomLoading(),
+      );
+    });
   }
 }

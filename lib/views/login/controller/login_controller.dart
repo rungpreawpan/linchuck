@@ -52,6 +52,7 @@ class LoginController extends GetxController {
       );
 
       if (response != null && response.toString() == 'true') {
+        //TODO: save login model
         Get.offAll(() => const HomePage());
       }
     } catch (e) {

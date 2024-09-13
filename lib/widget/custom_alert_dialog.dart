@@ -53,7 +53,7 @@ class CustomAlertDialog extends StatelessWidget {
       actions: [
         CustomSubmitButton(
           onTap: () {
-            Get.back();
+            Get.back(result: true);
 
             if (onOk != null) {
               onOk!();
