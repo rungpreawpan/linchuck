@@ -19,23 +19,21 @@ class _PayByPromptPayState extends State<PayByPromptPay> {
   Future getImageFromGallery() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+    }
 
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      }
-    });
+    setState(() {});
   }
 
   Future getImageFromCamera() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+    }
 
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      }
-    });
+    setState(() {});
   }
 
   @override

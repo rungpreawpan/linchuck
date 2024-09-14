@@ -10,10 +10,12 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 
 class AddEditProductDialog extends StatefulWidget {
   final bool isEdit;
+  final bool showSweet;
 
   const AddEditProductDialog({
     super.key,
     this.isEdit = false,
+    this.showSweet = false,
   });
 
   @override
@@ -54,8 +56,8 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const TextFontStyle(
-                '“เพิ่ม/แก้ไข” สินค้า',
+              TextFontStyle(
+                widget.isEdit ? 'แก้ไขสินค้า' : 'เพิ่มสินค้า',
                 color: Colors.black,
                 size: fontSizeL,
                 weight: FontWeight.bold,
@@ -71,8 +73,7 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
                 textEditingController: _qtyController,
               ),
               const SizedBox(height: 20.0),
-              _options(),
-              const SizedBox(height: 20.0),
+              _sweetLevel(),
               _actionButton(),
             ],
           ),
@@ -81,59 +82,63 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
     );
   }
 
-  _options() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const TextFontStyle(
-          'ระดับความหวาน',
-          size: fontSizeM,
-          weight: FontWeight.bold,
-        ),
-        const SizedBox(height: marginX2),
-        SizedBox(
-          height: 50.0,
-          width: Get.width / 1.2,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _homeController.sweetList.length,
-            itemBuilder: (context, index) {
-              SweetModel item = _homeController.sweetList[index];
+  _sweetLevel() {
+    return Visibility(
+      visible: widget.showSweet,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const TextFontStyle(
+            'ระดับความหวาน',
+            size: fontSizeM,
+            weight: FontWeight.bold,
+          ),
+          const SizedBox(height: marginX2),
+          SizedBox(
+            height: 50.0,
+            width: Get.width / 1.2,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _homeController.sweetList.length,
+              itemBuilder: (context, index) {
+                SweetModel item = _homeController.sweetList[index];
 
-              return InkWell(
-                onTap: () {
-                  _homeController.selectedSweet = item;
-                  setState(() {});
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: marginX2),
-                  decoration: BoxDecoration(
-                    color: item == _homeController.selectedSweet
-                        ? primaryColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(25.0),
-                    border: item == _homeController.selectedSweet
-                        ? null
-                        : Border.all(),
-                  ),
-                  child: Center(
-                    child: TextFontStyle(
-                      '${item.percent}% ${item.name}',
-                      size: fontSizeM,
+                return InkWell(
+                  onTap: () {
+                    _homeController.selectedSweet = item;
+                    setState(() {});
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: marginX2),
+                    decoration: BoxDecoration(
                       color: item == _homeController.selectedSweet
-                          ? Colors.white
-                          : Colors.black,
+                          ? primaryColor
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(25.0),
+                      border: item == _homeController.selectedSweet
+                          ? null
+                          : Border.all(),
+                    ),
+                    child: Center(
+                      child: TextFontStyle(
+                        '${item.percent}% ${item.name}',
+                        size: fontSizeM,
+                        color: item == _homeController.selectedSweet
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(width: marginX2);
-            },
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(width: marginX2);
+              },
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 20.0),
+        ],
+      ),
     );
   }
 

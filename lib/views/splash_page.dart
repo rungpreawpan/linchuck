@@ -36,7 +36,6 @@ class _SplashPageState extends State<SplashPage> {
     String? permission = await storage.read(key: 'permission');
     String? intro = await storage.read(key: 'intro');
     String? login = await storage.read(key: 'login');
-    print(login);
 
     if (permission == null) {
       Get.off(() => const IntroPage());

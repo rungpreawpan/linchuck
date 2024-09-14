@@ -18,9 +18,15 @@ class HomeController extends GetxController {
   SweetModel? selectedSweet;
 
   List<ProductModel> productList = [];
+  int? selectedProductId;
+  ProductModel? selectedProduct;
 
   List<ProductTypeModel> productTypeList = [];
+  int? selectedProductTypeId;
   List<ProductTypeModel> selectedProductTypeList = [];
+
+  DateTime? orderDate;
+  DateTime? expireDate;
 
   getSweet() async {
     bool isOnline = await RequestService().checkInternetConnection();
@@ -64,7 +70,6 @@ class HomeController extends GetxController {
     }
 
     try {
-      print('get product type');
       isLoading.value = true;
 
       var response = await RequestService().request(
@@ -122,7 +127,7 @@ class HomeController extends GetxController {
     }
   }
 
-  editProductType(int id) async {
+  editProductType(int id, String productType) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
     if (!isOnline) {
@@ -135,10 +140,8 @@ class HomeController extends GetxController {
     try {
       isLoading.value = true;
 
-      var response = await RequestService().request(
-        '/productType/$id',
-        method: HttpMethod.post,
-      );
+      var response = await RequestService().request('/productType/$id',
+          method: HttpMethod.post, data: {'product_type': productType});
 
       if (response != null) {
         //TODO: show dialog
@@ -168,8 +171,10 @@ class HomeController extends GetxController {
         method: HttpMethod.delete,
       );
 
-      if (response != null) {
-        //TODO: show dialog
+      if (response != null && response.toString() == 'true') {
+        Get.dialog(
+          const CustomAlertDialog(title: 'ลบหมวดหมู่สำเร็จ'),
+        );
       }
     } catch (e) {
       log(e.toString());
@@ -209,7 +214,94 @@ class HomeController extends GetxController {
     }
   }
 
-  editProduct(int id) async {
+  getOneProduct(int id) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/product/$id',
+        method: HttpMethod.get,
+      );
+
+      if (response != null) {
+        var dataJSON = response.data;
+        selectedProduct = ProductModel.fromJSON(dataJSON);
+        // productList = dataJSON
+        //     .map<ProductModel>((json) => ProductModel.fromJSON(json))
+        //     .toList();
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  addProduct(
+    String? name,
+    double? price,
+    double? cost,
+    int? quantity,
+    int? productTypeId,
+    String? orderDate,
+    String? expireDate,
+  ) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/product',
+        method: HttpMethod.post,
+        data: {
+          'product_name': name,
+          'product_price': price,
+          'product_cost': cost,
+          'product_quantity': quantity,
+          'product_type_id': productTypeId,
+          'product_image': 'test', //TODO:
+          'order_date': orderDate,
+          'expire_date': expireDate,
+        },
+      );
+
+      if (response != null) {
+        Get.back(result: true);
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  editProduct(
+    int id,
+    String? name,
+    double? price,
+    double? cost,
+    int? quantity,
+    int? productTypeId,
+    String? orderDate,
+    String? expireDate,
+  ) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
     if (!isOnline) {
@@ -225,10 +317,20 @@ class HomeController extends GetxController {
       var response = await RequestService().request(
         '/product/$id',
         method: HttpMethod.post,
+        data: {
+          'product_name': name,
+          'product_price': price,
+          'product_cost': cost,
+          'product_quantity': quantity,
+          'product_type_id': productTypeId,
+          'product_image': 'test', //TODO:
+          'order_date': orderDate,
+          'expire_date': expireDate,
+        },
       );
 
-      if (response != null) {
-        //TODO: show dialog
+      if (response != null && response.toString() == 'true') {
+        Get.back(result: true);
       }
     } catch (e) {
       log(e.toString());
@@ -255,8 +357,10 @@ class HomeController extends GetxController {
         method: HttpMethod.delete,
       );
 
-      if (response != null) {
-        //TODO: show dialog
+      if (response != null && response.toString() == 'true') {
+        Get.dialog(
+          const CustomAlertDialog(title: 'ลบสินค้าสำเร็จ'),
+        );
       }
     } catch (e) {
       log(e.toString());

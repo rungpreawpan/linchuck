@@ -120,7 +120,7 @@ class _SelectCategoryDialogState extends State<SelectCategoryDialog> {
         Expanded(
           child: CustomSubmitButton(
             onTap: () {
-              Get.back();
+              Get.back(result: true);
             },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,

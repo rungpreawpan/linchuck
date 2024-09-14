@@ -12,7 +12,12 @@ import 'package:lin_chuck/widget/select_camera_gallery_bottom_sheet.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class EditMenuDialog extends StatefulWidget {
-  const EditMenuDialog({super.key});
+  final bool isEdit;
+
+  const EditMenuDialog({
+    super.key,
+    this.isEdit = false,
+  });
 
   @override
   State<EditMenuDialog> createState() => _EditMenuDialogState();
@@ -22,31 +27,29 @@ class _EditMenuDialogState extends State<EditMenuDialog> {
   final HomeController _homeController = Get.find();
 
   final TextEditingController _productNameController = TextEditingController();
+  final TextEditingController _productTypeController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
 
   File? _imageFile;
 
   Future getImageFromGallery() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+    }
 
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      }
-    });
+    setState(() {});
   }
 
   Future getImageFromCamera() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+    }
 
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      }
-    });
+    setState(() {});
   }
 
   // bool _showKeyboard = true;
@@ -83,8 +86,8 @@ class _EditMenuDialogState extends State<EditMenuDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const TextFontStyle(
-                'แก้ไขสินค้า',
+              TextFontStyle(
+                widget.isEdit ? 'แก้ไขสินค้า' : 'เพิ่มสินค้า',
                 size: fontSizeL,
                 weight: FontWeight.bold,
               ),
@@ -102,7 +105,6 @@ class _EditMenuDialogState extends State<EditMenuDialog> {
                         _selectCategory(),
                         const SizedBox(height: marginX2),
                         _productPrice(),
-                        // _selectedOptionBox(),
                       ],
                     ),
                   ),
@@ -179,15 +181,22 @@ class _EditMenuDialogState extends State<EditMenuDialog> {
 
   _selectCategory() {
     return InkWell(
-      onTap: () {
-        Get.dialog(
+      onTap: () async {
+        bool? result = await Get.dialog(
           const SelectCategoryDialog(),
           barrierDismissible: false,
         );
+
+        if (result != null) {
+          _productTypeController.text =
+              _homeController.selectedProductTypeList.first.name ?? '';
+
+          setState(() {});
+        }
       },
       child: CustomTextField(
         isEnabled: false,
-        textEditingController: _categoryController,
+        textEditingController: _productTypeController,
         labelText: 'หมวดหมู่',
       ),
     );
@@ -221,48 +230,4 @@ class _EditMenuDialogState extends State<EditMenuDialog> {
       ],
     );
   }
-
-// _selectedOptionBox() {
-//   return _homeController.selectedOptionList.isEmpty
-//       ? InkWell(
-//           onTap: () {},
-//           child: Container(
-//             height: 50.0,
-//             width: Get.width,
-//             padding: const EdgeInsets.symmetric(
-//               horizontal: marginX2,
-//               vertical: margin,
-//             ),
-//             decoration: BoxDecoration(
-//               border: Border.all(color: Colors.black12),
-//               borderRadius: BorderRadius.circular(10.0),
-//             ),
-//             child: const TextFontStyle(
-//               'ตัวเลือก',
-//               size: fontSizeM,
-//               color: Colors.grey,
-//             ),
-//           ),
-//         )
-//       : Column(
-//           children: [
-//             Row(
-//               children: [
-//                 const TextFontStyle(
-//                   'ตัวเลือก',
-//                   size: fontSizeM,
-//                 ),
-//                 const SizedBox(width: marginX2),
-//                 InkWell(
-//                   onTap: () {},
-//                   child: const Icon(
-//                     Icons.add_circle,
-//                     color: Colors.green,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         );
-// }
 }

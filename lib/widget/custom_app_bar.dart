@@ -5,11 +5,15 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 class CustomAppBar extends StatelessWidget {
   final String title;
   final bool showBackIcon;
+  final bool showActionButton;
+  final Widget actionButton;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.showBackIcon = false,
+    this.showActionButton = false,
+    this.actionButton = const SizedBox(),
   });
 
   @override
@@ -43,6 +47,11 @@ class CustomAppBar extends StatelessWidget {
                   title,
                   size: 40.0,
                   weight: FontWeight.bold,
+                ),
+                const Spacer(),
+                Visibility(
+                  visible: showActionButton,
+                  child: actionButton,
                 ),
               ],
             ),

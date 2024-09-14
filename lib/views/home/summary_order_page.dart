@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/pay_by_cash_page.dart';
 import 'package:lin_chuck/views/home/components/pay_by_promptpay.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
 import 'package:lin_chuck/widget/custom_app_bar.dart';
-
-// import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/widget/custom_drawer.dart';
 import 'package:lin_chuck/widget/custom_side_bar.dart';
 
@@ -22,7 +22,7 @@ class SummaryOrderPage extends StatefulWidget {
 }
 
 class _SummaryOrderPageState extends State<SummaryOrderPage> {
-  // final HomeController _homeController = Get.find();
+  final HomeController _homeController = Get.find();
 
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
 
@@ -64,7 +64,7 @@ class _SummaryOrderPageState extends State<SummaryOrderPage> {
     return Expanded(
       child: Column(
         children: [
-          const CustomAppBar(
+          CustomAppBar(
             title: 'ชำระเงิน',
             showBackIcon: true,
           ),

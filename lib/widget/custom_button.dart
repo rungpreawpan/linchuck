@@ -4,20 +4,24 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomButton extends StatelessWidget {
   final Function() onTap;
+  final Function(LongPressStartDetails)? onLongPress;
   final String title;
   final bool isSelected;
 
   const CustomButton({
     super.key,
     required this.onTap,
+    this.onLongPress,
     required this.title,
     this.isSelected = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
+      // onLongPress: onLongPress,
+      onLongPressStart: onLongPress,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         decoration: BoxDecoration(

@@ -6,12 +6,16 @@ import 'package:lin_chuck/widget/custom_side_bar.dart';
 class MainTemplate extends StatefulWidget {
   final String appBarTitle;
   final bool showBackButton;
+  final bool showActionButton;
+  final Widget actionButton;
   final List<Widget> contentWidget;
 
   const MainTemplate({
     super.key,
     required this.appBarTitle,
     this.showBackButton = false,
+    this.showActionButton = false,
+    this.actionButton = const SizedBox(),
     required this.contentWidget,
   });
 
@@ -60,6 +64,8 @@ class _MainTemplateState extends State<MainTemplate> {
           CustomAppBar(
             title: widget.appBarTitle,
             showBackIcon: widget.showBackButton,
+            showActionButton: widget.showActionButton,
+            actionButton: widget.actionButton,
           ),
           Expanded(
             child: Row(

@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/controller/app_info_controller.dart';
+import 'package:lin_chuck/views/category/category_page.dart';
 import 'package:lin_chuck/views/employee/employee_page.dart';
 import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
@@ -103,6 +104,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Get.to(() => const StockPage());
             },
             title: 'คลังสินค้า',
+          ),
+          _navigateButton(
+            onTap: () {
+              Get.to(() => const CategoryPage());
+            },
+            title: 'หมวดหมู่สินค้า',
           ),
           _navigateButton(
             onTap: () {

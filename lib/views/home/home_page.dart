@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/home/components/add_category_dialog.dart';
+import 'package:lin_chuck/views/category/category_page.dart';
 import 'package:lin_chuck/views/home/components/menu_card.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
+import 'package:lin_chuck/views/stock/stock_page.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
+import 'package:lin_chuck/widget/edit_delete_popup.dart';
 import 'package:lin_chuck/widget/main_template.dart';
+import 'package:lin_chuck/widget/text_font_style.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +26,9 @@ class _HomePageState extends State<HomePage> {
 
   int currentIndex = 0;
   List<ProductTypeModel> productTypeList = [];
+
+  List<String> popupItems = ['หมวดหมู่สินค้า', 'สินค้า'];
+  String selectedItem = '';
 
   @override
   void initState() {
@@ -62,6 +68,14 @@ class _HomePageState extends State<HomePage> {
       children: [
         MainTemplate(
           appBarTitle: 'รายการสินค้า',
+          showActionButton: true,
+          // actionButton: InkWell(
+          //   onTap: () {
+          //
+          //   },
+          //   child: const Icon(Icons.tune),
+          // ),
+          actionButton: _popUp(),
           contentWidget: [
             _menu(),
             const SizedBox(width: 20.0),
@@ -111,52 +125,120 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           ProductTypeModel item = productTypeList[index];
 
-          if (index == productTypeList.length - 1) {
-            return Row(
-              children: [
-                CustomButton(
-                  onTap: () {
-                    currentIndex = index;
-                    setState(() {});
-                  },
-                  title: '${item.name} (${item.quantity})',
-                  isSelected: currentIndex == index,
-                ),
-                const SizedBox(width: marginX2),
-                InkWell(
-                  onTap: () async {
-                    bool? result = await Get.dialog(const AddCategoryDialog());
-
-                    if (result != null) {
-                      await _prepareData();
-                      setState(() {});
-                    }
-                  },
-                  child: const Icon(
-                    Icons.add_circle_rounded,
-                    color: Colors.green,
-                    size: 30.0,
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return CustomButton(
-              onTap: () {
-                currentIndex = index;
-                setState(() {});
-              },
-              title: index != 0
-                  ? '${item.name} (${item.quantity})'
-                  : '${item.name} (${_homeController.productList.length})',
-              isSelected: currentIndex == index,
-            );
-          }
+          // if (index == productTypeList.length - 1) {
+          // return Row(
+          //   children: [
+          //     CustomButton(
+          //       key: ValueKey(index),
+          //       onTap: () {
+          //         currentIndex = index;
+          //         setState(() {});
+          //       },
+          //       title: '${item.name} (${item.quantity})',
+          //       isSelected: currentIndex == index,
+          //     ),
+          // const SizedBox(width: marginX2),
+          // Visibility(
+          //   visible: !isLocked,
+          //   child: InkWell(
+          //     onTap: () async {
+          //       bool? result =
+          //           await Get.dialog(const AddCategoryDialog());
+          //
+          //       if (result != null) {
+          //         await _prepareData();
+          //         setState(() {});
+          //       }
+          //     },
+          //     child: const Icon(
+          //       Icons.add_circle_rounded,
+          //       color: Colors.green,
+          //       size: 30.0,
+          //     ),
+          //   ),
+          // ),
+          //     ],
+          //   );
+          // } else {
+          return CustomButton(
+            onTap: () {
+              currentIndex = index;
+              setState(() {});
+            },
+            title: index != 0
+                ? '${item.name} (${item.quantity})'
+                : '${item.name} (${_homeController.productList.length})',
+            isSelected: currentIndex == index,
+          );
+          // }
         },
         separatorBuilder: (context, index) {
           return const SizedBox(width: marginX2);
         },
       ),
+    );
+  }
+
+  // _addProductButton() {
+  //   return Visibility(
+  //     visible: !isLocked,
+  //     child: InkWell(
+  //       onTap: () {
+  //         Get.dialog(const EditMenuDialog());
+  //       },
+  //       child: Column(
+  //         children: [
+  //           Expanded(
+  //             child: Container(
+  //               decoration: BoxDecoration(
+  //                 color: Colors.grey.shade300,
+  //                 borderRadius: BorderRadius.circular(10.0),
+  //               ),
+  //               child: const Center(
+  //                 child: Icon(Icons.add),
+  //               ),
+  //             ),
+  //           ),
+  //           const SizedBox(height: marginX2),
+  //           const TextFontStyle(
+  //             '',
+  //             size: 20.0,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  _popUp() {
+    return PopupMenuButton(
+      itemBuilder: (BuildContext context) {
+        return popupItems.map((data) {
+          return PopupMenuItem<String>(
+            value: data,
+            child: InkWell(
+              onTap: data == 'สินค้า'
+                  ? () {
+                      Get.back();
+                      Get.to(() => const StockPage());
+                    }
+                  : () {
+                      Get.back();
+                      Get.to(() => const CategoryPage());
+                    },
+              child: TextFontStyle(
+                data,
+                size: fontSizeM,
+              ),
+            ),
+          );
+        }).toList();
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      offset: const Offset(0, 30),
+      child: const Icon(Icons.tune_rounded),
     );
   }
 
