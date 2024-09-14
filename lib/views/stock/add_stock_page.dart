@@ -335,6 +335,11 @@ class _AddStockPageState extends State<AddStockPage> {
           child: CustomSubmitButton(
             onTap: widget.isEdit
                 ? () async {
+                    DateTime orderDate = DateFormat("dd/MM/yyyy")
+                        .parse(_orderDateController.text);
+                    DateTime expireDate = DateFormat("dd/MM/yyyy")
+                        .parse(_expireDateController.text);
+
                     await _homeController.editProduct(
                       _homeController.selectedProductId ?? 0,
                       _productNameController.text,
@@ -342,8 +347,8 @@ class _AddStockPageState extends State<AddStockPage> {
                       double.parse(_costController.text),
                       int.parse(_quantityController.text),
                       _homeController.selectedProductTypeList.first.id,
-                      _selectedOrderDate.toString(),
-                      _selectedExpireDate.toString(),
+                      orderDate.toString(),
+                      expireDate.toString(),
                     );
                   }
                 : () async {

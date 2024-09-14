@@ -35,19 +35,14 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
 
   _prepareData() async {
     if (widget.isEdit && _homeController.selectedProductTypeId != null) {
-      print(_homeController.selectedProductTypeId);
       String? name;
 
       for (ProductTypeModel type in _homeController.productTypeList) {
-        print(type.id );
         if (type.id == _homeController.selectedProductTypeId) {
           name = type.name ?? '';
         }
       }
 
-      // ProductTypeModel? item = _homeController.selectedProductTypeList.first;
-      //
-      // print(item  );
       _productTypeController.text = name ?? '-';
     }
 

@@ -110,7 +110,6 @@ class HomeController extends GetxController {
       );
 
       if (response != null) {
-        print(response);
         Get.dialog(
           CustomAlertDialog(
             title: 'เพิ่มประเภทสินค้าสำเร็จ',
@@ -144,7 +143,9 @@ class HomeController extends GetxController {
           method: HttpMethod.post, data: {'product_type': productType});
 
       if (response != null) {
-        //TODO: show dialog
+        Get.dialog(
+          const CustomAlertDialog(title: 'แก้ไขหมวดหมู่สำเร็จ'),
+        );
       }
     } catch (e) {
       log(e.toString());
@@ -235,9 +236,6 @@ class HomeController extends GetxController {
       if (response != null) {
         var dataJSON = response.data;
         selectedProduct = ProductModel.fromJSON(dataJSON);
-        // productList = dataJSON
-        //     .map<ProductModel>((json) => ProductModel.fromJSON(json))
-        //     .toList();
       }
     } catch (e) {
       log(e.toString());
@@ -329,8 +327,15 @@ class HomeController extends GetxController {
         },
       );
 
-      if (response != null && response.toString() == 'true') {
-        Get.back(result: true);
+      if (response != null) {
+        Get.dialog(
+          CustomAlertDialog(
+            title: 'แก้ไขสินค้าสำเร็จ',
+            onOk: () {
+              Get.back(result: true);
+            },
+          ),
+        );
       }
     } catch (e) {
       log(e.toString());

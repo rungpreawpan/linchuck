@@ -127,7 +127,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
                 return _categoryRow(
                   index: item.id ?? 0,
-                  title1: (index + 1).toString(),
+                  title1: '${(index + 1)}.',
                   title2: item.name ?? '',
                   title3: item.quantity.toString(),
                 );
@@ -158,7 +158,7 @@ class _CategoryPageState extends State<CategoryPage> {
           Expanded(
             child: TextFontStyle(
               title1,
-              size: fontSizeL,
+              size: isHeader ? fontSizeL : fontSizeM,
               weight: isHeader ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -167,7 +167,7 @@ class _CategoryPageState extends State<CategoryPage> {
             flex: 3,
             child: TextFontStyle(
               title2,
-              size: fontSizeL,
+              size: isHeader ? fontSizeL : fontSizeM,
               weight: isHeader ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -175,7 +175,7 @@ class _CategoryPageState extends State<CategoryPage> {
             flex: 3,
             child: TextFontStyle(
               title3,
-              size: fontSizeL,
+              size: isHeader ? fontSizeL : fontSizeM,
               weight: isHeader ? FontWeight.bold : FontWeight.normal,
             ),
           ),

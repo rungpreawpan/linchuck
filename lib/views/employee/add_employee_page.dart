@@ -1,35 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/employee/components/add_employee_dialog.dart';
+import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
+import 'package:lin_chuck/views/login/model/user_model.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class AddEmployeePage extends StatefulWidget {
-  const AddEmployeePage({super.key});
+  final bool isEdit;
+
+  const AddEmployeePage({
+    super.key,
+    this.isEdit = false,
+  });
 
   @override
   State<AddEmployeePage> createState() => _AddEmployeePageState();
 }
 
 class _AddEmployeePageState extends State<AddEmployeePage> {
+  final EmployeeController _employeeController = Get.find();
+  final TextEditingController _firstnameController = TextEditingController();
+  final TextEditingController _lastnameController = TextEditingController();
+
   int employeeNo = 1;
-  int employeeListPage = 1;
-  int currentPage = 1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _prepareData();
+  }
+
+  _prepareData() async {
+    if (widget.isEdit && _employeeController.selectedEmployeeId != null) {
+      await _employeeController
+          .getOneEmployee(_employeeController.selectedEmployeeId!);
+
+      if (_employeeController.selectedEmployee != null) {
+        UserModel? item = _employeeController.selectedEmployee;
+      }
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return MainTemplate(
-      appBarTitle: 'เพิ่มพนักงาน',
+      appBarTitle:
+          widget.isEdit ? 'แก้ไขรายชื่อพนักงาน' : 'เพิ่มรายชื่อพนักงาน',
       contentWidget: [
         Expanded(
           child: Column(
             children: [
               _employeeList(),
-              const SizedBox(height: 20.0),
-              _page(),
               const SizedBox(height: 20.0),
               _confirmAndCancelButton(),
             ],
@@ -37,6 +64,8 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         ),
         const SizedBox(width: 30.0),
       ],
+      showActionButton: widget.isEdit ? false : true,
+      actionButton: _addEmployeeButton(),
     );
   }
 
@@ -44,58 +73,39 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
     return Expanded(
       child: ListView.separated(
         itemCount: employeeNo,
-        itemBuilder: (context, index) {
-          TextEditingController firstnameController$index =
-              TextEditingController();
-          TextEditingController lastnameController$index =
-              TextEditingController();
+        itemBuilder: !widget.isEdit
+            ? (context, index) {
+                TextEditingController firstnameController$index =
+                    TextEditingController();
+                TextEditingController lastnameController$index =
+                    TextEditingController();
 
-          if (index + 1 == employeeNo) {
-            return Column(
-              children: [
-                _employeeData(
+                return _employeeData(
                   index: int.parse((index + 1).toString()),
                   firstnameController: firstnameController$index,
                   lastnameController: lastnameController$index,
                   deleteEmployee: () {
                     if (employeeNo != 1) {
                       employeeNo -= 1;
-
-                      if (employeeNo % 6 == 0) {
-                        employeeListPage -= 1;
-                      }
                     }
 
                     setState(() {});
-                    print(employeeNo);
-                    print(employeeListPage);
                   },
-                ),
-                const SizedBox(height: marginX2),
-                _addEmployeeButton(),
-              ],
-            );
-          } else {
-            return _employeeData(
-              index: int.parse((index + 1).toString()),
-              firstnameController: firstnameController$index,
-              lastnameController: lastnameController$index,
-              deleteEmployee: () {
-                if (employeeNo != 1) {
-                  employeeNo -= 1;
+                );
+              }
+            : (context, index) {
+                _firstnameController.text =
+                    _employeeController.selectedEmployee?.firstname ?? '';
+                _lastnameController.text =
+                    _employeeController.selectedEmployee?.lastname ?? '';
 
-                  if (employeeNo % 6 == 0) {
-                    employeeListPage -= 1;
-                  }
-                }
-
-                setState(() {});
-                print(employeeNo);
-                print(employeeListPage);
+                return _employeeData(
+                  index: 1,
+                  firstnameController: _firstnameController,
+                  lastnameController: _lastnameController,
+                  deleteEmployee: () {},
+                );
               },
-            );
-          }
-        },
         separatorBuilder: (context, index) {
           return const SizedBox(height: marginX2);
         },
@@ -131,96 +141,33 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
             labelText: 'นามสกุล',
           ),
         ),
-        const SizedBox(width: marginX2),
-        InkWell(
-          onTap: deleteEmployee,
-          child: const Icon(
-            Icons.delete_outline_rounded,
-            color: primaryColor,
-            size: fontSizeXL,
-          ),
-        ),
+        SizedBox(width: widget.isEdit ? 0 : marginX2),
+        widget.isEdit
+            ? const SizedBox()
+            : InkWell(
+                onTap: deleteEmployee,
+                child: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: primaryColor,
+                  size: fontSizeXL,
+                ),
+              ),
       ],
     );
   }
 
   _addEmployeeButton() {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            employeeNo += 1;
+    return InkWell(
+      onTap: () {
+        employeeNo += 1;
 
-            if (employeeNo % 6 == 1) {
-              employeeListPage += 1;
-            }
-
-            setState(() {});
-            print(employeeNo);
-            print(employeeListPage);
-          },
-          child: const Row(
-            children: [
-              Icon(
-                Icons.add_circle_outline_rounded,
-                color: primaryColor,
-                size: fontSizeL,
-              ),
-              SizedBox(width: margin),
-              TextFontStyle(
-                'เพิ่มพนักงาน',
-                size: fontSizeM,
-                weight: FontWeight.bold,
-                color: primaryColor,
-              ),
-            ],
-          ),
-        ),
-        const TextFontStyle(
-          ' หรือ ',
-          size: fontSizeM,
-          weight: FontWeight.bold,
-        ),
-        InkWell(
-          onTap: () {
-            Get.dialog(const AddEmployeeDialog());
-          },
-          child: const TextFontStyle(
-            'เพิ่มเป็นจำนวนมาก',
-            size: fontSizeM,
-            weight: FontWeight.bold,
-            color: primaryColor,
-          ),
-        ),
-      ],
-    );
-  }
-
-  _page() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        InkWell(
-          onTap: currentPage != 1 ? () {} : null,
-          child: Icon(
-            Icons.arrow_back_ios_rounded,
-            color: currentPage != 1 ? Colors.black : Colors.grey.shade300,
-          ),
-        ),
-        const SizedBox(width: 20.0),
-        const TextFontStyle(
-          '1',
-          size: fontSizeM,
-        ),
-        const SizedBox(width: 20.0),
-        InkWell(
-          onTap: () {},
-          child: const Icon(
-            Icons.arrow_forward_ios_rounded,
-            // color: Colors.grey,
-          ),
-        ),
-      ],
+        setState(() {});
+      },
+      child: const Icon(
+        Icons.add,
+        color: primaryColor,
+        size: fontSizeXL,
+      ),
     );
   }
 
@@ -242,7 +189,15 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         const SizedBox(width: marginX2),
         Expanded(
           child: CustomSubmitButton(
-            onTap: () {},
+            onTap: widget.isEdit
+                ? () async {
+                    await _employeeController.editEmployee(
+                      _employeeController.selectedEmployeeId ?? 0,
+                      _firstnameController.text,
+                      _lastnameController.text,
+                    );
+                  }
+                : () async {},
             title: 'ยืนยัน',
             backgroundColor: primaryColor,
           ),
