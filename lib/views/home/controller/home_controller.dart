@@ -11,9 +11,6 @@ import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 class HomeController extends GetxController {
   var isLoading = false.obs;
 
-  List optionList = [];
-  List selectedOptionList = [];
-
   List<SweetModel> sweetList = [];
   SweetModel? selectedSweet;
 

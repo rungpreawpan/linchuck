@@ -29,13 +29,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _obscurePassword = true;
 
-  final List<String> items = [
-    'ผู้จัดการ',
-    'พนักงาน',
-  ];
-
-  String? selectedRole;
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -53,8 +46,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 _logo(),
                 const SizedBox(height: 20.0),
                 _textField(),
-                const SizedBox(height: 20.0),
-                _selectPosition(),
                 const SizedBox(height: 40.0),
                 _registerButton(),
               ],
@@ -88,6 +79,11 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         const SizedBox(height: marginX2),
         CustomTextField(
+          textEditingController: _employeeCodeController,
+          labelText: 'รหัสพนักงาน',
+        ),
+        const SizedBox(height: marginX2),
+        CustomTextField(
           textEditingController: _emailController,
           labelText: 'อีเมล',
         ),
@@ -111,94 +107,6 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _selectPosition() {
-    return Row(
-      children: [
-        DropdownButtonHideUnderline(
-          child: DropdownButton2<String>(
-            isExpanded: true,
-            hint: const TextFontStyle(
-              'กรุณาเลือกตำแหน่ง',
-              size: fontSizeM,
-            ),
-            items: items
-                .map(
-                  (String item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 11.0,
-                          backgroundColor: primaryColor,
-                          child: CircleAvatar(
-                            radius: 10.0,
-                            backgroundColor: Colors.grey.shade200,
-                            child: Center(
-                              child: CircleAvatar(
-                                radius: 6.0,
-                                backgroundColor: item == selectedRole
-                                    ? primaryColor
-                                    : Colors.grey.shade200,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: marginX2),
-                        TextFontStyle(
-                          item,
-                          size: fontSizeM,
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
-            value: selectedRole,
-            onChanged: (String? value) {
-              selectedRole = value;
-              setState(() {});
-            },
-            buttonStyleData: ButtonStyleData(
-              height: 50.0,
-              width: 280.0,
-              padding: const EdgeInsets.symmetric(horizontal: marginX2),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            iconStyleData: const IconStyleData(
-              icon: Icon(Icons.expand_circle_down_outlined),
-              iconEnabledColor: Colors.grey,
-              iconDisabledColor: Colors.grey,
-            ),
-            dropdownStyleData: DropdownStyleData(
-              maxHeight: 300.0,
-              width: 300.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              offset: const Offset(0, -10),
-            ),
-            menuItemStyleData: const MenuItemStyleData(
-              height: 40.0,
-              padding: EdgeInsets.symmetric(horizontal: marginX2),
-            ),
-          ),
-        ),
-        const SizedBox(width: marginX2),
-        Expanded(
-          child: CustomTextField(
-            isEnabled: selectedRole != null ? true : false,
-            textEditingController: _employeeCodeController,
-            labelText: 'รหัสพนักงาน',
-          ),
-        ),
-      ],
-    );
-  }
-
   _registerButton() {
     return Column(
       children: [
@@ -206,22 +114,11 @@ class _RegisterPageState extends State<RegisterPage> {
           padding: const EdgeInsets.symmetric(horizontal: 150.0),
           child: CustomSubmitButton(
             onTap: () async {
-              String role;
-
-              if (selectedRole == 'ผู้จัดการ') {
-                role = 'manager';
-              } else if (selectedRole == 'พนักงาน') {
-                role = 'employee';
-              } else {
-                role = '';
-              }
-
               await _registerController.verifyRegister(
                 _firstnameController.text,
                 _lastnameController.text,
                 _emailController.text,
                 _passwordController.text,
-                role,
                 _employeeCodeController.text,
               );
             },

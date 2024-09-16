@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
+import 'package:lin_chuck/views/receipt/controller/receipt_controller.dart';
 import 'package:lin_chuck/views/receipt/receipt_detail_page.dart';
+import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
@@ -13,27 +16,63 @@ class ReceiptPage extends StatefulWidget {
 }
 
 class _ReceiptPageState extends State<ReceiptPage> {
+  final ReceiptController _receiptController = Get.put(ReceiptController());
+  final EmployeeController _employeeController = Get.put(EmployeeController());
+
+  @override
+  void initState() {
+    super.initState();
+
+    _prepareDate();
+  }
+
+  _prepareDate() async {
+    await _receiptController.getReceipt();
+    await _employeeController.getEmployee();
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MainTemplate(
-      appBarTitle: 'ใบเสร็จ',
-      contentWidget: [
-        Expanded(
-          child: ListView.separated(
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return _receiptListCard();
+    return Stack(
+      children: [
+        MainTemplate(
+          appBarTitle: 'ใบเสร็จ',
+          contentWidget: [
+            _receiptList(),
+          ],
+          showActionButton: true,
+          actionButton: InkWell(
+            onTap: () async {
+              await _prepareDate();
             },
-            separatorBuilder: (context, index) {
-              return const SizedBox(height: marginX2);
-            },
+            child: const Icon(
+              Icons.refresh_rounded,
+              color: primaryColor,
+            ),
           ),
         ),
+        _loading(),
       ],
     );
   }
 
-  _receiptListCard() {
+  _receiptList() {
+    return Expanded(
+      child: ListView.separated(
+        itemCount: _receiptController.receiptList.length,
+        itemBuilder: (context, index) {
+          return _receiptCard();
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(height: marginX2);
+        },
+      ),
+    );
+  }
+
+  _receiptCard() {
     return InkWell(
       onTap: () {
         Get.to(
@@ -102,5 +141,14 @@ class _ReceiptPageState extends State<ReceiptPage> {
         ),
       ),
     );
+  }
+
+  _loading() {
+    return Obx(() {
+      return Visibility(
+        visible: _receiptController.isLoading.value,
+        child: const CustomLoading(),
+      );
+    });
   }
 }
