@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
 import 'package:lin_chuck/views/login/model/user_model.dart';
+import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/main_template.dart';
@@ -22,8 +23,16 @@ class AddEmployeePage extends StatefulWidget {
 
 class _AddEmployeePageState extends State<AddEmployeePage> {
   final EmployeeController _employeeController = Get.find();
-  final TextEditingController _firstnameController = TextEditingController();
-  final TextEditingController _lastnameController = TextEditingController();
+  final TextEditingController _firstnameController1 = TextEditingController();
+  final TextEditingController _lastnameController1 = TextEditingController();
+  final TextEditingController _firstnameController2 = TextEditingController();
+  final TextEditingController _lastnameController2 = TextEditingController();
+  final TextEditingController _firstnameController3 = TextEditingController();
+  final TextEditingController _lastnameController3 = TextEditingController();
+  final TextEditingController _firstnameController4 = TextEditingController();
+  final TextEditingController _lastnameController4 = TextEditingController();
+  final TextEditingController _firstnameController5 = TextEditingController();
+  final TextEditingController _lastnameController5 = TextEditingController();
 
   int employeeNo = 1;
 
@@ -41,6 +50,9 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
 
       if (_employeeController.selectedEmployee != null) {
         UserModel? item = _employeeController.selectedEmployee;
+
+        _firstnameController1.text = item?.firstname ?? '';
+        _lastnameController1.text = item?.lastname ?? '';
       }
     }
 
@@ -75,34 +87,80 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         itemCount: employeeNo,
         itemBuilder: !widget.isEdit
             ? (context, index) {
-                TextEditingController firstnameController$index =
-                    TextEditingController();
-                TextEditingController lastnameController$index =
-                    TextEditingController();
+                if (index == 0) {
+                  return _employeeData(
+                    index: int.parse((index + 1).toString()),
+                    firstnameController: _firstnameController1,
+                    lastnameController: _lastnameController1,
+                    deleteEmployee: () {
+                      if (employeeNo != 1) {
+                        employeeNo -= 1;
+                      }
 
-                return _employeeData(
-                  index: int.parse((index + 1).toString()),
-                  firstnameController: firstnameController$index,
-                  lastnameController: lastnameController$index,
-                  deleteEmployee: () {
-                    if (employeeNo != 1) {
-                      employeeNo -= 1;
-                    }
+                      setState(() {});
+                    },
+                  );
+                } else if (index == 1) {
+                  return _employeeData(
+                    index: int.parse((index + 1).toString()),
+                    firstnameController: _firstnameController2,
+                    lastnameController: _lastnameController2,
+                    deleteEmployee: () {
+                      if (employeeNo != 1) {
+                        employeeNo -= 1;
+                      }
 
-                    setState(() {});
-                  },
-                );
+                      setState(() {});
+                    },
+                  );
+                } else if (index == 2) {
+                  return _employeeData(
+                    index: int.parse((index + 1).toString()),
+                    firstnameController: _firstnameController3,
+                    lastnameController: _lastnameController3,
+                    deleteEmployee: () {
+                      if (employeeNo != 1) {
+                        employeeNo -= 1;
+                      }
+
+                      setState(() {});
+                    },
+                  );
+                } else if (index == 3) {
+                  return _employeeData(
+                    index: int.parse((index + 1).toString()),
+                    firstnameController: _firstnameController4,
+                    lastnameController: _lastnameController4,
+                    deleteEmployee: () {
+                      if (employeeNo != 1) {
+                        employeeNo -= 1;
+                      }
+
+                      setState(() {});
+                    },
+                  );
+                } else if (index == 4) {
+                  return _employeeData(
+                    index: int.parse((index + 1).toString()),
+                    firstnameController: _firstnameController5,
+                    lastnameController: _lastnameController5,
+                    deleteEmployee: () {
+                      if (employeeNo != 1) {
+                        employeeNo -= 1;
+                      }
+
+                      setState(() {});
+                    },
+                  );
+                } else {
+                  return const SizedBox();
+                }
               }
             : (context, index) {
-                _firstnameController.text =
-                    _employeeController.selectedEmployee?.firstname ?? '';
-                _lastnameController.text =
-                    _employeeController.selectedEmployee?.lastname ?? '';
-
                 return _employeeData(
                   index: 1,
-                  firstnameController: _firstnameController,
-                  lastnameController: _lastnameController,
+                  firstnameController: _firstnameController1,
+                  lastnameController: _lastnameController1,
                   deleteEmployee: () {},
                 );
               },
@@ -159,9 +217,15 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   _addEmployeeButton() {
     return InkWell(
       onTap: () {
-        employeeNo += 1;
+        if (employeeNo != 5) {
+          employeeNo += 1;
 
-        setState(() {});
+          setState(() {});
+        } else {
+          Get.dialog(
+            const CustomAlertDialog(title: 'เพิ่มพนักงานได้ไม่เกิน 5 คน'),
+          );
+        }
       },
       child: const Icon(
         Icons.add,
@@ -193,11 +257,111 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
                 ? () async {
                     await _employeeController.editEmployee(
                       _employeeController.selectedEmployeeId ?? 0,
-                      _firstnameController.text,
-                      _lastnameController.text,
+                      _firstnameController1.text,
+                      _lastnameController1.text,
                     );
                   }
-                : () async {},
+                : () async {
+                    if (employeeNo == 1 &&
+                        _firstnameController1.text != '' &&
+                        _lastnameController1.text != '') {
+                      _employeeController.addEmployee(
+                        _firstnameController1.text,
+                        _lastnameController1.text,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                      );
+                    } else if (employeeNo == 2 &&
+                        _firstnameController1.text != '' &&
+                        _lastnameController1.text != '' &&
+                        _firstnameController2.text != '' &&
+                        _lastnameController2.text != '') {
+                      _employeeController.addEmployee(
+                        _firstnameController1.text,
+                        _lastnameController1.text,
+                        _firstnameController2.text,
+                        _lastnameController2.text,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                      );
+                    } else if (employeeNo == 3 &&
+                        _firstnameController1.text != '' &&
+                        _lastnameController1.text != '' &&
+                        _firstnameController2.text != '' &&
+                        _lastnameController2.text != '' &&
+                        _firstnameController3.text != '' &&
+                        _lastnameController3.text != '') {
+                      _employeeController.addEmployee(
+                        _firstnameController1.text,
+                        _lastnameController1.text,
+                        _firstnameController2.text,
+                        _lastnameController2.text,
+                        _firstnameController3.text,
+                        _lastnameController3.text,
+                        null,
+                        null,
+                        null,
+                        null,
+                      );
+                    } else if (employeeNo == 4 &&
+                        _firstnameController1.text != '' &&
+                        _lastnameController1.text != '' &&
+                        _firstnameController2.text != '' &&
+                        _lastnameController2.text != '' &&
+                        _firstnameController3.text != '' &&
+                        _lastnameController3.text != '' &&
+                        _firstnameController4.text != '' &&
+                        _lastnameController4.text != '') {
+                      _employeeController.addEmployee(
+                        _firstnameController1.text,
+                        _lastnameController1.text,
+                        _firstnameController2.text,
+                        _lastnameController2.text,
+                        _firstnameController3.text,
+                        _lastnameController3.text,
+                        _firstnameController4.text,
+                        _lastnameController4.text,
+                        null,
+                        null,
+                      );
+                    } else if (employeeNo == 5 &&
+                        _firstnameController1.text != '' &&
+                        _lastnameController1.text != '' &&
+                        _firstnameController2.text != '' &&
+                        _lastnameController2.text != '' &&
+                        _firstnameController3.text != '' &&
+                        _lastnameController3.text != '' &&
+                        _firstnameController4.text != '' &&
+                        _lastnameController4.text != '' &&
+                        _firstnameController5.text != '' &&
+                        _lastnameController5.text != '') {
+                      _employeeController.addEmployee(
+                        _firstnameController1.text,
+                        _lastnameController1.text,
+                        _firstnameController2.text,
+                        _lastnameController2.text,
+                        _firstnameController3.text,
+                        _lastnameController3.text,
+                        _firstnameController4.text,
+                        _lastnameController4.text,
+                        _firstnameController5.text,
+                        _lastnameController5.text,
+                      );
+                    } else {
+                      Get.dialog(
+                          const CustomAlertDialog(title: 'กรุณากรอกข้อมูล'));
+                    }
+                  },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,
           ),

@@ -74,7 +74,122 @@ class EmployeeController {
     }
   }
 
-  addEmployee() async {
+  addEmployee(
+    String? firstname1,
+    String? lastname1,
+    String? firstname2,
+    String? lastname2,
+    String? firstname3,
+    String? lastname3,
+    String? firstname4,
+    String? lastname4,
+    String? firstname5,
+    String? lastname5,
+  ) async {
+    // print(employeeList);
+    var nameList;
+
+    if (firstname1 != null &&
+        lastname1 != null &&
+        firstname2 != null &&
+        lastname2 != null &&
+        firstname3 != null &&
+        lastname3 != null &&
+        firstname4 != null &&
+        lastname4 != null &&
+        firstname5 != null &&
+        lastname5 != null) {
+      nameList = [
+        {
+          'firstname': firstname1,
+          'lastname': lastname1,
+        },
+        {
+          'firstname': firstname2,
+          'lastname': lastname2,
+        },
+        {
+          'firstname': firstname3,
+          'lastname': lastname3,
+        },
+        {
+          'firstname': firstname4,
+          'lastname': lastname4,
+        },
+        {
+          'firstname': firstname5,
+          'lastname': lastname5,
+        }
+      ];
+    } else if (firstname1 != null &&
+        lastname1 != null &&
+        firstname2 != null &&
+        lastname2 != null &&
+        firstname3 != null &&
+        lastname3 != null &&
+        firstname4 != null &&
+        lastname4 != null) {
+      nameList = [
+        {
+          'firstname': firstname1,
+          'lastname': lastname1,
+        },
+        {
+          'firstname': firstname2,
+          'lastname': lastname2,
+        },
+        {
+          'firstname': firstname3,
+          'lastname': lastname3,
+        },
+        {
+          'firstname': firstname4,
+          'lastname': lastname4,
+        }
+      ];
+    } else if (firstname1 != null &&
+        lastname1 != null &&
+        firstname2 != null &&
+        lastname2 != null &&
+        firstname3 != null &&
+        lastname3 != null) {
+      nameList = [
+        {
+          'firstname': firstname1,
+          'lastname': lastname1,
+        },
+        {
+          'firstname': firstname2,
+          'lastname': lastname2,
+        },
+        {
+          'firstname': firstname3,
+          'lastname': lastname3,
+        }
+      ];
+    } else if (firstname1 != null &&
+        lastname1 != null &&
+        firstname2 != null &&
+        lastname2 != null) {
+      nameList = [
+        {
+          'firstname': firstname1,
+          'lastname': lastname1,
+        },
+        {
+          'firstname': firstname2,
+          'lastname': lastname2,
+        }
+      ];
+    } else if (firstname1 != null && lastname1 != null) {
+      nameList = [
+        {
+          'firstname': firstname1,
+          'lastname': lastname1,
+        }
+      ];
+    }
+
     bool isOnline = await RequestService().checkInternetConnection();
 
     if (!isOnline) {
@@ -90,7 +205,19 @@ class EmployeeController {
       var response = await RequestService().request(
         '/user/manager/add',
         method: HttpMethod.post,
+        data: nameList,
       );
+
+      if (response != null) {
+        Get.dialog(
+          CustomAlertDialog(
+            title: 'เพิ่มพนักงานสำเร็จ',
+            onOk: () {
+              Get.back(result: true);
+            },
+          ),
+        );
+      }
     } catch (e) {
       log(e.toString());
     } finally {
