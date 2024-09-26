@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
 import 'package:lin_chuck/views/receipt/controller/receipt_controller.dart';
+import 'package:lin_chuck/views/receipt/model/order_model.dart';
+import 'package:lin_chuck/views/receipt/model/payment_model.dart';
 import 'package:lin_chuck/views/receipt/model/receipt_model.dart';
 import 'package:lin_chuck/views/receipt/receipt_detail_page.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
@@ -30,6 +32,9 @@ class _ReceiptPageState extends State<ReceiptPage> {
 
   _prepareDate() async {
     await _receiptController.getReceipt();
+    await _receiptController.getPayment();
+    await _receiptController.getOrder();
+    await _receiptController.getOrderDetail();
     await _employeeController.getEmployee();
 
     setState(() {});
@@ -63,18 +68,34 @@ class _ReceiptPageState extends State<ReceiptPage> {
   _receiptList() {
     return Expanded(
       child: ListView.separated(
-        itemCount: _receiptController.receiptList.length,
+        itemCount: _receiptController.paymentList.length,
         itemBuilder: (context, index) {
-          ReceiptModel item = _receiptController.receiptList[index];
+          PaymentModel item = _receiptController.paymentList[index];
+          int employeeId = 0;
+          int orderId = 0;
+
+          for (ReceiptModel receipt in _receiptController.receiptList) {
+            if (receipt.receiptId == item.receiptId) {
+              employeeId = receipt.userId ?? 0;
+            }
+          }
+
+          for (OrderModel order in _receiptController.orderList) {
+            if (order.paymentId == item.paymentId) {
+              orderId = order.orderId ?? 0;
+            }
+          }
 
           return _receiptCard(
-            receiptNo: '',
-            total: '',
+            payment: item,
+            receiptNo: '-',
             createDate: item.createOn != null
-                ? DateFormat('dd/MM/yyyy HH:mm')
+                ? DateFormat('dd//MM/yyyy HH:mm')
                     .format(DateTime.parse(item.createOn!))
-                : '',
-            receipt: item,
+                : '-',
+            total: item.totalPrice != null ? item.totalPrice.toString() : '0',
+            employeeId: employeeId,
+            orderId: orderId,
           );
         },
         separatorBuilder: (context, index) {
@@ -88,13 +109,22 @@ class _ReceiptPageState extends State<ReceiptPage> {
     required String receiptNo,
     required String createDate,
     required String total,
-    required ReceiptModel receipt,
+    required PaymentModel payment,
+    required int employeeId,
+    required int orderId,
+    // required ReceiptModel receipt,
   }) {
     return InkWell(
       onTap: () {
         Get.to(
           () => ReceiptDetailPage(
-            receipt: receipt,
+            // receipt: receipt,
+            //TODO:
+            payment: payment,
+            // paymentId: payment.paymentId ?? 0,
+            orderId: orderId,
+            receiptId: payment.receiptId ?? 0,
+            employeeId: employeeId,
           ),
         );
       },

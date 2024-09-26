@@ -11,7 +11,7 @@ class SweetModel {
 
   factory SweetModel.fromJSON(Map<String, dynamic> json) {
     return SweetModel(
-      id: json['sweet_id'] ?? 0,
+      id: json['sweet_id'],
       percent: json['sweet_num'] ?? 0,
       name: json['sweet_desc'] ?? '',
     );

@@ -16,9 +16,9 @@ class OrderDetailModel {
   factory OrderDetailModel.fromJSON(Map<String, dynamic> json) {
     return OrderDetailModel(
       orderDetailId: json['order_detail_id'] ?? 0,
-      orderId: json['order_id'] ?? 0,
-      productId: json['product_id'] ?? 0,
-      sweetId: json['sweet_id'] ?? 0,
+      orderId: json['order_id'],
+      productId: json['product_id'],
+      sweetId: json['sweet_id'],
       quantity: json['quantity'] ?? 0,
     );
   }
