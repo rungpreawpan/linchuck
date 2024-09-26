@@ -7,7 +7,6 @@ import 'package:lin_chuck/views/receipt/model/order_detail_model.dart';
 import 'package:lin_chuck/views/receipt/model/order_model.dart';
 import 'package:lin_chuck/views/receipt/model/payment_model.dart';
 import 'package:lin_chuck/views/receipt/model/receipt_model.dart';
-import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 
 class ReceiptController extends GetxController {
   var isLoading = false.obs;

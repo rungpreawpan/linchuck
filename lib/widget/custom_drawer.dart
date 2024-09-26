@@ -21,12 +21,33 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   final AppInfoController _appInfoController = Get.find();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
+
+  String? firstname;
+  String? lastname;
+  String? role;
 
   @override
   void initState() {
     super.initState();
 
+    _prepareData();
+  }
+
+  _prepareData() async {
     _appInfoController.getDeviceInfo();
+
+    firstname = await storage.read(key: 'firstname');
+    lastname = await storage.read(key: 'lastname');
+
+    String? roleEng = await storage.read(key: 'role');
+    if (roleEng == 'employee') {
+      role = 'พนักงาน';
+    } else {
+      role = 'ผู้จัดการ';
+    }
+
+    setState(() {});
   }
 
   @override
@@ -55,28 +76,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   _header() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
+        const CircleAvatar(
           backgroundColor: Colors.grey,
           radius: 55.0,
         ),
-        SizedBox(height: marginX2),
+        const SizedBox(height: marginX2),
         TextFontStyle(
-          'บุ๊คโกะ โคบาอาชิ',
+          '$firstname $lastname',
           size: fontSizeXL,
           weight: FontWeight.bold,
           color: primaryColor,
         ),
         TextFontStyle(
-          'ร้าน Cafe Meow Meow',
+          '$role',
           size: fontSizeM,
           color: primaryColor,
         ),
-        Divider(
-          color: Colors.black,
-          height: 20.0,
+        Visibility(
+          visible: role == 'ผู้จัดการ',
+          child: const Divider(
+            color: Colors.black,
+            height: 20.0,
+          ),
         ),
       ],
     );
@@ -132,14 +156,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
     required Function() onTap,
     required String title,
   }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: TextFontStyle(
-          title,
-          size: fontSizeM,
-          weight: FontWeight.bold,
+    return Visibility(
+      visible: role == 'ผู้จัดการ',
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: TextFontStyle(
+            title,
+            size: fontSizeM,
+            weight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -154,6 +181,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
             onTap: () async {
               const storage = FlutterSecureStorage();
               await storage.delete(key: 'login');
+              await storage.delete(key: 'firstname');
+              await storage.delete(key: 'lastname');
+              await storage.delete(key: 'role');
+              await storage.delete(key: 'image');
 
               Get.offAll(() => const LoginPage());
             },

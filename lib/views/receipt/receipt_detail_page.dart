@@ -86,6 +86,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
             ),
           ),
         ),
+        _loading(),
       ],
     );
   }
@@ -114,7 +115,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                 size: fontSizeM,
               ),
               const TextFontStyle(
-                'No. -',
+                'No. -', //TODO:
                 size: fontSizeM,
               ),
             ],
@@ -387,6 +388,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
       height: Get.height,
       child: Stack(
         children: [
+          //TODO: show promptpay image
           Positioned(
             top: margin,
             right: margin,
@@ -422,8 +424,8 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   _loading() {
     return Obx(() {
       return Visibility(
-        visible: _receiptController.isLoading.value ||
-            _homeController.isLoading.value ||
+        visible: _receiptController.isLoading.value &&
+            _homeController.isLoading.value &&
             _employeeController.isLoading.value,
         child: const CustomLoading(),
       );
