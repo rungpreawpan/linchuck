@@ -61,10 +61,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   _logo() {
-    return Container(
-      width: 100.0,
-      height: 100.0,
-      color: Colors.grey,
+    return Image.asset(
+      'assets/icons/logo_white.png',
+      width: 200.0,
+      height: 200.0,
     );
   }
 

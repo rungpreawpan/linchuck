@@ -75,6 +75,7 @@ class ForgetPasswordController extends GetxController {
         userId = user.id;
 
         await Get.to(() => const ResetPasswordPage());
+        isLoading.value = false;
       }
     } catch (e) {
       log(e.toString());

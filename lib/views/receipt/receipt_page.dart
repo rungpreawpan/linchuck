@@ -118,10 +118,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
       onTap: () {
         Get.to(
           () => ReceiptDetailPage(
-            // receipt: receipt,
             //TODO:
             payment: payment,
-            // paymentId: payment.paymentId ?? 0,
             orderId: orderId,
             receiptId: payment.receiptId ?? 0,
             employeeId: employeeId,

@@ -25,12 +25,6 @@ class _IntroPageState extends State<IntroPage> {
   final AppInfoController _appInfoController = Get.find();
 
   @override
-  void initState() {
-    super.initState();
-    _appInfoController.checkPermission();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TemplateBackground(
       body: _content(),
@@ -42,14 +36,14 @@ class _IntroPageState extends State<IntroPage> {
       switch (_introController.currentPage.value) {
         case 0:
           return _template(
-              icon: Icons.camera_alt,
+              imagePath: 'camera.png',
               description1: 'แอปพลิเคชั่นต้องการเข้าถึงกล้องถ่ายรูป',
               description2: 'เพื่อถ่ายรูปสินค้าและเอกสารประกอบการส่งสินค้า',
               next: _cameraPermission,
               back: () {});
         case 1:
           return _template(
-              icon: Icons.photo_size_select_actual_rounded,
+              imagePath: 'gallery.png',
               description1: 'แอปพลิเคชั่นต้องการเข้าถึงคลังรูปภาพ',
               description2: 'เพื่อเพิ่มการใช้งานรูปภาพจากในคลัง',
               next: _galleryPermission,
@@ -67,7 +61,7 @@ class _IntroPageState extends State<IntroPage> {
   }
 
   _template({
-    required IconData icon,
+    required String imagePath,
     required String description1,
     required String description2,
     required Function() next,
@@ -84,11 +78,11 @@ class _IntroPageState extends State<IntroPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 200.0,
+            Image.asset(
+              'assets/icons/$imagePath',
+              width: 200.0,
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 40.0),
             TextFontStyle(
               description1,
               size: 30.0,

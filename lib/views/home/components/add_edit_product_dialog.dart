@@ -12,10 +12,13 @@ class AddEditProductDialog extends StatefulWidget {
   final bool isEdit;
   final bool showSweet;
 
+  // final int quantity;
+
   const AddEditProductDialog({
     super.key,
     this.isEdit = false,
     this.showSweet = false,
+    // required this.quantity,
   });
 
   @override
@@ -25,7 +28,7 @@ class AddEditProductDialog extends StatefulWidget {
 class _AddEditProductDialogState extends State<AddEditProductDialog> {
   final HomeController _homeController = Get.find();
 
-  final TextEditingController _qtyController = TextEditingController();
+  int quantity = 1;
 
   @override
   void initState() {
@@ -64,13 +67,26 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
               ),
               const SizedBox(height: 20.0),
               CounterButton(
+                quantity: quantity,
                 onDelete: () {
-                  Get.dialog(const DeleteDialog());
+                  if (quantity != 1) {
+                    quantity -= 1;
+                    setState(() {});
+                  } else {
+                    Get.dialog(
+                      DeleteDialog(
+                        onOk: () {
+                          Get.back();
+                        },
+                      ),
+                    );
+                  }
                 },
                 onAdd: () {
                   //TODO: ควรจะต้องเช็คกับหลังบ้านว่ามีจำนวนเท่าไหร่
+                  quantity += 1;
+                  setState(() {});
                 },
-                textEditingController: _qtyController,
               ),
               const SizedBox(height: 20.0),
               _sweetLevel(),

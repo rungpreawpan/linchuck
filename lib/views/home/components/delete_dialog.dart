@@ -5,7 +5,12 @@ import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class DeleteDialog extends StatelessWidget {
-  const DeleteDialog({super.key});
+  final Function()? onOk;
+
+  const DeleteDialog({
+    super.key,
+    this.onOk,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +25,9 @@ class DeleteDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 100,
-              width: 100,
-              color: Colors.grey,
+            Image.asset(
+              'assets/icons/delete.png',
+              width: 120.0,
             ),
             const SizedBox(height: marginX2),
             const TextFontStyle(
@@ -53,11 +57,16 @@ class DeleteDialog extends StatelessWidget {
             fontColor: primaryColor,
           ),
         ),
-        const  SizedBox(width: marginX2),
+        const SizedBox(width: marginX2),
         Expanded(
           child: CustomSubmitButton(
             onTap: () {
               Get.back();
+
+              //TODO:
+              if (onOk != null) {
+                onOk!();
+              }
             },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,

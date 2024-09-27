@@ -19,7 +19,6 @@ class WelcomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _logo(),
-            const SizedBox(height: 30.0),
             _welcomeText(),
             const SizedBox(height: 30.0),
             _contactBox(),
@@ -32,10 +31,10 @@ class WelcomePage extends StatelessWidget {
   }
 
   _logo() {
-    return Container(
-      color: Colors.grey,
-      height: 100.0,
-      width: 100.0,
+    return Image.asset(
+      'assets/icons/logo_white.png',
+      width: 200.0,
+      height: 200.0,
     );
   }
 

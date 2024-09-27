@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/login/controller/login_controller.dart';
@@ -59,10 +58,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _logo() {
-    return Container(
-      color: Colors.grey,
-      height: 100,
-      width: 100,
+    return Image.asset(
+      'assets/icons/logo_white.png',
+      width: 200.0,
+      height: 200.0,
     );
   }
 
@@ -112,15 +111,10 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(horizontal: 150.0),
       child: CustomSubmitButton(
         onTap: () async {
-          const storage = FlutterSecureStorage();
-
           await _loginController.verifyLogin(
             _emailController.text,
             _passwordController.text,
           );
-
-          await storage.write(key: 'intro', value: 'true');
-          await storage.write(key: 'login',  value: 'true');
         },
         title: 'เข้าสู่ระบบ',
         backgroundColor: lAmber,

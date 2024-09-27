@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
+import 'package:lin_chuck/views/sell/model/sell_model.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class CostPage extends StatelessWidget {
-  const CostPage({super.key});
+class CostPage extends StatefulWidget {
+  final SellModel sellData;
+
+  const CostPage({
+    super.key,
+    required this.sellData,
+  });
+
+  @override
+  State<CostPage> createState() => _CostPageState();
+}
+
+class _CostPageState extends State<CostPage> {
+  final SellController _sellController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +28,21 @@ class CostPage extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(15.0),
       ),
-      child: Column(
-        children: [
-          _summaryData(),
-          const SizedBox(height: 20.0),
-          _costList(),
-        ],
-      ),
+      child: _sellController.sellData != null
+          ? Column(
+              children: [
+                _summaryData(),
+                const SizedBox(height: 20.0),
+                _costList(),
+              ],
+            )
+          : const Center(
+              child: TextFontStyle(
+                'ไม่พบข้อมูล',
+                size: fontSizeM,
+                weight: FontWeight.bold,
+              ),
+            ),
     );
   }
 
@@ -28,13 +51,13 @@ class CostPage extends StatelessWidget {
       width: 200.0,
       padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          TextFontStyle(
-            'ค่าใช้จ่าย',
+          const TextFontStyle(
+            'ต้นทุน',
             size: fontSizeM,
             weight: FontWeight.bold,
           ),
@@ -42,12 +65,12 @@ class CostPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextFontStyle(
-                '80000',
+                widget.sellData.allCosts.toString(),
                 size: fontSizeL,
                 weight: FontWeight.bold,
               ),
-              SizedBox(width: margin),
-              TextFontStyle(
+              const SizedBox(width: margin),
+              const TextFontStyle(
                 'บาท',
                 size: fontSizeM,
               ),
@@ -61,12 +84,14 @@ class CostPage extends StatelessWidget {
   _costList() {
     return Expanded(
       child: ListView.separated(
-        itemCount: 5,
+        itemCount: _sellController.sellData!.sellProduct!.length,
         itemBuilder: (context, index) {
+          SellProductModel? item = _sellController.sellData!.sellProduct![index];
+
           return _costCard(
-            title: 'แก้วพลาสติก',
-            qty: 1,
-            cost: 100.0,
+            title: item.name ?? '',
+            qty: item.count ?? 0,
+            cost: item.cost ?? 0,
           );
         },
         separatorBuilder: (context, index) {
@@ -87,7 +112,7 @@ class CostPage extends StatelessWidget {
         vertical: margin,
       ),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Row(
@@ -108,10 +133,19 @@ class CostPage extends StatelessWidget {
                 size: fontSizeM,
                 weight: FontWeight.bold,
               ),
+              const SizedBox(
+                width: margin,
+              ),
+              TextFontStyle(
+                '($cost)',
+                size: fontSizeM,
+                weight: FontWeight.bold,
+                color: Colors.grey.shade700,
+              ),
             ],
           ),
           TextFontStyle(
-            '$cost บาท',
+            '${cost*qty} บาท',
             size: fontSizeM,
             weight: FontWeight.bold,
           ),

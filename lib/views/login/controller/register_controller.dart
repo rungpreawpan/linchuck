@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/service/request_service.dart';
 import 'package:lin_chuck/utils/alert.dart';
@@ -8,6 +9,7 @@ import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 
 class RegisterController extends GetxController {
   var isLoading = false.obs;
+  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   verifyRegister(
     String firstname,
@@ -91,6 +93,7 @@ class RegisterController extends GetxController {
       );
 
       if (response != null) {
+        await storage.write(key: 'intro', value: 'true');
         Get.offAll(() => const RegisterSuccessPage());
       }
     } catch (e) {

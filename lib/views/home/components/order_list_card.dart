@@ -4,18 +4,27 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/add_edit_product_dialog.dart';
 import 'package:lin_chuck/views/home/components/delete_dialog.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/order_complete_page.dart';
 import 'package:lin_chuck/views/home/summary_order_page.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class OrderListCard extends StatelessWidget {
+class OrderListCard extends StatefulWidget {
   final bool isSummaryPage;
 
   const OrderListCard({
     super.key,
     this.isSummaryPage = false,
   });
+
+  @override
+  State<OrderListCard> createState() => _OrderListCardState();
+}
+
+class _OrderListCardState extends State<OrderListCard> {
+  final HomeController _homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +45,32 @@ class OrderListCard extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            child: ListView.separated(
-              itemCount: 2,
-              itemBuilder: (context, index) {
-                return _selectedProduct();
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(height: marginX2);
-              },
-            ),
+            child: _homeController.selectedProductList.isNotEmpty
+                ? ListView.separated(
+                    itemCount: _homeController.selectedProductList.length,
+                    itemBuilder: (context, index) {
+                      ProductModel item =
+                          _homeController.selectedProductList[index];
+
+                      return _selectedProduct(
+                        product: item.name ?? '',
+                        quantity: item.quantity ?? 0,
+                        price: double.parse(item.productPrice.toString()),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(height: marginX2);
+                    },
+                  )
+                : const Center(
+                    child: TextFontStyle(
+                      'กรุณาเพิ่ม\nสินค้าที่ต้องการ',
+                      size: fontSizeM,
+                      weight: FontWeight.bold,
+                      color: Colors.white,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
           ),
           _total(),
         ],
@@ -52,7 +78,11 @@ class OrderListCard extends StatelessWidget {
     );
   }
 
-  _selectedProduct() {
+  _selectedProduct({
+    required String product,
+    required int quantity,
+    required double price,
+  }) {
     return Slidable(
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
@@ -81,25 +111,25 @@ class OrderListCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: const Row(
+        child: Row(
           children: [
             TextFontStyle(
-              'x1',
+              'x$quantity',
               size: fontSizeM,
               color: Colors.black,
             ),
-            SizedBox(width: 10.0),
+            const SizedBox(width: 10.0),
             Expanded(
               child: TextFontStyle(
-                'Cake ส้ม',
+                product,
                 size: fontSizeM,
                 color: primaryColor,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(width: 10.0),
+            const SizedBox(width: 10.0),
             TextFontStyle(
-              '180.-',
+              price.toString(),
               size: fontSizeM,
               color: Colors.red,
             ),
@@ -126,7 +156,7 @@ class OrderListCard extends StatelessWidget {
               weight: FontWeight.bold,
             ),
             TextFontStyle(
-              '2,178.-',
+              '2,178.-', //TODO
               color: Colors.white,
               size: fontSizeM,
               weight: FontWeight.bold,
@@ -137,14 +167,14 @@ class OrderListCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: CustomSubmitButton(
-            onTap: isSummaryPage
+            onTap: widget.isSummaryPage
                 ? () {
                     Get.to(() => const OrderCompletePage());
                   }
                 : () {
                     Get.to(() => const SummaryOrderPage(total: 2178));
                   },
-            title: isSummaryPage ? 'บันทึกใบเสร็จ' : 'ชำระเงิน',
+            title: widget.isSummaryPage ? 'บันทึกใบเสร็จ' : 'ชำระเงิน',
             backgroundColor: lYellow,
             fontColor: Colors.black,
           ),
@@ -152,4 +182,8 @@ class OrderListCard extends StatelessWidget {
       ],
     );
   }
+
+  // _calTotal() {
+  //   // for () {}
+  // }
 }

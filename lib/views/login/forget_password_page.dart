@@ -52,10 +52,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }
 
   _logo() {
-    return Container(
-      color: Colors.grey,
-      width: 100.0,
-      height: 100.0,
+    return Image.asset(
+      'assets/icons/logo_white.png',
+      width: 200.0,
+      height: 200.0,
     );
   }
 

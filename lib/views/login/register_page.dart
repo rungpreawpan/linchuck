@@ -1,7 +1,5 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/route_manager.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/login/controller/register_controller.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
@@ -41,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 250.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 _logo(),
                 const SizedBox(height: 20.0),
@@ -58,10 +56,10 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _logo() {
-    return Container(
-      width: 100,
-      height: 100,
-      color: Colors.grey,
+    return Image.asset(
+      'assets/icons/logo_white.png',
+      width: 180.0,
+      height: 180.0,
     );
   }
 

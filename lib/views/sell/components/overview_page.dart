@@ -1,39 +1,81 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/components/test_chart.dart';
+import 'package:lin_chuck/views/sell/components/chart_indicator.dart';
+import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
+import 'package:lin_chuck/views/sell/model/sell_model.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class OverviewPage extends StatefulWidget {
-  const OverviewPage({super.key});
+  final SellModel sellData;
+
+  const OverviewPage({
+    super.key,
+    required this.sellData,
+  });
 
   @override
   State<OverviewPage> createState() => _OverviewPageState();
 }
 
 class _OverviewPageState extends State<OverviewPage> {
-  List summaryData = [
-    {
-      'title': 'รายการขาย',
-      'value': 120000,
-      'unit': 'รายการ',
-    },
-    {
-      'title': 'ยอดขาย',
-      'value': 200,
-      'unit': 'บาท',
-    },
-    {
-      'title': 'ค่าใช้จ่าย',
-      'value': 80000,
-      'unit': 'บาท',
-    },
-    {
-      'title': 'กำไร',
-      'value': 40000,
-      'unit': 'บาท',
-    },
-  ];
+  final SellController _sellController = Get.find();
+
+  double? jan;
+  double? feb;
+  double? mar;
+  double? apr;
+  double? may;
+  double? jun;
+  double? jul;
+  double? aug;
+  double? sep;
+  double? oct;
+  double? nov;
+  double? dec;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _prepareData();
+  }
+
+  _prepareData() async {
+    await _sellController.getFinance();
+
+    if (_sellController.janData?.sales != null &&
+        _sellController.febData?.sales != null &&
+        _sellController.marData?.sales != null &&
+        _sellController.aprData?.sales != null &&
+        _sellController.mayData?.sales != null &&
+        _sellController.junData?.sales != null &&
+        _sellController.julData?.sales != null &&
+        _sellController.augData?.sales != null &&
+        _sellController.sepData?.sales != null &&
+        _sellController.octData?.sales != null &&
+        _sellController.novData?.sales != null &&
+        _sellController.decData?.sales != null) {
+      jan = (_sellController.janData!.sales! / 3000);
+      feb = _sellController.febData!.sales! / 3000;
+      mar = _sellController.marData!.sales! / 3000;
+      apr = _sellController.aprData!.sales! / 3000;
+      may = _sellController.mayData!.sales! / 3000;
+      jun = _sellController.junData!.sales! / 3000;
+      jul = _sellController.julData!.sales! / 3000;
+      aug = _sellController.augData!.sales! / 3000;
+      sep = _sellController.sepData!.sales! / 3000;
+      oct = _sellController.octData!.sales! / 3000;
+      nov = _sellController.novData!.sales! / 3000;
+      dec = _sellController.decData!.sales! / 3000;
+    }
+
+    setState(() {});
+  }
 
   List<Color> gradientColors = [
     Colors.cyan,
@@ -41,6 +83,17 @@ class _OverviewPageState extends State<OverviewPage> {
   ];
 
   int touchedIndex = -1;
+
+  List<Color> colorList = [
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,50 +117,76 @@ class _OverviewPageState extends State<OverviewPage> {
   _summaryData() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: summaryData.map((item) {
-        return Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(15.0),
-            margin: summaryData.indexOf(item) != summaryData.length - 1
-                ? const EdgeInsets.only(right: marginX2)
-                : EdgeInsets.zero,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
+      children: [
+        _dataBox(
+          title: 'รายการขาย',
+          value: widget.sellData.allOrder.toString(),
+          unit: 'รายการ',
+        ),
+        const SizedBox(width: marginX2),
+        _dataBox(
+          title: 'ยอดขาย',
+          value: widget.sellData.sales.toString(),
+          unit: 'บาท',
+        ),
+        const SizedBox(width: marginX2),
+        _dataBox(
+          title: 'ต้นทุน',
+          value: widget.sellData.allCosts.toString(),
+          unit: 'บาท',
+        ),
+        const SizedBox(width: marginX2),
+        _dataBox(
+          title: 'กำไร',
+          value: widget.sellData.profit.toString(),
+          unit: 'บาท',
+        ),
+      ],
+    );
+  }
+
+  _dataBox({
+    required String title,
+    required String value,
+    required String unit,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(15.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          children: [
+            TextFontStyle(
+              title,
+              size: fontSizeM,
+              weight: FontWeight.bold,
             ),
-            child: Column(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFontStyle(
-                  item['title'],
-                  size: fontSizeM,
+                  value.toString(),
+                  color: title == 'กำไร'
+                      ? double.parse(value) > 0
+                          ? Colors.green
+                          : Colors.red
+                      : Colors.black,
+                  size: fontSizeL,
                   weight: FontWeight.bold,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextFontStyle(
-                      item['value'].toString(),
-                      color: summaryData.indexOf(item).toInt() ==
-                              summaryData.length - 1
-                          ? double.parse(item['value'].toString()) > 0
-                              ? Colors.green
-                              : Colors.red
-                          : Colors.black,
-                      size: fontSizeL,
-                      weight: FontWeight.bold,
-                    ),
-                    const SizedBox(width: margin),
-                    TextFontStyle(
-                      item['unit'],
-                      size: fontSizeM,
-                    ),
-                  ],
+                const SizedBox(width: margin),
+                TextFontStyle(
+                  unit,
+                  size: fontSizeM,
                 ),
               ],
             ),
-          ),
-        );
-      }).toList(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -127,7 +206,7 @@ class _OverviewPageState extends State<OverviewPage> {
               size: fontSizeM,
               weight: FontWeight.bold,
             ),
-            const SizedBox(height: margin),
+            const SizedBox(height: marginX2),
             Expanded(
               child: LineChart(mainData()),
             ),
@@ -144,14 +223,41 @@ class _OverviewPageState extends State<OverviewPage> {
     );
     Widget text;
     switch (value.toInt()) {
+      case 0:
+        text = const Text('JAN', style: style);
+        break;
+      case 1:
+        text = const Text('FEB', style: style);
+        break;
       case 2:
         text = const Text('MAR', style: style);
+        break;
+      case 3:
+        text = const Text('APR', style: style);
+        break;
+      case 4:
+        text = const Text('MAY', style: style);
         break;
       case 5:
         text = const Text('JUN', style: style);
         break;
+      case 6:
+        text = const Text('JUL', style: style);
+        break;
+      case 7:
+        text = const Text('AUG', style: style);
+        break;
       case 8:
         text = const Text('SEP', style: style);
+        break;
+      case 9:
+        text = const Text('OCT', style: style);
+        break;
+      case 10:
+        text = const Text('NOV', style: style);
+        break;
+      case 11:
+        text = const Text('DEC', style: style);
         break;
       default:
         text = const Text('', style: style);
@@ -167,18 +273,30 @@ class _OverviewPageState extends State<OverviewPage> {
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 15,
+      fontSize: 16,
     );
     String text;
     switch (value.toInt()) {
+      case 0:
+        text = '0';
+        break;
       case 1:
-        text = '10K';
+        text = '3K';
+        break;
+      case 2:
+        text = '6k';
         break;
       case 3:
-        text = '30k';
+        text = '9k';
+        break;
+      case 4:
+        text = '12k';
         break;
       case 5:
-        text = '50k';
+        text = '15k';
+        break;
+      case 6:
+        text = '18k';
         break;
       default:
         return Container();
@@ -242,16 +360,21 @@ class _OverviewPageState extends State<OverviewPage> {
       maxY: 6,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
+          spots: [
+            FlSpot(0, jan ?? 0),
+            FlSpot(1, feb ?? 0),
+            FlSpot(2, mar ?? 0),
+            FlSpot(3, apr ?? 0),
+            FlSpot(4, may ?? 0),
+            FlSpot(5, jun ?? 0),
+            FlSpot(6, jul ?? 0),
+            FlSpot(7, aug ?? 0),
+            FlSpot(8, sep ?? 0),
+            FlSpot(9, oct ?? 0),
+            FlSpot(10, nov ?? 0),
+            FlSpot(11, dec ?? 0),
           ],
-          isCurved: true,
+          isCurved: false,
           gradient: LinearGradient(
             colors: gradientColors,
           ),
@@ -295,16 +418,16 @@ class _OverviewPageState extends State<OverviewPage> {
                 PieChartData(
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          touchedIndex = -1;
-                          return;
-                        }
-                        touchedIndex = pieTouchResponse
-                            .touchedSection!.touchedSectionIndex;
-                      });
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null ||
+                          pieTouchResponse.touchedSection == null) {
+                        touchedIndex = -1;
+                        return;
+                      }
+                      touchedIndex =
+                          pieTouchResponse.touchedSection!.touchedSectionIndex;
+
+                      setState(() {});
                     },
                   ),
                   borderData: FlBorderData(
@@ -317,33 +440,19 @@ class _OverviewPageState extends State<OverviewPage> {
               ),
             ),
             const SizedBox(height: margin),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Indicator(
-                  color: Colors.blue,
-                  text: 'First',
-                  isSquare: true,
-                ),
-                SizedBox(width: marginX2),
-                Indicator(
-                  color: Colors.amber,
-                  text: 'Second',
-                  isSquare: true,
-                ),
-                SizedBox(width: marginX2),
-                Indicator(
-                  color: Colors.purple,
-                  text: 'Third',
-                  isSquare: true,
-                ),
-                SizedBox(width: marginX2),
-                Indicator(
-                  color: Colors.green,
-                  text: 'Fourth',
-                  isSquare: true,
-                ),
-              ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: _sellController.sellData!.sellProduct!.map(
+                (e) {
+                  int index = _sellController.sellData!.sellProduct!.indexOf(e);
+
+                  return Indicator(
+                    color: colorList[index],
+                    text: e.name ?? '',
+                    isSquare: true,
+                  );
+                },
+              ).toList(),
             ),
           ],
         ),
@@ -352,67 +461,35 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 25.0 : 16.0;
-      final radius = isTouched ? 60.0 : 50.0;
-      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Colors.blue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Colors.amber,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: Colors.purple,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: Colors.green,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        default:
-          throw Error();
-      }
-    });
+    double total = 0;
+
+    for (SellProductModel product in _sellController.sellData!.sellProduct!) {
+      total += product.count!;
+    }
+
+    return List.generate(
+      _sellController.sellData!.sellProduct!.length,
+      (i) {
+        final isTouched = i == touchedIndex;
+        final fontSize = isTouched ? 25.0 : 16.0;
+        final radius = isTouched ? 60.0 : 50.0;
+        const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+
+        return PieChartSectionData(
+          color: colorList[i],
+          value: _sellController.sellData!.sellProduct![i].count!.toDouble(),
+          title:
+              '${(_sellController.sellData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
+          radius: radius,
+          titleStyle: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            shadows: shadows,
+            fontFamily: GoogleFonts.kanit().fontFamily,
+          ),
+        );
+      },
+    );
   }
 }

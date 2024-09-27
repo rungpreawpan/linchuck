@@ -15,6 +15,7 @@ class HomeController extends GetxController {
   SweetModel? selectedSweet;
 
   List<ProductModel> productList = [];
+  List<ProductModel> selectedProductList = [];
   int? selectedProductId;
   ProductModel? selectedProduct;
 

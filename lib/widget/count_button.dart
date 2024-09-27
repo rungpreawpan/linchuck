@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/widget/custom_text_field.dart';
+import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CounterButton extends StatelessWidget {
+  final int quantity;
   final Function() onDelete;
   final Function() onAdd;
-  final TextEditingController textEditingController;
 
   const CounterButton({
     super.key,
+    required this.quantity,
     required this.onDelete,
     required this.onAdd,
-    required this.textEditingController,
   });
 
   @override
@@ -34,9 +33,12 @@ class CounterButton extends StatelessWidget {
         const SizedBox(width: 20.0),
         SizedBox(
           width: 100.0,
-          child: CustomTextField(
-            textEditingController: textEditingController,
-            inputType: TextInputType.number,
+          child: Center(
+            child: TextFontStyle(
+              quantity.toString(),
+              size: fontSizeM,
+              weight: FontWeight.bold,
+            ),
           ),
         ),
         const SizedBox(width: 20.0),

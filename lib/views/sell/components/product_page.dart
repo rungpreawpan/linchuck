@@ -1,56 +1,72 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/components/test_chart.dart';
+import 'package:lin_chuck/views/sell/components/chart_indicator.dart';
+import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
+import 'package:lin_chuck/views/sell/model/sell_model.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key});
+  final SellModel sellData;
+
+  const ProductPage({
+    super.key,
+    required this.sellData,
+  });
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final SellController _sellController = Get.find();
+
   int touchedIndex = -1;
+
+  List<Color> colorList = [
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-        flex: 5,
+          flex: 5,
           child: _productCharts(),
         ),
-        const Expanded(
+        Expanded(
           flex: 2,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Indicator(
-                color: Colors.blue,
-                text: 'First',
-                isSquare: true,
-              ),
-              SizedBox(height: marginX2),
-              Indicator(
-                color: Colors.amber,
-                text: 'Second',
-                isSquare: true,
-              ),
-              SizedBox(height: marginX2),
-              Indicator(
-                color: Colors.purple,
-                text: 'Third',
-                isSquare: true,
-              ),
-              SizedBox(height: marginX2),
-              Indicator(
-                color: Colors.green,
-                text: 'Fourth',
-                isSquare: true,
-              ),
-            ],
+            children: _sellController.sellData!.sellProduct!.map(
+              (e) {
+                int index = _sellController.sellData!.sellProduct!.indexOf(e);
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: marginX2),
+                  child: Indicator(
+                    color: colorList[index],
+                    text: e.name ?? '',
+                    isSquare: true,
+                    size: 30.0,
+                    fontSize: 20.0,
+                    padding: marginX2,
+                  ),
+                );
+              },
+            ).toList(),
           ),
         ),
       ],
@@ -62,90 +78,54 @@ class _ProductPageState extends State<ProductPage> {
       PieChartData(
         pieTouchData: PieTouchData(
           touchCallback: (FlTouchEvent event, pieTouchResponse) {
-            setState(() {
-              if (!event.isInterestedForInteractions ||
-                  pieTouchResponse == null ||
-                  pieTouchResponse.touchedSection == null) {
-                touchedIndex = -1;
-                return;
-              }
-              touchedIndex =
-                  pieTouchResponse.touchedSection!.touchedSectionIndex;
-            });
+            if (!event.isInterestedForInteractions ||
+                pieTouchResponse == null ||
+                pieTouchResponse.touchedSection == null) {
+              touchedIndex = -1;
+              return;
+            }
+            touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+
+            setState(() {});
           },
         ),
         borderData: FlBorderData(
           show: false,
         ),
         sectionsSpace: 0,
-        centerSpaceRadius: 150,
+        centerSpaceRadius: 180,
         sections: showingSections(),
       ),
     );
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+    double total = 0;
+
+    for (SellProductModel product in _sellController.sellData!.sellProduct!) {
+      total += product.count!;
+    }
+
+    return List.generate(_sellController.sellData!.sellProduct!.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Colors.blue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Colors.amber,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: Colors.purple,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: Colors.green,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: shadows,
-            ),
-          );
-        default:
-          throw Error();
-      }
+
+      return PieChartSectionData(
+        color: colorList[i],
+        value: _sellController.sellData!.sellProduct![i].count!.toDouble(),
+        title:
+            '${(_sellController.sellData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          shadows: shadows,
+          fontFamily: GoogleFonts.kanit().fontFamily,
+        ),
+      );
     });
   }
 }

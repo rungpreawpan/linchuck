@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:crypt/crypt.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/service/request_service.dart';
@@ -14,6 +13,8 @@ class LoginController extends GetxController {
   FlutterSecureStorage storage = const FlutterSecureStorage();
 
   List<UserModel> userList = [];
+
+  // UserModel? user;
 
   verifyLogin(String email, String password) async {
     if (email == '') {
@@ -57,50 +58,20 @@ class LoginController extends GetxController {
         },
       );
 
-      if (response != null && response.toString() == 'true') { //TODO:
-        await getAllUser();
-
-        for (UserModel user in userList) {
-          if (user.email == email) {
-            await storage.write(key: 'firstname', value: user.firstname);
-            await storage.write(key: 'lastname', value: user.lastname);
-            await storage.write(key: 'position', value: user.role);
-            await storage.write(key: 'image', value: user.image);
-          }
-        }
-
-        await Get.offAll(() => const HomePage());
-      }
-    } catch (e) {
-      log(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  getAllUser() async {
-    bool isOnline = await RequestService().checkInternetConnection();
-
-    if (!isOnline) {
-      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
-      isLoading.value = false;
-
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-
-      var response = await RequestService().request(
-        '/user',
-        method: HttpMethod.get,
-      );
-
       if (response != null) {
         var dataJSON = response.data;
         userList = dataJSON
             .map<UserModel>((json) => UserModel.fromJSON(json))
             .toList();
+
+        await storage.write(key: 'intro', value: 'true');
+        await storage.write(key: 'login', value: 'true');
+        await storage.write(key: 'firstname', value: userList.first.firstname);
+        await storage.write(key: 'lastname', value: userList.first.lastname);
+        await storage.write(key: 'position', value: userList.first.role);
+        await storage.write(key: 'image', value: userList.first.image);
+
+        await Get.offAll(() => const HomePage());
       }
     } catch (e) {
       log(e.toString());

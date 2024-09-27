@@ -7,12 +7,12 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 bool showingAlert = false;
 
 showAlert(
-    String title, {
-      String? content,
-      String? remark,
-      Function()? onTap,
-      bool? barrierDismissible,
-    }) async {
+  String title, {
+  String? content,
+  String? remark,
+  Function()? onTap,
+  bool? barrierDismissible,
+}) async {
   if (showingAlert) {
     return;
   }
@@ -29,26 +29,24 @@ showAlert(
       ),
       content: content != null
           ? Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFontStyle(
-            content,
-            textAlign: TextAlign.center,
-            size: fontSizeS,
-            color: Colors.grey,
-          ),
-          const SizedBox(height: margin),
-          Visibility(
-            visible: remark != null,
-            child: TextFontStyle(
-              remark ?? '',
-              textAlign: TextAlign.center,
-              size: fontSize2XS,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      )
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFontStyle(
+                  content,
+                  textAlign: TextAlign.center,
+                  size: fontSizeS,
+                ),
+                const SizedBox(height: margin),
+                Visibility(
+                  visible: remark != null,
+                  child: TextFontStyle(
+                    remark ?? '',
+                    textAlign: TextAlign.center,
+                    size: fontSize2XS,
+                  ),
+                ),
+              ],
+            )
           : null,
       actions: [
         CustomSubmitButton(
@@ -62,6 +60,7 @@ showAlert(
             }
           },
           title: 'ตกลง',
+          backgroundColor: primaryColor,
         ),
       ],
       actionsAlignment: MainAxisAlignment.center,
@@ -117,11 +116,10 @@ showConfirmAlert({
       ),
       content: content != null
           ? TextFontStyle(
-        content,
-        textAlign: TextAlign.center,
-        size: fontSizeS,
-        color: Colors.grey,
-      )
+              content,
+              textAlign: TextAlign.center,
+              size: fontSizeS,
+            )
           : null,
       actions: [
         CustomSubmitButton(
@@ -143,6 +141,7 @@ showConfirmAlert({
             onConfirm();
           },
           title: confirmText,
+          backgroundColor: primaryColor,
         ),
       ],
       actionsAlignment: MainAxisAlignment.center,

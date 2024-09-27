@@ -10,7 +10,6 @@ import 'package:lin_chuck/views/stock/stock_page.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/views/home/components/order_list_card.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
-import 'package:lin_chuck/widget/edit_delete_popup.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
@@ -27,8 +26,9 @@ class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
   List<ProductTypeModel> productTypeList = [];
 
+  List<ProductModel> _filterProductList = [];
+
   List<String> popupItems = ['หมวดหมู่สินค้า', 'สินค้า'];
-  String selectedItem = '';
 
   @override
   void initState() {
@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
     await _homeController.getProductType();
     await _getProductType();
     await _homeController.getProduct();
+    await _getFilterProduct();
 
     setState(() {});
   }
@@ -62,6 +63,17 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  _getFilterProduct() {
+    if (currentIndex == 0) {
+      _filterProductList = _homeController.productList;
+    } else {
+      _filterProductList = _homeController.productList
+          .where((product) =>
+              product.productTypeId == _homeController.selectedProductTypeId)
+          .toList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -69,12 +81,6 @@ class _HomePageState extends State<HomePage> {
         MainTemplate(
           appBarTitle: 'รายการสินค้า',
           showActionButton: true,
-          // actionButton: InkWell(
-          //   onTap: () {
-          //
-          //   },
-          //   child: const Icon(Icons.tune),
-          // ),
           actionButton: _popUp(),
           contentWidget: [
             _menu(),
@@ -94,7 +100,6 @@ class _HomePageState extends State<HomePage> {
         children: [
           _productType(),
           const SizedBox(height: 20.0),
-          //TODO: edit filter product type
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -103,9 +108,9 @@ class _HomePageState extends State<HomePage> {
                 crossAxisSpacing: marginX2,
                 childAspectRatio: 1.0,
               ),
-              itemCount: _homeController.productList.length,
+              itemCount: _filterProductList.length,
               itemBuilder: (context, index) {
-                ProductModel item = _homeController.productList[index];
+                ProductModel item = _filterProductList[index];
 
                 return MenuCard(product: item);
               },
@@ -125,44 +130,12 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           ProductTypeModel item = productTypeList[index];
 
-          // if (index == productTypeList.length - 1) {
-          // return Row(
-          //   children: [
-          //     CustomButton(
-          //       key: ValueKey(index),
-          //       onTap: () {
-          //         currentIndex = index;
-          //         setState(() {});
-          //       },
-          //       title: '${item.name} (${item.quantity})',
-          //       isSelected: currentIndex == index,
-          //     ),
-          // const SizedBox(width: marginX2),
-          // Visibility(
-          //   visible: !isLocked,
-          //   child: InkWell(
-          //     onTap: () async {
-          //       bool? result =
-          //           await Get.dialog(const AddCategoryDialog());
-          //
-          //       if (result != null) {
-          //         await _prepareData();
-          //         setState(() {});
-          //       }
-          //     },
-          //     child: const Icon(
-          //       Icons.add_circle_rounded,
-          //       color: Colors.green,
-          //       size: 30.0,
-          //     ),
-          //   ),
-          // ),
-          //     ],
-          //   );
-          // } else {
           return CustomButton(
             onTap: () {
               currentIndex = index;
+              _homeController.selectedProductTypeId = item.id;
+              _getFilterProduct();
+
               setState(() {});
             },
             title: index != 0
@@ -170,7 +143,6 @@ class _HomePageState extends State<HomePage> {
                 : '${item.name} (${_homeController.productList.length})',
             isSelected: currentIndex == index,
           );
-          // }
         },
         separatorBuilder: (context, index) {
           return const SizedBox(width: marginX2);
@@ -178,37 +150,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  // _addProductButton() {
-  //   return Visibility(
-  //     visible: !isLocked,
-  //     child: InkWell(
-  //       onTap: () {
-  //         Get.dialog(const EditMenuDialog());
-  //       },
-  //       child: Column(
-  //         children: [
-  //           Expanded(
-  //             child: Container(
-  //               decoration: BoxDecoration(
-  //                 color: Colors.grey.shade300,
-  //                 borderRadius: BorderRadius.circular(10.0),
-  //               ),
-  //               child: const Center(
-  //                 child: Icon(Icons.add),
-  //               ),
-  //             ),
-  //           ),
-  //           const SizedBox(height: marginX2),
-  //           const TextFontStyle(
-  //             '',
-  //             size: 20.0,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
   _popUp() {
     return PopupMenuButton(

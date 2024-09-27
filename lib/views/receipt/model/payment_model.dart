@@ -1,7 +1,7 @@
 class PaymentModel {
   int? paymentId;
   int? receiptId;
-  int? totalPrice;
+  double? totalPrice;
   String? payType;
   String? payImage;
   int? cashReceive;
@@ -20,14 +20,21 @@ class PaymentModel {
   });
 
   factory PaymentModel.fromJSON(Map<String, dynamic> json) {
+    double? totalPrice;
+    if (json['total_price'].runtimeType == int) {
+      totalPrice = double.parse(json['total_price'].toString());
+    } else {
+      totalPrice = json['total_price'];
+    }
+
     return PaymentModel(
       paymentId: json['payment_id'] ?? 0,
       receiptId: json['receipt_id'] ?? 0,
-      totalPrice: json['total_price'] ?? 0,
+      totalPrice: totalPrice,
       payType: json['pay_type'] ?? '',
       payImage: json['pay_img'] ?? '',
-      cashReceive: json['cash_receive'] ?? 0,
-      cashReturn: json['cash_return'] ?? 0,
+      cashReceive: json['cash_receive'],
+      cashReturn: json['cash_return'],
       createOn: json['create_on'] ?? '',
     );
   }
