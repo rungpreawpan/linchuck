@@ -21,7 +21,7 @@ class ReceiptPage extends StatefulWidget {
 
 class _ReceiptPageState extends State<ReceiptPage> {
   final ReceiptController _receiptController = Get.put(ReceiptController());
-  final EmployeeController _employeeController = Get.put(EmployeeController());
+  final EmployeeController _employeeController = Get.find();
 
   @override
   void initState() {
@@ -68,15 +68,17 @@ class _ReceiptPageState extends State<ReceiptPage> {
   _receiptList() {
     return Expanded(
       child: ListView.separated(
-        itemCount: _receiptController.paymentList.length,
+        itemCount: _receiptController.paymentList.reversed.length,
         itemBuilder: (context, index) {
-          PaymentModel item = _receiptController.paymentList[index];
+          PaymentModel item = _receiptController.paymentList.reversed.toList()[index];
           int employeeId = 0;
           int orderId = 0;
+          String receiptNo = '';
 
           for (ReceiptModel receipt in _receiptController.receiptList) {
             if (receipt.receiptId == item.receiptId) {
               employeeId = receipt.userId ?? 0;
+              receiptNo = receipt.receiptNumber ?? '-';
             }
           }
 
@@ -88,9 +90,9 @@ class _ReceiptPageState extends State<ReceiptPage> {
 
           return _receiptCard(
             payment: item,
-            receiptNo: '-',
+            receiptNo: receiptNo,
             createDate: item.createOn != null
-                ? DateFormat('dd//MM/yyyy HH:mm')
+                ? DateFormat('dd/MM/yyyy HH:mm')
                     .format(DateTime.parse(item.createOn!))
                 : '-',
             total: item.totalPrice != null ? item.totalPrice.toString() : '0',
@@ -112,16 +114,15 @@ class _ReceiptPageState extends State<ReceiptPage> {
     required PaymentModel payment,
     required int employeeId,
     required int orderId,
-    // required ReceiptModel receipt,
   }) {
     return InkWell(
       onTap: () {
         Get.to(
           () => ReceiptDetailPage(
-            //TODO:
             payment: payment,
             orderId: orderId,
             receiptId: payment.receiptId ?? 0,
+            receiptNo: receiptNo,
             employeeId: employeeId,
           ),
         );

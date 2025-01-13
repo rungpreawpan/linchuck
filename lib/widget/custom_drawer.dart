@@ -79,9 +79,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CircleAvatar(
-          backgroundColor: Colors.grey,
+        CircleAvatar(
+          backgroundColor: Colors.grey.shade300,
           radius: 55.0,
+          child: Icon(
+            Icons.image_not_supported_outlined,
+            color: Colors.grey.shade700,
+          ),
         ),
         const SizedBox(height: marginX2),
         TextFontStyle(
@@ -183,8 +187,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
               await storage.delete(key: 'login');
               await storage.delete(key: 'firstname');
               await storage.delete(key: 'lastname');
-              await storage.delete(key: 'role');
+              await storage.delete(key: 'position');
               await storage.delete(key: 'image');
+              await storage.delete(key: 'user_id');
 
               Get.offAll(() => const LoginPage());
             },

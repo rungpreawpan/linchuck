@@ -9,7 +9,7 @@ String getBaseURL() {
 
   switch (env) {
     case Environment.production:
-      baseURL = 'http://localhost:3000';
+      baseURL =  'http://172.17.8.53:3000';//'http://localhost:3000';
       break;
 
     default:

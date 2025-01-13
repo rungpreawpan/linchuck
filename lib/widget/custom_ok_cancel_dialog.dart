@@ -65,7 +65,7 @@ class CustomOkCancelDialog extends StatelessWidget {
             ),
             Visibility(
               visible: content != null,
-              child: content!,
+              child: content ?? const SizedBox(),
             ),
           ],
         ),

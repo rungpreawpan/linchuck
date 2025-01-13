@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/delete_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_model.dart';
+import 'package:lin_chuck/views/home/model/selected_product_model.dart';
 import 'package:lin_chuck/views/home/model/sweet_model.dart';
 import 'package:lin_chuck/widget/count_button.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
@@ -11,14 +13,13 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 class AddEditProductDialog extends StatefulWidget {
   final bool isEdit;
   final bool showSweet;
-
-  // final int quantity;
+  final ProductModel? product;
 
   const AddEditProductDialog({
     super.key,
     this.isEdit = false,
     this.showSweet = false,
-    // required this.quantity,
+    this.product,
   });
 
   @override
@@ -177,8 +178,14 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
         Expanded(
           child: CustomSubmitButton(
             onTap: () {
+              SelectedProductModel orderDetail = SelectedProductModel(
+                product: widget.product,
+                sweet: widget.showSweet ? _homeController.selectedSweet : null,
+                quantity: quantity,
+              );
+              _homeController.orderDetailList.add(orderDetail);
+
               Get.back(result: true);
-              //TODO: send data
             },
             title: 'บันทึก',
             backgroundColor: primaryColor,

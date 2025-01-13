@@ -34,6 +34,7 @@ class TextFontStyle extends StatelessWidget {
         decoration: isUnderline ? TextDecoration.underline : null,
       ),
       textAlign: textAlign,
+      maxLines: 1,
     );
   }
 }

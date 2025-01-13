@@ -9,6 +9,7 @@ class MainTemplate extends StatefulWidget {
   final bool showActionButton;
   final Widget actionButton;
   final List<Widget> contentWidget;
+  final Function()? backFunction;
 
   const MainTemplate({
     super.key,
@@ -17,6 +18,7 @@ class MainTemplate extends StatefulWidget {
     this.showActionButton = false,
     this.actionButton = const SizedBox(),
     required this.contentWidget,
+    this.backFunction,
   });
 
   @override
@@ -66,6 +68,7 @@ class _MainTemplateState extends State<MainTemplate> {
             showBackIcon: widget.showBackButton,
             showActionButton: widget.showActionButton,
             actionButton: widget.actionButton,
+            backFunction: widget.backFunction,
           ),
           Expanded(
             child: Row(

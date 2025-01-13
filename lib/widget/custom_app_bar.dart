@@ -7,6 +7,7 @@ class CustomAppBar extends StatelessWidget {
   final bool showBackIcon;
   final bool showActionButton;
   final Widget actionButton;
+  final Function()? backFunction;
 
   const CustomAppBar({
     super.key,
@@ -14,6 +15,7 @@ class CustomAppBar extends StatelessWidget {
     this.showBackIcon = false,
     this.showActionButton = false,
     this.actionButton = const SizedBox(),
+    this.backFunction,
   });
 
   @override
@@ -32,9 +34,10 @@ class CustomAppBar extends StatelessWidget {
                   child: Row(
                     children: [
                       InkWell(
-                        onTap: () {
-                          Get.back();
-                        },
+                        onTap: backFunction ??
+                            () {
+                              Get.back();
+                            },
                         child: const Icon(
                           Icons.arrow_back_ios_new_rounded,
                         ),

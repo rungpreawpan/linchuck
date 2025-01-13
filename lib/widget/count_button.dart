@@ -31,8 +31,13 @@ class CounterButton extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 20.0),
-        SizedBox(
+        Container(
           width: 100.0,
+          height: 40.0,
+          decoration: BoxDecoration(
+            border: Border.all(),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           child: Center(
             child: TextFontStyle(
               quantity.toString(),

@@ -18,7 +18,7 @@ class EmployeePage extends StatefulWidget {
 }
 
 class _EmployeePageState extends State<EmployeePage> {
-  final EmployeeController _employeeController = Get.put(EmployeeController());
+  final EmployeeController _employeeController = Get.find();
 
   String selectedItem = '';
 

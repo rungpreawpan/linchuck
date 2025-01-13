@@ -1,15 +1,22 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/login/model/user_model.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class PayByCashPage extends StatefulWidget {
   final double total;
+  final Function() cancelOrder;
+  final UserModel? user;
+  final Function() onConfirm;
 
   const PayByCashPage({
     super.key,
     required this.total,
+    required this.cancelOrder,
+    required this.user,
+    required this.onConfirm,
   });
 
   @override
@@ -17,8 +24,27 @@ class PayByCashPage extends StatefulWidget {
 }
 
 class _PayByCashPageState extends State<PayByCashPage> {
+  final HomeController _homeController = Get.find();
+
   String equation = '0';
   String result = '0';
+
+  double change = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _prepareData();
+  }
+
+  _prepareData() {
+    if (_homeController.receivedMoney != null) {
+      result = _homeController.receivedMoney ?? '0';
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,22 +251,27 @@ class _PayByCashPageState extends State<PayByCashPage> {
         if (buttonText == '.') {
           equation = '0.';
           result = equation;
+          _homeController.receivedMoney = result;
         } else {
           equation = buttonText;
           result = equation;
+          _homeController.receivedMoney = result;
         }
         // กรณีพิมพ์เลขที่ไม่ใช่ตัวแรก
       } else {
         if (result.contains('.')) {
           if (buttonText == '.') {
             result = result;
+            _homeController.receivedMoney = result;
           } else {
             equation = equation + buttonText;
             result = equation;
+            _homeController.receivedMoney = result;
           }
         } else {
           equation = equation + buttonText;
           result = equation;
+          _homeController.receivedMoney = result;
         }
       }
     }
@@ -254,10 +285,11 @@ class _PayByCashPageState extends State<PayByCashPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
+            width: Get.width,
             padding: const EdgeInsets.symmetric(horizontal: marginX2),
             color: const Color.fromRGBO(30, 64, 162, 1),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const Column(
@@ -271,11 +303,10 @@ class _PayByCashPageState extends State<PayByCashPage> {
                     SizedBox(height: 12.0),
                   ],
                 ),
-                const SizedBox(width: 20.0),
                 TextFontStyle(
                   widget.total.toString(),
                   color: Colors.white,
-                  size: 60.0,
+                  size: 55.0,
                   weight: FontWeight.bold,
                   textAlign: TextAlign.end,
                 ),
@@ -285,6 +316,7 @@ class _PayByCashPageState extends State<PayByCashPage> {
           const SizedBox(height: 40.0),
           Container(
             height: 50.0,
+            width: Get.width,
             padding: const EdgeInsets.symmetric(horizontal: marginX2),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -309,25 +341,29 @@ class _PayByCashPageState extends State<PayByCashPage> {
           ),
           const SizedBox(height: marginX2),
           Container(
-            height: 40.0,
+            height: 50.0,
+            width: Get.width,
             padding: const EdgeInsets.symmetric(horizontal: marginX2),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade600),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(
               children: [
-                TextFontStyle(
-                  'รหัสพนักงาน',
+                const TextFontStyle(
+                  'พนักงาน:',
                   size: 20.0,
                   weight: FontWeight.bold,
                 ),
-                TextFontStyle(
-                  '123456',
-                  size: 20.0,
-                  weight: FontWeight.bold,
+                const SizedBox(width: margin),
+                Expanded(
+                  child: TextFontStyle(
+                    '${widget.user?.firstname} ${widget.user?.lastname}',
+                    size: 20.0,
+                    weight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -342,9 +378,9 @@ class _PayByCashPageState extends State<PayByCashPage> {
   _calChange() {
     double total = widget.total;
     double received = double.parse(result);
-    double change = 0.0;
 
     change = received - total;
+    _homeController.changeMoney = change;
     return change.toString();
   }
 
@@ -352,7 +388,7 @@ class _PayByCashPageState extends State<PayByCashPage> {
     return Column(
       children: [
         InkWell(
-          onTap: () {},
+          onTap: widget.onConfirm,
           child: Container(
             height: 50.0,
             decoration: BoxDecoration(
@@ -370,9 +406,7 @@ class _PayByCashPageState extends State<PayByCashPage> {
         ),
         const SizedBox(height: margin),
         InkWell(
-          onTap: () {
-            Get.back();
-          },
+          onTap: widget.cancelOrder,
           child: const TextFontStyle(
             'ยกเลิกออเดอร์',
             color: Colors.red,

@@ -16,6 +16,7 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 class ReceiptDetailPage extends StatefulWidget {
   final PaymentModel payment;
   final int receiptId;
+  final String receiptNo;
   final int orderId;
   final int employeeId;
 
@@ -23,6 +24,7 @@ class ReceiptDetailPage extends StatefulWidget {
     super.key,
     required this.payment,
     required this.receiptId,
+    required this.receiptNo,
     required this.orderId,
     required this.employeeId,
   });
@@ -114,8 +116,8 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                     : '',
                 size: fontSizeM,
               ),
-              const TextFontStyle(
-                'No. -', //TODO:
+               TextFontStyle(
+                'No. ${widget.receiptNo}',
                 size: fontSizeM,
               ),
             ],

@@ -174,46 +174,6 @@ class ReceiptController extends GetxController {
     }
   }
 
-  createPayment(
-    int userId,
-    double totalPrice,
-    String payType,
-    String payImage,
-  ) async {
-    bool isOnline = await RequestService().checkInternetConnection();
-
-    if (!isOnline) {
-      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
-      isLoading.value = false;
-
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-
-      var response = await RequestService().request(
-        '/payment',
-        method: HttpMethod.post,
-        data: {
-          "receipt": {"user_id": userId},
-          "payment": {
-            "total_price": totalPrice,
-            "pay_type": payImage,
-          }
-        },
-      );
-
-      if (response != null) {
-        //TODO:
-      }
-    } catch (e) {
-      log(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
   getOrder() async {
     bool isOnline = await RequestService().checkInternetConnection();
 

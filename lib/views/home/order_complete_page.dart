@@ -1,14 +1,21 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
-class OrderCompletePage extends StatelessWidget {
+class OrderCompletePage extends StatefulWidget {
   const OrderCompletePage({super.key});
+
+  @override
+  State<OrderCompletePage> createState() => _OrderCompletePageState();
+}
+
+class _OrderCompletePageState extends State<OrderCompletePage> {
+  final HomeController _homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -49,28 +56,28 @@ class OrderCompletePage extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(),
           ),
-          child: const Column(
+          child: Column(
             children: [
-              SizedBox(height: 40.0),
-              TextFontStyle(
+              const SizedBox(height: 40.0),
+              const TextFontStyle(
                 'ยอดรวม',
                 size: 28.0,
                 weight: FontWeight.bold,
               ),
               TextFontStyle(
-                '2,178 บาท',
+                '${_homeController.orderDetailPayment?.totalPrice} บาท',
                 size: 60.0,
                 weight: FontWeight.bold,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextFontStyle(
+                  const TextFontStyle(
                     'เลขที่ใบเสร็จ',
                     size: fontSizeXL,
                   ),
                   TextFontStyle(
-                    '345345',
+                    _homeController.receipt?.receiptNumber ?? '',
                     size: fontSizeXL,
                   ),
                 ],
@@ -78,17 +85,19 @@ class OrderCompletePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextFontStyle(
-                    'ช่องทางการขำระเงิน',
+                  const TextFontStyle(
+                    'ช่องทางการชำระเงิน',
                     size: fontSizeXL,
                   ),
                   TextFontStyle(
-                    'เงินสด',
+                    _homeController.orderDetailPayment?.payType == 'cash'
+                        ? 'เงินสด'
+                        : 'Promptpay',
                     size: fontSizeXL,
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextFontStyle(
@@ -104,12 +113,14 @@ class OrderCompletePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextFontStyle(
+                  const TextFontStyle(
                     'วันที่',
                     size: fontSizeXL,
                   ),
                   TextFontStyle(
-                    '08 สิงหาคม 2567 09:00น.',
+                    DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(
+                        _homeController.createOrderPayment?.createOn ??
+                            DateTime.now().toString())),
                     size: fontSizeXL,
                   ),
                 ],
@@ -137,6 +148,11 @@ class OrderCompletePage extends StatelessWidget {
   _newOrderButton() {
     return CustomSubmitButton(
       onTap: () {
+        _homeController.receivedMoney = null;
+        _homeController.changeMoney = null;
+        _homeController.orderDetailPayment = null;
+        _homeController.orderDetailList.clear();
+
         Get.off(() => const HomePage());
       },
       title: 'ทำรายการใหม่',

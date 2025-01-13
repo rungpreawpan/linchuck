@@ -1,26 +1,56 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/selected_product_model.dart';
+import 'package:lin_chuck/views/login/model/user_model.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
+import 'package:lin_chuck/widget/select_camera_gallery_bottom_sheet.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class PayByPromptPay extends StatefulWidget {
-  const PayByPromptPay({super.key});
+  final UserModel? user;
+  final double total;
+
+  const PayByPromptPay({
+    super.key,
+    required this.user,
+    required this.total,
+  });
 
   @override
   State<PayByPromptPay> createState() => _PayByPromptPayState();
 }
 
 class _PayByPromptPayState extends State<PayByPromptPay> {
+  final HomeController _homeController = Get.find();
   File? _imageFile;
+
+  //TODO: save to controller
 
   Future getImageFromGallery() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _imageFile = File(pickedFile.path);
+
+      List<int> imageBytes = _imageFile!.readAsBytesSync();
+      String base64Image = base64Encode(imageBytes);
+      _homeController.orderDetailPayment?.payImage = base64Image;
+      _homeController.orderDetailPayment?.payType = 'promptpay';
+
+      SelectedPaymentModel payment = SelectedPaymentModel(
+        user: widget.user,
+        totalPrice: widget.total,
+        payType: 'promptpay',
+        payImage: 'test',//base64Image,
+      );
+
+     _homeController.orderDetailPayment = payment;
     }
 
     setState(() {});
@@ -31,6 +61,18 @@ class _PayByPromptPayState extends State<PayByPromptPay> {
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       _imageFile = File(pickedFile.path);
+
+      List<int> imageBytes = _imageFile!.readAsBytesSync();
+      String base64Image = base64Encode(imageBytes);
+
+      SelectedPaymentModel payment = SelectedPaymentModel(
+        user: widget.user,
+        totalPrice: widget.total,
+        payType: 'promptpay',
+        payImage: base64Image,
+      );
+
+      _homeController.orderDetailPayment = payment;
     }
 
     setState(() {});
@@ -72,8 +114,14 @@ class _PayByPromptPayState extends State<PayByPromptPay> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 100.0),
                       child: CustomSubmitButton(
-                        //TODO: change to camera(gallery for test only) getImageFromCamera,
-                        onTap: getImageFromGallery,
+                        onTap: () {
+                          Get.bottomSheet(
+                            SelectCameraGalleryBottomSheet(
+                              getImageFromCamera: getImageFromCamera,
+                              getImageFromGallery: getImageFromGallery,
+                            ),
+                          );
+                        },
                         title: 'กดเพื่อเปิดกล้อง',
                         backgroundColor: primaryColor,
                       ),

@@ -86,25 +86,25 @@ class _SellReportPageState extends State<SellReportPage> {
         _sellController.novData?.allOrder != null &&
         _sellController.decData?.allOrder != null) {
       if (currentIndex == 0) {
-        jan = _sellController.janData!.allOrder!.toDouble() / 5;
-        feb = _sellController.febData!.allOrder!.toDouble() / 5;
-        mar = _sellController.marData!.allOrder!.toDouble() / 5;
-        apr = _sellController.aprData!.allOrder!.toDouble() / 5;
-        may = _sellController.mayData!.allOrder!.toDouble() / 5;
-        jun = _sellController.junData!.allOrder!.toDouble() / 5;
-        jul = _sellController.julData!.allOrder!.toDouble() / 5;
-        aug = _sellController.augData!.allOrder!.toDouble() / 5;
-        sep = _sellController.sepData!.allOrder!.toDouble() / 5;
-        oct = _sellController.octData!.allOrder!.toDouble() / 5;
-        nov = _sellController.novData!.allOrder!.toDouble() / 5;
-        dec = _sellController.decData!.allOrder!.toDouble() / 5;
+        jan = _sellController.janData!.allOrder!.toDouble() / 10;
+        feb = _sellController.febData!.allOrder!.toDouble() / 10;
+        mar = _sellController.marData!.allOrder!.toDouble() / 10;
+        apr = _sellController.aprData!.allOrder!.toDouble() / 10;
+        may = _sellController.mayData!.allOrder!.toDouble() / 10;
+        jun = _sellController.junData!.allOrder!.toDouble() / 10;
+        jul = _sellController.julData!.allOrder!.toDouble() / 10;
+        aug = _sellController.augData!.allOrder!.toDouble() / 10;
+        sep = _sellController.sepData!.allOrder!.toDouble() / 10;
+        oct = _sellController.octData!.allOrder!.toDouble() / 10;
+        nov = _sellController.novData!.allOrder!.toDouble() / 10;
+        dec = _sellController.decData!.allOrder!.toDouble() / 10;
       } else {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
                 in _sellController.janData!.sellTypes!) {
               if (sellType.id == type.id) {
-                jan = sellType.count!.toDouble() / 5;
+                jan = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -114,7 +114,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.febData!.sellTypes!) {
               if (sellType.id == type.id) {
-                feb = sellType.count!.toDouble() / 5;
+                feb = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -124,7 +124,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.marData!.sellTypes!) {
               if (sellType.id == type.id) {
-                mar = sellType.count!.toDouble() / 5;
+                mar = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -134,7 +134,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.aprData!.sellTypes!) {
               if (sellType.id == type.id) {
-                apr = sellType.count!.toDouble() / 5;
+                apr = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -144,7 +144,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.mayData!.sellTypes!) {
               if (sellType.id == type.id) {
-                may = sellType.count!.toDouble() / 5;
+                may = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -154,7 +154,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.junData!.sellTypes!) {
               if (sellType.id == type.id) {
-                jun = sellType.count!.toDouble() / 5;
+                jun = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -164,7 +164,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.julData!.sellTypes!) {
               if (sellType.id == type.id) {
-                jul = sellType.count!.toDouble() / 5;
+                jul = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -174,7 +174,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.augData!.sellTypes!) {
               if (sellType.id == type.id) {
-                aug = sellType.count!.toDouble() / 5;
+                aug = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -184,7 +184,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.sepData!.sellTypes!) {
               if (sellType.id == type.id) {
-                sep = sellType.count!.toDouble() / 5;
+                sep = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -194,7 +194,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.octData!.sellTypes!) {
               if (sellType.id == type.id) {
-                oct = sellType.count!.toDouble() / 5;
+                oct = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -204,7 +204,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.novData!.sellTypes!) {
               if (sellType.id == type.id) {
-                nov = sellType.count!.toDouble() / 5;
+                nov = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -214,7 +214,7 @@ class _SellReportPageState extends State<SellReportPage> {
             for (SellTypesModel sellType
                 in _sellController.decData!.sellTypes!) {
               if (sellType.id == type.id) {
-                dec = sellType.count!.toDouble() / 5;
+                dec = sellType.count!.toDouble() / 10;
               }
             }
           }
@@ -360,22 +360,22 @@ class _SellReportPageState extends State<SellReportPage> {
         text = '0';
         break;
       case 1:
-        text = '5';
-        break;
-      case 2:
         text = '10';
         break;
-      case 3:
-        text = '15';
-        break;
-      case 4:
+      case 2:
         text = '20';
         break;
+      case 3:
+        text = '30';
+        break;
+      case 4:
+        text = '40';
+        break;
       case 5:
-        text = '25';
+        text = '50';
         break;
       case 6:
-        text = '30';
+        text = '60';
         break;
       default:
         return Container();

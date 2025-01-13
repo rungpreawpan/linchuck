@@ -64,7 +64,7 @@ class ForgetPasswordController extends GetxController {
     }
 
     try {
-      isLoading.value = true;
+      // isLoading.value = true;
 
       var response = await RequestService().request('/user/forget',
           method: HttpMethod.post, data: {'email': email});
