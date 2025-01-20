@@ -7,7 +7,9 @@ import 'package:lin_chuck/views/category/category_page.dart';
 import 'package:lin_chuck/views/employee/employee_page.dart';
 import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
+import 'package:lin_chuck/views/promotion/promotion_page.dart';
 import 'package:lin_chuck/views/receipt/receipt_page.dart';
+import 'package:lin_chuck/views/recipe/recipe_page.dart';
 import 'package:lin_chuck/views/sell/sell_page.dart';
 import 'package:lin_chuck/views/stock/stock_page.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
@@ -144,6 +146,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Get.to(() => const ReceiptPage());
             },
             title: 'ใบเสร็จ',
+          ),
+          _navigateButton(
+            onTap: () {
+              Get.to(() => const PromotionPage());
+            },
+            title: 'โปรโมชั่น',
+          ),
+          _navigateButton(
+            onTap: () {
+              Get.to(() => const RecipePage());
+            },
+            title: 'สูตร',
           ),
           _navigateButton(
             onTap: () {

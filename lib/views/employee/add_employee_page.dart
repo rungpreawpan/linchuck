@@ -23,6 +23,7 @@ class AddEmployeePage extends StatefulWidget {
 
 class _AddEmployeePageState extends State<AddEmployeePage> {
   final EmployeeController _employeeController = Get.find();
+
   final TextEditingController _firstnameController1 = TextEditingController();
   final TextEditingController _lastnameController1 = TextEditingController();
   final TextEditingController _firstnameController2 = TextEditingController();

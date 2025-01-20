@@ -36,19 +36,22 @@ class _LoginPageState extends State<LoginPage> {
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 300.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _logo(),
-                const SizedBox(height: 30.0),
-                _textField(),
-                const SizedBox(height: 20.0),
-                _forgetButton(),
-                const SizedBox(height: 40.0),
-                _loginButton(),
-                const SizedBox(height: marginX2),
-                _registerButton(),
-              ],
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _logo(),
+                  const SizedBox(height: 30.0),
+                  _textField(),
+                  const SizedBox(height: 20.0),
+                  _forgetButton(),
+                  const SizedBox(height: 40.0),
+                  _loginButton(),
+                  const SizedBox(height: marginX2),
+                  _registerButton(),
+                ],
+              ),
             ),
           ),
         ),

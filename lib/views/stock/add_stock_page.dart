@@ -10,6 +10,7 @@ import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
+import 'package:lin_chuck/widget/custom_select_date.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/main_template.dart';
@@ -274,7 +275,7 @@ class _AddStockPageState extends State<AddStockPage> {
   _orderDate() {
     return InkWell(
       onTap: () async {
-        _selectedOrderDate = await _datePicker();
+        _selectedOrderDate = await datePicker(context);
 
         if (_selectedOrderDate != null) {
           _orderDateController.text =
@@ -296,7 +297,7 @@ class _AddStockPageState extends State<AddStockPage> {
   _expireDate() {
     return InkWell(
       onTap: () async {
-        _selectedExpireDate = await _datePicker();
+        _selectedExpireDate = await datePicker(context);
 
         if (_selectedExpireDate != null) {
           _expireDateController.text =
@@ -367,31 +368,6 @@ class _AddStockPageState extends State<AddStockPage> {
           ),
         ),
       ],
-    );
-  }
-
-  _datePicker() {
-    return showDatePicker(
-      context: context,
-      locale: const Locale('th', 'TH'),
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: primaryColor,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-            dialogBackgroundColor: Colors.white,
-          ),
-          child: child!,
-        );
-      },
-      confirmText: 'ยืนยัน',
-      cancelText: 'ยกเลิก',
     );
   }
 
