@@ -131,15 +131,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           _navigateButton(
             onTap: () {
-              Get.to(() => const StockPage());
-            },
-            title: 'คลังสินค้า',
-          ),
-          _navigateButton(
-            onTap: () {
               Get.to(() => const CategoryPage());
             },
             title: 'หมวดหมู่สินค้า',
+          ),
+          _navigateButton(
+            onTap: () {
+              Get.to(() => const StockPage());
+            },
+            title: 'วัตถุดิบ',
           ),
           _navigateButton(
             onTap: () {

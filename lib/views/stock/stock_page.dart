@@ -13,7 +13,7 @@ class _StockPageState extends State<StockPage> {
   @override
   Widget build(BuildContext context) {
     return  MainTemplate(
-      appBarTitle: 'คลังทั้งหมด',
+      appBarTitle: 'วัตถุดิบทั้งหมด',
       contentWidget: [
         Expanded(
           child: Column(

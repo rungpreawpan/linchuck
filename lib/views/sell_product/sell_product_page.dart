@@ -128,35 +128,28 @@ class _SellProductPageState extends State<SellProductPage> {
               itemCount: _homeController.productList.length,
               itemBuilder: (context, index) {
                 ProductModel item = _homeController.productList[index];
-                String productType = '';
-                String promotionName = '';
+                String productType = '-';
+                String promotionName = '-';
 
                 for (PromotionModel promotion
-                in _promotionController.promotionList) {
-                  print(promotion.promotionId == 2);
-                  // print('list ${promotion.promotionId.runtimeType}');
-                  // print(item.promotionId.runtimeType);
-                  // if (promotion.promotionId == 2) {
-                  //   promotionName = promotion.promotionName ?? '-';
-                  // } else {
-                  //   promotionName = '-';
-                  // }
+                    in _promotionController.promotionList) {
+                  if (item.promotionId == promotion.promotionId) {
+                    promotionName = promotion.promotionName ?? '-';
+                  }
                 }
 
-                // for (ProductTypeModel type in _homeController.productTypeList) {
-                //   if (type.id == item.productTypeId) {
-                //     productType = type.name ?? '';
-                //   } else {
-                //     productType = '-';
-                //   }
-                // }
+                for (ProductTypeModel type in _homeController.productTypeList) {
+                  if (type.id == item.productTypeId) {
+                    productType = type.name ?? '';
+                  }
+                }
 
                 return _stockRow(
                   index: item.id ?? 0,
                   title1: item.name ?? '',
                   title2: productType,
                   title3: item.productPrice.toString(),
-                  title4: promotionName, //TODO
+                  title4: promotionName,
                 );
               },
               separatorBuilder: (context, index) {
