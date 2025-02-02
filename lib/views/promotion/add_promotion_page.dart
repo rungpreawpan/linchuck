@@ -5,6 +5,7 @@ import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/promotion/controller/promotion_controller.dart';
+import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_item_picker_cell.dart';
 import 'package:lin_chuck/widget/custom_item_picker_page.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
@@ -15,12 +16,7 @@ import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class AddPromotionPage extends StatefulWidget {
-  final bool isEdit;
-
-  const AddPromotionPage({
-    super.key,
-    this.isEdit = false,
-  });
+  const AddPromotionPage({super.key});
 
   @override
   State<AddPromotionPage> createState() => _AddPromotionPageState();
@@ -30,11 +26,15 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
   final PromotionController _promotionController = Get.find();
   final HomeController _homeController = Get.find();
 
+  final TextEditingController _promotionNameController =
+      TextEditingController();
   final TextEditingController _fixedPriceController = TextEditingController();
   final TextEditingController _percentagePriceController =
       TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
+
+  String selectedProduct = 'กดเพื่อเลือกสินค้า';
 
   bool isPercentage = false;
 
@@ -68,15 +68,18 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
       child: Padding(
         padding: const EdgeInsets.only(right: 20.0),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //TODO: กดเลือกแล้วโชว์รูปพร้อมสินค้า?
-              // CustomTextField(
-              //   textEditingController: _selectProductController,
-              //   labelText: 'กดเพื่อเลือกสินค้า',
-              // ),
+              // const SizedBox(height: 15.0),
+              CustomTextField(
+                textEditingController: _promotionNameController,
+                labelText: 'ชื่อโปรโมชั่น',
+              ),
+              const SizedBox(height: marginX2),
               _selectProduct(),
+              //TODO: ถ้าเลือกเป็นpercentให้แสดงด้วยว่าลดกี่บาท
               const Divider(
                 color: Colors.grey,
                 height: 30.0,
@@ -164,45 +167,46 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
 
   _selectProduct() {
     return InkWell(
-      onTap: () {
-        Get.to(() =>
-          CustomItemPicker(
+      onTap: () async {
+        List? result = await Get.to(
+          () => CustomItemPicker(
             title: 'เลือกสินค้า',
             items: _homeController.productList,
             selectedItems: _homeController.selectedProductList,
-            itemWidget: (item, bool isSelected) {
+            itemWidget: (item, isSelected) {
               ProductModel castedItem = item as ProductModel;
 
               return CustomItemPickerCell(
-                onTap: () {},
                 title: castedItem.name ?? '-',
+                isSelected: isSelected,
               );
             },
             onSearch: (searchText) {
-              print(searchText);
-              // if (searchText != '') {
-              //
-              // }
+              if (searchText != '') {
+                return _homeController.productList
+                    .where((product) => product.name!
+                        .toLowerCase()
+                        .contains(searchText.toLowerCase()))
+                    .toList();
+              } else {
+                return _homeController.productList;
+              }
             },
             hintText: 'ค้นหาสินค้า',
+            pickMultipleItem: false,
           ),
         );
-        // Get.to(
-        //   () => CustomItemPicker(
-        //     title: 'เลือกสินค้า',
-        //     items: [],
-        //     selectedItems: [],
-        //     itemWidget: (item, bool isSelected) {
-        //       return SizedBox();
-        //     },
-        //     onSearch: (String searchText) {},
-        //   ),
-        // );
+
+        if (result != null) {
+          selectedProduct =
+              _homeController.selectedProductList.first.name ?? '';
+          setState(() {});
+        }
       },
       child: Container(
         height: 80.0,
         width: Get.width,
-        padding: const EdgeInsets.all(marginX2),
+        padding: const EdgeInsets.symmetric(horizontal: margin),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
@@ -210,14 +214,30 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
           ),
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Row(
           children: [
+            Visibility(
+              visible: selectedProduct != 'กดเพื่อเลือกสินค้า',
+              child: Row(
+                children: [
+                  Container(
+                    height: 60.0,
+                    width: 90.0,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  const SizedBox(width: 20.0),
+                ],
+              ),
+            ),
             TextFontStyle(
-              'กดเพื่อเลือกสินค้า',
+              selectedProduct,
               size: fontSizeL,
             ),
-            Icon(
+            const Spacer(),
+            const Icon(
               Icons.navigate_next_rounded,
               size: 40.0,
               color: Colors.grey,
@@ -240,6 +260,12 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
           children: [
             InkWell(
               onTap: () {
+                if (isPercentage) {
+                  _percentagePriceController.clear();
+                } else {
+                  _fixedPriceController.clear();
+                }
+
                 isPercentage = !isPercentage;
                 setState(() {});
               },
@@ -268,7 +294,7 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
         Expanded(
           child: CustomTextField(
             isEnabled: isSelected,
-            textEditingController: _fixedPriceController,
+            textEditingController: controller,
             hintText: '0',
             suffix: SizedBox(
               width: 50.0,
@@ -305,7 +331,56 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
         const SizedBox(width: marginX2),
         Expanded(
           child: CustomSubmitButton(
-            onTap: widget.isEdit ? () async {} : () async {},
+            onTap: () async {
+              if (_promotionNameController.text == '') {
+                Get.dialog(
+                  const CustomAlertDialog(title: 'กรุณากรอกชื่อโปรโมชั่น'),
+                );
+              } else if (_homeController.selectedProductList.isEmpty) {
+                Get.dialog(
+                  const CustomAlertDialog(title: 'กรุณาเลือกสินค้า'),
+                );
+              } else if (!isPercentage && _fixedPriceController.text == '') {
+                Get.dialog(
+                  const CustomAlertDialog(title: 'กรุณากรอกส่วนลด'),
+                );
+              } else if (isPercentage &&
+                  _percentagePriceController.text == '') {
+                Get.dialog(
+                  const CustomAlertDialog(title: 'กรุณากรอกส่วนลด'),
+                );
+              } else if (_startDateController.text == '') {
+                Get.dialog(
+                  const CustomAlertDialog(
+                      title: 'กรุณาเลือกวันเริ่มต้นโปรโมชั่น'),
+                );
+              } else if (_endDateController.text == '') {
+                Get.dialog(
+                  const CustomAlertDialog(
+                      title: 'กรุณาเลือกวันสิ้นสุดโปรโมชั่น'),
+                );
+              } else {
+                double discountAmount = 0;
+
+                if (isPercentage) {
+                  discountAmount =
+                      _homeController.selectedProductList.first.productPrice! *
+                          int.parse(_percentagePriceController.text) /
+                          100;
+                } else {
+                  discountAmount = double.parse(_fixedPriceController.text);
+                }
+
+                await _promotionController.createPromotion(
+                  promotionName: _promotionNameController.text,
+                  productId: _homeController.selectedProductList.first.id ?? 0,
+                  discountAmount: int.parse(discountAmount.toStringAsFixed(0)),
+                  startDate: _startDateController.text,
+                  endDate: _endDateController.text,
+                );
+                _homeController.selectedProductList.clear();
+              }
+            },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,
           ),
@@ -315,13 +390,11 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
   }
 
   _loading() {
-    return Obx(
-      () {
-        return Visibility(
-          visible: _promotionController.isLoading.value,
-          child: const CustomLoading(),
-        );
-      },
-    );
+    return Obx(() {
+      return Visibility(
+        visible: _promotionController.isLoading.value,
+        child: const CustomLoading(),
+      );
+    });
   }
 }

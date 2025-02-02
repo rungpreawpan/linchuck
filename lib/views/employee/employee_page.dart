@@ -76,8 +76,14 @@ class _EmployeePageState extends State<EmployeePage> {
 
   _addEmployeeButton() {
     return InkWell(
-      onTap: () {
-        Get.to(() => const AddEmployeePage());
+      onTap: () async {
+        bool? result = await Get.to(() => const AddEmployeePage());
+
+        if (result != null) {
+          await _employeeController.getEmployee();
+
+          setState(() {});
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -233,35 +239,35 @@ class _EmployeePageState extends State<EmployeePage> {
           const SizedBox(width: 20.0),
           isHeader
               ? const Icon(
-            Icons.more_vert_rounded,
-            size: fontSizeL,
-            color: Colors.white,
-          )
+                  Icons.more_vert_rounded,
+                  size: fontSizeL,
+                  color: Colors.white,
+                )
               : EditDeletePopup(
-            selectedItem: selectedItem,
-            onEdit: () async {
-              _employeeController.selectedEmployeeId = index;
+                  selectedItem: selectedItem,
+                  onEdit: () async {
+                    _employeeController.selectedEmployeeId = index;
 
-              bool? result =
-              await Get.to(() => const AddEmployeePage(isEdit: true));
+                    bool? result =
+                        await Get.to(() => const AddEmployeePage(isEdit: true));
 
-              if (result != null) {
-                await _employeeController.getEmployee();
+                    if (result != null) {
+                      await _employeeController.getEmployee();
 
-                setState(() {});
-              }
-            },
-            onDelete: () async {
-              _employeeController.selectedEmployeeId = index;
-              await _employeeController
-                  .deleteEmployee(_employeeController.selectedEmployeeId ?? 0);
-              Get.back();
+                      setState(() {});
+                    }
+                  },
+                  onDelete: () async {
+                    _employeeController.selectedEmployeeId = index;
+                    await _employeeController.deleteEmployee(
+                        _employeeController.selectedEmployeeId ?? 0);
+                    Get.back();
 
-              await _employeeController.getEmployee();
-              Get.back();
-              setState(() {});
-            },
-          ),
+                    await _employeeController.getEmployee();
+                    Get.back();
+                    setState(() {});
+                  },
+                ),
         ],
       ),
     );

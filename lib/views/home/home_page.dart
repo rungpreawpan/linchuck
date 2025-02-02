@@ -13,7 +13,8 @@ import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/views/home/model/selected_product_model.dart';
-import 'package:lin_chuck/views/stock/stock_page.dart';
+import 'package:lin_chuck/views/promotion/controller/promotion_controller.dart';
+import 'package:lin_chuck/views/sell_product/sell_product_page.dart';
 import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
@@ -32,6 +33,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final HomeController _homeController = Get.put(HomeController());
   final EmployeeController _employeeController = Get.put(EmployeeController());
+  final PromotionController _promotionController =
+  Get.put(PromotionController());
 
   FlutterSecureStorage storage = const FlutterSecureStorage();
 
@@ -64,6 +67,7 @@ class _HomePageState extends State<HomePage> {
     await _homeController.getProduct();
     await _getFilterProduct();
     await _employeeController.getOneEmployee(int.parse(userId.toString()));
+    await _promotionController.getPromotion();
 
     setState(() {});
   }
@@ -615,7 +619,7 @@ class _HomePageState extends State<HomePage> {
               onTap: data == 'สินค้า'
                   ? () {
                       Get.back();
-                      Get.to(() => const StockPage());
+                      Get.to(() => const SellProductPage());
                     }
                   : () {
                       Get.back();

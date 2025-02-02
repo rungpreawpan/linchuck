@@ -265,10 +265,10 @@ class HomeController extends GetxController {
     String? name,
     double? price,
     double? cost,
-    int? quantity,
+    // int? quantity,
     int? productTypeId,
-    String? orderDate,
-    String? expireDate,
+    // String? orderDate,
+    // String? expireDate,
   ) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
@@ -289,11 +289,11 @@ class HomeController extends GetxController {
           'product_name': name,
           'product_price': price,
           'product_cost': cost,
-          'product_quantity': quantity,
+          // 'product_quantity': quantity,
           'product_type_id': productTypeId,
           'product_image': 'test', //TODO:
-          'order_date': orderDate,
-          'expire_date': expireDate,
+          // 'order_date': orderDate,
+          // 'expire_date': expireDate,
         },
       );
 
@@ -312,10 +312,10 @@ class HomeController extends GetxController {
     String? name,
     double? price,
     double? cost,
-    int? quantity,
+    // int? quantity,
     int? productTypeId,
-    String? orderDate,
-    String? expireDate,
+    // String? orderDate,
+    // String? expireDate,
   ) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
@@ -336,11 +336,11 @@ class HomeController extends GetxController {
           'product_name': name,
           'product_price': price,
           'product_cost': cost,
-          'product_quantity': quantity,
+          // 'product_quantity': quantity,
           'product_type_id': productTypeId,
           'product_image': 'test', //TODO:
-          'order_date': orderDate,
-          'expire_date': expireDate,
+          // 'order_date': orderDate,
+          // 'expire_date': expireDate,
         },
       );
 

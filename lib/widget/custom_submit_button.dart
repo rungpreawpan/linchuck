@@ -6,6 +6,7 @@ class CustomSubmitButton extends StatelessWidget {
   final Function() onTap;
   final double buttonHeight;
   final double? buttonWidth;
+  final EdgeInsetsGeometry? buttonMargin;
   final Color backgroundColor;
   final double borderRadius;
   final bool showBorder;
@@ -21,6 +22,7 @@ class CustomSubmitButton extends StatelessWidget {
     required this.onTap,
     this.buttonHeight = 50.0,
     this.buttonWidth,
+    this.buttonMargin,
     this.backgroundColor = Colors.grey,
     this.borderRadius = 25.0,
     this.showBorder = false,
@@ -39,6 +41,7 @@ class CustomSubmitButton extends StatelessWidget {
       child: Container(
         height: buttonHeight,
         width: buttonWidth,
+        margin: buttonMargin,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(borderRadius),

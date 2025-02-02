@@ -5,6 +5,8 @@ PODS:
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_keyboard_visibility (0.0.1):
+    - Flutter
   - flutter_localization (0.0.1):
     - Flutter
   - flutter_secure_storage (6.0.0):
@@ -28,6 +30,7 @@ DEPENDENCIES:
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_localization (from `.symlinks/plugins/flutter_localization/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -44,6 +47,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_keyboard_visibility:
+    :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_localization:
     :path: ".symlinks/plugins/flutter_localization/ios"
   flutter_secure_storage:
@@ -65,6 +70,7 @@ SPEC CHECKSUMS:
   connectivity_plus: ddd7f30999e1faaef5967c23d5b6d503d10434db
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_localization: f43b18844a2b3d2c71fd64f04ffd6b1e64dd54d4
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1

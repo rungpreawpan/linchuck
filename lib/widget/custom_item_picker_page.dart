@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
-import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomItemPicker extends StatefulWidget {
@@ -115,10 +114,16 @@ class _CustomItemPickerState extends State<CustomItemPicker> {
 
   _searchBar() {
     return Padding(
-      padding: const EdgeInsets.all(marginX2),
+      padding: const EdgeInsets.only(
+        left: 60.0,
+        right: 20.0,
+        top: marginX2,
+        bottom: marginX2,
+      ),
       child: CustomTextField(
         textEditingController: _searchController,
         hintText: widget.hintText,
+        padding: const EdgeInsets.all(marginX2),
         onChanged: (value) {
           _filteredItems = widget.onSearch(value);
           setState(() {});
@@ -131,7 +136,10 @@ class _CustomItemPickerState extends State<CustomItemPicker> {
     return _filteredItems.isNotEmpty
         ? ListView.separated(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: marginX2),
+            padding: const EdgeInsets.only(
+              left: 60.0,
+              right: 20.0,
+            ),
             itemCount: _filteredItems.length,
             itemBuilder: (context, index) {
               var item = _filteredItems[index];
@@ -190,6 +198,12 @@ class _CustomItemPickerState extends State<CustomItemPicker> {
                 fontSize: fontSizeM,
                 borderRadius: 10,
                 backgroundColor: primaryColor,
+                buttonMargin: const EdgeInsets.only(
+                  left: 60.0,
+                  right: 20.0,
+                  top: marginX2,
+                  bottom: marginX2,
+                ),
               )
             : CustomSubmitButton(
                 onTap: () {},
@@ -201,6 +215,12 @@ class _CustomItemPickerState extends State<CustomItemPicker> {
                 showBorder: true,
                 borderColor: Colors.grey.shade400,
                 borderWidth: 1.5,
+                buttonMargin: const EdgeInsets.only(
+                  left: 60.0,
+                  right: 20.0,
+                  top: marginX2,
+                  bottom: marginX2,
+                ),
               ),
       ),
     );

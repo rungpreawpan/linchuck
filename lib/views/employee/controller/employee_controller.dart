@@ -86,7 +86,6 @@ class EmployeeController {
     String? firstname5,
     String? lastname5,
   ) async {
-    // print(employeeList);
     var nameList;
 
     if (firstname1 != null &&

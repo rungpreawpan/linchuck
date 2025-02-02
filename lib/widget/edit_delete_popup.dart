@@ -4,12 +4,14 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 
 class EditDeletePopup extends StatefulWidget {
   final String selectedItem;
+  final bool showEdit;
   final Function() onEdit;
   final Function() onDelete;
 
   const EditDeletePopup({
     super.key,
     required this.selectedItem,
+    this.showEdit = true,
     required this.onEdit,
     required this.onDelete,
   });
@@ -29,6 +31,7 @@ class _EditDeletePopupState extends State<EditDeletePopup> {
   }
 
   List<String> popupItems = ['แก้ไข', 'ลบ'];
+  List<String> deleteItems = ['ลบ'];
 
   @override
   Widget build(BuildContext context) {
@@ -38,30 +41,51 @@ class _EditDeletePopupState extends State<EditDeletePopup> {
 
         setState(() {});
       },
-      itemBuilder: (BuildContext context) {
-        return popupItems.map((data) {
-          return PopupMenuItem<String>(
-            value: data,
-            child: InkWell(
-              onTap: data == 'แก้ไข' ? widget.onEdit : widget.onDelete,
-              child: Row(
-                children: [
-                  Icon(
-                    data == 'แก้ไข'
-                        ? Icons.edit_rounded
-                        : Icons.delete_forever_rounded,
+      itemBuilder: widget.showEdit
+          ? (BuildContext context) {
+              return popupItems.map((data) {
+                return PopupMenuItem<String>(
+                  value: data,
+                  child: InkWell(
+                    onTap: data == 'แก้ไข' ? widget.onEdit : widget.onDelete,
+                    child: Row(
+                      children: [
+                        Icon(
+                          data == 'แก้ไข'
+                              ? Icons.edit_rounded
+                              : Icons.delete_forever_rounded,
+                        ),
+                        const SizedBox(width: marginX2),
+                        TextFontStyle(
+                          data,
+                          size: fontSizeM,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: marginX2),
-                  TextFontStyle(
-                    data,
-                    size: fontSizeM,
+                );
+              }).toList();
+            }
+          : (BuildContext context) {
+              return deleteItems.map((data) {
+                return PopupMenuItem<String>(
+                  value: data,
+                  child: InkWell(
+                    onTap: widget.onDelete,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.delete_forever_rounded),
+                        const SizedBox(width: marginX2),
+                        TextFontStyle(
+                          data,
+                          size: fontSizeM,
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          );
-        }).toList();
-      },
+                );
+              }).toList();
+            },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
