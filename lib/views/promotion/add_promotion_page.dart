@@ -72,7 +72,6 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // const SizedBox(height: 15.0),
               CustomTextField(
                 textEditingController: _promotionNameController,
                 labelText: 'ชื่อโปรโมชั่น',
@@ -375,8 +374,8 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
                   promotionName: _promotionNameController.text,
                   productId: _homeController.selectedProductList.first.id ?? 0,
                   discountAmount: int.parse(discountAmount.toStringAsFixed(0)),
-                  startDate: _startDateController.text,
-                  endDate: _endDateController.text,
+                  startDate: _startDate.toString(),
+                  endDate: _endDate.toString(),
                 );
                 _homeController.selectedProductList.clear();
               }

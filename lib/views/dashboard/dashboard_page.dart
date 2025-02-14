@@ -1,26 +1,29 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/components/cost_page.dart';
-import 'package:lin_chuck/views/sell/components/finance_page.dart';
-import 'package:lin_chuck/views/sell/components/overview_page.dart';
-import 'package:lin_chuck/views/sell/components/product_page.dart';
-import 'package:lin_chuck/views/sell/components/sell_report_page.dart';
-import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
+import 'package:lin_chuck/views/dashboard/components/cost_page.dart';
+import 'package:lin_chuck/views/dashboard/components/finance_page.dart';
+import 'package:lin_chuck/views/dashboard/components/overview_page.dart';
+import 'package:lin_chuck/views/dashboard/components/product_page.dart';
+import 'package:lin_chuck/views/dashboard/components/request_pdf_dialog.dart';
+import 'package:lin_chuck/views/dashboard/components/sell_report_page.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 
-class SellPage extends StatefulWidget {
-  const SellPage({super.key});
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
   @override
-  State<SellPage> createState() => _SellPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _SellPageState extends State<SellPage> {
-  final SellController _sellController = Get.put(SellController());
+class _DashboardPageState extends State<DashboardPage> {
+  final DashboardController _dashboardController = Get.put(DashboardController());
 
   @override
   void initState() {
@@ -30,7 +33,7 @@ class _SellPageState extends State<SellPage> {
   }
 
   _prepareData() async {
-    await _sellController.getAllData('2024-01-01 00:00:00',
+    await _dashboardController.getAllData('2024-01-01 00:00:00',
         DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()));
 
     setState(() {});
@@ -54,7 +57,7 @@ class _SellPageState extends State<SellPage> {
         MainTemplate(
           appBarTitle: 'ยอดขาย',
           showActionButton: true,
-          actionButton: _popUp(),
+          actionButton: _actionButton(),
           contentWidget: [
             Expanded(
               child: Column(
@@ -68,7 +71,7 @@ class _SellPageState extends State<SellPage> {
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      child: _sellController.sellData != null
+                      child: _dashboardController.dashboardData != null
                           ? _dataContent()
                           : const SizedBox(),
                     ),
@@ -109,29 +112,41 @@ class _SellPageState extends State<SellPage> {
     );
   }
 
-  _popUp() {
-    return InkWell(
-      onTap: () {
-        _prepareData();
-      },
-      child: const Icon(
-        Icons.refresh,
-        color: primaryColor,
-      ),
+  _actionButton() {
+    return Row(
+      children: [
+        InkWell(
+          onTap: () {
+            Get.dialog(RequestPdfDialog());
+            // Get.to(() => HomeScreen());
+          },
+          child: Icon(Icons.file_present_outlined),
+        ),
+        const SizedBox(width: 20.0),
+        InkWell(
+          onTap: () {
+            _prepareData();
+          },
+          child: const Icon(
+            Icons.refresh,
+            color: primaryColor,
+          ),
+        ),
+      ],
     );
   }
 
   _dataContent() {
     if (currentIndex == 0) {
-      return OverviewPage(sellData: _sellController.sellData!);
+      return OverviewPage(dashboardData: _dashboardController.dashboardData!);
     } else if (currentIndex == 1) {
-      return SellReportPage(sellData: _sellController.sellData!);
+      return SellReportPage(dashboardData: _dashboardController.dashboardData!);
     } else if (currentIndex == 2) {
       return const FinancePage();
     } else if (currentIndex == 3) {
-      return CostPage(sellData: _sellController.sellData!);
+      return CostPage(sellData: _dashboardController.dashboardData!);
     } else if (currentIndex == 4) {
-      return ProductPage(sellData: _sellController.sellData!);
+      return ProductPage(dashboardData: _dashboardController.dashboardData!);
     } else {
       return const SizedBox();
     }
@@ -140,7 +155,7 @@ class _SellPageState extends State<SellPage> {
   _loading() {
     return Obx(() {
       return Visibility(
-        visible: _sellController.isLoading.value,
+        visible: _dashboardController.isLoading.value,
         child: const CustomLoading(),
       );
     });

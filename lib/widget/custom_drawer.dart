@@ -4,14 +4,15 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/controller/app_info_controller.dart';
 import 'package:lin_chuck/views/category/category_page.dart';
+import 'package:lin_chuck/views/dashboard/dashboard_page.dart';
 import 'package:lin_chuck/views/employee/employee_page.dart';
 import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
 import 'package:lin_chuck/views/promotion/promotion_page.dart';
 import 'package:lin_chuck/views/receipt/receipt_page.dart';
 import 'package:lin_chuck/views/recipe/recipe_page.dart';
-import 'package:lin_chuck/views/sell/sell_page.dart';
 import 'package:lin_chuck/views/stock/stock_page.dart';
+import 'package:lin_chuck/widget/custom_ok_cancel_dialog.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -27,6 +28,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   String? firstname;
   String? lastname;
+  String? profileImage;
   String? role;
 
   @override
@@ -41,8 +43,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     firstname = await storage.read(key: 'firstname');
     lastname = await storage.read(key: 'lastname');
+    profileImage = await storage.read(key: 'image');
 
-    String? roleEng = await storage.read(key: 'role');
+    String? roleEng = await storage.read(key: 'role'); //TODO:
     if (roleEng == 'employee') {
       role = 'พนักงาน';
     } else {
@@ -125,7 +128,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           _navigateButton(
             onTap: () {
-              Get.to(() => const SellPage());
+              Get.to(() => const DashboardPage());
             },
             title: 'ยอดขาย',
           ),
@@ -197,15 +200,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: [
           InkWell(
             onTap: () async {
-              const storage = FlutterSecureStorage();
-              await storage.delete(key: 'login');
-              await storage.delete(key: 'firstname');
-              await storage.delete(key: 'lastname');
-              await storage.delete(key: 'position');
-              await storage.delete(key: 'image');
-              await storage.delete(key: 'user_id');
+              Get.dialog(
+                CustomOkCancelDialog(
+                  title: 'ต้องการออกจากระบบหรือไม่',
+                  onOK: () async {
+                    const storage = FlutterSecureStorage();
+                    await storage.delete(key: 'login');
+                    await storage.delete(key: 'firstname');
+                    await storage.delete(key: 'lastname');
+                    await storage.delete(key: 'position');
+                    await storage.delete(key: 'image');
+                    await storage.delete(key: 'user_id');
 
-              Get.offAll(() => const LoginPage());
+                    Get.offAll(() => const LoginPage());
+                  },
+                ),
+              );
             },
             child: const Row(
               children: [

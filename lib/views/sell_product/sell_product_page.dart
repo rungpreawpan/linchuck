@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/components/delete_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
@@ -13,7 +14,12 @@ import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class SellProductPage extends StatefulWidget {
-  const SellProductPage({super.key});
+  final bool isFromHomePage;
+
+  const SellProductPage({
+    super.key,
+    this.isFromHomePage = false,
+  });
 
   @override
   State<SellProductPage> createState() => _SellProductPageState();
@@ -80,6 +86,7 @@ class _SellProductPageState extends State<SellProductPage> {
   _addStockButton() {
     return InkWell(
       onTap: () async {
+        _homeController.selectedProductTypeList.clear();
         bool? result = await Get.to(() => const AddSellProductPage());
 
         if (result != null) {
@@ -244,12 +251,16 @@ class _SellProductPageState extends State<SellProductPage> {
                 },
                 onDelete: () async {
                   _homeController.selectedProductId = index;
-                  await _homeController
-                      .deleteProduct(_homeController.selectedProductId ?? 0);
-                  Get.back();
+                  bool? result = await Get.dialog(const DeleteDialog());
 
-                  await _homeController.getProduct();
-                  setState(() {});
+                  if (result != null) {
+                    await _homeController
+                        .deleteProduct(_homeController.selectedProductId ?? 0);
+                    Get.back();
+
+                    await _homeController.getProduct();
+                    setState(() {});
+                  }
                 },
               ),
       ],

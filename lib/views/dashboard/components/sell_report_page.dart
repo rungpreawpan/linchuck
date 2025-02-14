@@ -2,19 +2,19 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
+import 'package:lin_chuck/views/dashboard/model/dashboard_model.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
-import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
-import 'package:lin_chuck/views/sell/model/sell_model.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class SellReportPage extends StatefulWidget {
-  final SellModel sellData;
+  final DashboardModel dashboardData;
 
   const SellReportPage({
     super.key,
-    required this.sellData,
+    required this.dashboardData,
   });
 
   @override
@@ -23,7 +23,7 @@ class SellReportPage extends StatefulWidget {
 
 class _SellReportPageState extends State<SellReportPage> {
   final HomeController _homeController = Get.find();
-  final SellController _sellController = Get.find();
+  final DashboardController _dashboardController = Get.find();
 
   int currentIndex = 0;
   List<ProductTypeModel> productTypeList = [];
@@ -73,36 +73,36 @@ class _SellReportPageState extends State<SellReportPage> {
   }
 
   _getSellData() async {
-    if (_sellController.janData?.allOrder != null &&
-        _sellController.febData?.allOrder != null &&
-        _sellController.marData?.allOrder != null &&
-        _sellController.aprData?.allOrder != null &&
-        _sellController.mayData?.allOrder != null &&
-        _sellController.junData?.allOrder != null &&
-        _sellController.julData?.allOrder != null &&
-        _sellController.augData?.allOrder != null &&
-        _sellController.sepData?.allOrder != null &&
-        _sellController.octData?.allOrder != null &&
-        _sellController.novData?.allOrder != null &&
-        _sellController.decData?.allOrder != null) {
+    if (_dashboardController.janData?.allOrder != null &&
+        _dashboardController.febData?.allOrder != null &&
+        _dashboardController.marData?.allOrder != null &&
+        _dashboardController.aprData?.allOrder != null &&
+        _dashboardController.mayData?.allOrder != null &&
+        _dashboardController.junData?.allOrder != null &&
+        _dashboardController.julData?.allOrder != null &&
+        _dashboardController.augData?.allOrder != null &&
+        _dashboardController.sepData?.allOrder != null &&
+        _dashboardController.octData?.allOrder != null &&
+        _dashboardController.novData?.allOrder != null &&
+        _dashboardController.decData?.allOrder != null) {
       if (currentIndex == 0) {
-        jan = _sellController.janData!.allOrder!.toDouble() / 10;
-        feb = _sellController.febData!.allOrder!.toDouble() / 10;
-        mar = _sellController.marData!.allOrder!.toDouble() / 10;
-        apr = _sellController.aprData!.allOrder!.toDouble() / 10;
-        may = _sellController.mayData!.allOrder!.toDouble() / 10;
-        jun = _sellController.junData!.allOrder!.toDouble() / 10;
-        jul = _sellController.julData!.allOrder!.toDouble() / 10;
-        aug = _sellController.augData!.allOrder!.toDouble() / 10;
-        sep = _sellController.sepData!.allOrder!.toDouble() / 10;
-        oct = _sellController.octData!.allOrder!.toDouble() / 10;
-        nov = _sellController.novData!.allOrder!.toDouble() / 10;
-        dec = _sellController.decData!.allOrder!.toDouble() / 10;
+        jan = _dashboardController.janData!.allOrder!.toDouble() / 10;
+        feb = _dashboardController.febData!.allOrder!.toDouble() / 10;
+        mar = _dashboardController.marData!.allOrder!.toDouble() / 10;
+        apr = _dashboardController.aprData!.allOrder!.toDouble() / 10;
+        may = _dashboardController.mayData!.allOrder!.toDouble() / 10;
+        jun = _dashboardController.junData!.allOrder!.toDouble() / 10;
+        jul = _dashboardController.julData!.allOrder!.toDouble() / 10;
+        aug = _dashboardController.augData!.allOrder!.toDouble() / 10;
+        sep = _dashboardController.sepData!.allOrder!.toDouble() / 10;
+        oct = _dashboardController.octData!.allOrder!.toDouble() / 10;
+        nov = _dashboardController.novData!.allOrder!.toDouble() / 10;
+        dec = _dashboardController.decData!.allOrder!.toDouble() / 10;
       } else {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.janData!.sellTypes!) {
+                in _dashboardController.janData!.sellTypes!) {
               if (sellType.id == type.id) {
                 jan = sellType.count!.toDouble() / 10;
               }
@@ -112,7 +112,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.febData!.sellTypes!) {
+                in _dashboardController.febData!.sellTypes!) {
               if (sellType.id == type.id) {
                 feb = sellType.count!.toDouble() / 10;
               }
@@ -122,7 +122,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.marData!.sellTypes!) {
+                in _dashboardController.marData!.sellTypes!) {
               if (sellType.id == type.id) {
                 mar = sellType.count!.toDouble() / 10;
               }
@@ -132,7 +132,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.aprData!.sellTypes!) {
+                in _dashboardController.aprData!.sellTypes!) {
               if (sellType.id == type.id) {
                 apr = sellType.count!.toDouble() / 10;
               }
@@ -142,7 +142,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.mayData!.sellTypes!) {
+                in _dashboardController.mayData!.sellTypes!) {
               if (sellType.id == type.id) {
                 may = sellType.count!.toDouble() / 10;
               }
@@ -152,7 +152,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.junData!.sellTypes!) {
+                in _dashboardController.junData!.sellTypes!) {
               if (sellType.id == type.id) {
                 jun = sellType.count!.toDouble() / 10;
               }
@@ -162,7 +162,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.julData!.sellTypes!) {
+                in _dashboardController.julData!.sellTypes!) {
               if (sellType.id == type.id) {
                 jul = sellType.count!.toDouble() / 10;
               }
@@ -172,7 +172,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.augData!.sellTypes!) {
+                in _dashboardController.augData!.sellTypes!) {
               if (sellType.id == type.id) {
                 aug = sellType.count!.toDouble() / 10;
               }
@@ -182,7 +182,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.sepData!.sellTypes!) {
+                in _dashboardController.sepData!.sellTypes!) {
               if (sellType.id == type.id) {
                 sep = sellType.count!.toDouble() / 10;
               }
@@ -192,7 +192,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.octData!.sellTypes!) {
+                in _dashboardController.octData!.sellTypes!) {
               if (sellType.id == type.id) {
                 oct = sellType.count!.toDouble() / 10;
               }
@@ -202,7 +202,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.novData!.sellTypes!) {
+                in _dashboardController.novData!.sellTypes!) {
               if (sellType.id == type.id) {
                 nov = sellType.count!.toDouble() / 10;
               }
@@ -212,7 +212,7 @@ class _SellReportPageState extends State<SellReportPage> {
         for (ProductTypeModel type in _homeController.productTypeList) {
           if (currentIndex == type.id) {
             for (SellTypesModel sellType
-                in _sellController.decData!.sellTypes!) {
+                in _dashboardController.decData!.sellTypes!) {
               if (sellType.id == type.id) {
                 dec = sellType.count!.toDouble() / 10;
               }

@@ -1,4 +1,4 @@
-class SellModel {
+class DashboardModel {
   int? allOrder;
   double? sales;
   double? allCosts;
@@ -6,7 +6,7 @@ class SellModel {
   List<SellProductModel>? sellProduct;
   List<SellTypesModel>? sellTypes;
 
-  SellModel({
+  DashboardModel({
     this.allOrder,
     this.sales,
     this.allCosts,
@@ -15,7 +15,7 @@ class SellModel {
     this.sellTypes,
   });
 
-  factory SellModel.fromJSON(Map<String, dynamic> json) {
+  factory DashboardModel.fromJSON(Map<String, dynamic> json) {
     double? sales;
     double? allCosts;
     double? profit;
@@ -24,7 +24,7 @@ class SellModel {
     allCosts = double.parse(json['allCost'].toString());
     profit = double.parse(json['profit'].toString());
 
-    return SellModel(
+    return DashboardModel(
       allOrder: json['allOrder'] ?? 0,
       sales: sales,
       allCosts: allCosts,

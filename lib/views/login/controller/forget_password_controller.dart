@@ -106,7 +106,6 @@ class ForgetPasswordController extends GetxController {
         },
       );
 
-      // TODO: response
       if (response != null) {
         await Get.dialog(
           CustomAlertDialog(

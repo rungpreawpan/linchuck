@@ -98,15 +98,11 @@ class ReceiptController extends GetxController {
     try {
       isLoading.value = true;
 
-      var response = await RequestService().request(
+      await RequestService().request(
         '/receipt',
         method: HttpMethod.post,
         data: {'user_id': userId},
       );
-
-      if (response != null) {
-        //TODO:
-      }
     } catch (e) {
       log(e.toString());
     } finally {
@@ -226,38 +222,6 @@ class ReceiptController extends GetxController {
       if (response != null) {
         var dataJSON = response.data;
         order = OrderModel.fromJSON(dataJSON);
-        // print(order);
-      }
-    } catch (e) {
-      log(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  createOrder() async {
-    bool isOnline = await RequestService().checkInternetConnection();
-
-    if (!isOnline) {
-      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
-      isLoading.value = false;
-
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-
-      var response = await RequestService().request(
-        '/order',
-        method: HttpMethod.post,
-        data: {
-        //TODO:
-        },
-      );
-
-      if (response != null) {
-        //TODO:
       }
     } catch (e) {
       log(e.toString());
@@ -356,6 +320,4 @@ class ReceiptController extends GetxController {
       isLoading.value = false;
     }
   }
-
-// createOrderDetail() async {}
 }

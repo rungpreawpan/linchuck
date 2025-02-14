@@ -3,24 +3,25 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/components/select_category_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
+import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
-import 'package:lin_chuck/widget/custom_select_date.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/select_camera_gallery_bottom_sheet.dart';
 
 class AddSellProductPage extends StatefulWidget {
+  final bool isFromHomePage;
   final bool isEdit;
 
   const AddSellProductPage({
     super.key,
+    this.isFromHomePage = false,
     this.isEdit = false,
   });
 
@@ -35,9 +36,6 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
   final TextEditingController _productTypeController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
-
-  // DateTime? _selectedOrderDate;
-  // DateTime? _selectedExpireDate;
 
   File? _imageFile;
 
@@ -67,12 +65,7 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
         _productNameController.text = item?.name ?? '-';
         _productTypeController.text = productTypeName ?? '-';
         _priceController.text = item?.productPrice.toString() ?? '0';
-        // _quantityController.text = item?.quantity.toString() ?? '0';
         _costController.text = item?.productCost.toString() ?? '0';
-        // _orderDateController.text = DateFormat('dd/MM/yyyy').format(
-        //     DateTime.parse(item?.orderDate ?? DateTime.now().toString()));
-        // _expireDateController.text = DateFormat('dd/MM/yyyy').format(
-        //     DateTime.parse(item?.expireDate ?? DateTime.now().toString()));
       }
     }
 
@@ -131,8 +124,6 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
                       _productName(),
                       const SizedBox(height: margin),
                       _productType(),
-                      // const SizedBox(height: 20.0),
-                      // _quantity(),
                       const SizedBox(height: 20.0),
                       Row(
                         children: [
@@ -145,18 +136,6 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
                           ),
                         ],
                       ),
-                      // const SizedBox(height: 20.0),
-                      // Row(
-                      //   children: [
-                      //     Expanded(
-                      //       child: _orderDate(),
-                      //     ),
-                      //     const SizedBox(width: marginX2),
-                      //     Expanded(
-                      //       child: _expireDate(),
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -261,65 +240,22 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
     );
   }
 
-  // _quantity() {
-  //   return CustomTextField(
-  //     textEditingController: _quantityController,
-  //     labelText: 'จำนวน',
-  //     inputType: TextInputType.number,
-  //   );
-  // }
-
-  // _orderDate() {
-  //   return InkWell(
-  //     onTap: () async {
-  //       _selectedOrderDate = await datePicker(context);
-  //
-  //       if (_selectedOrderDate != null) {
-  //         _orderDateController.text =
-  //             DateFormat('dd/MM/yyyy').format(_selectedOrderDate!);
-  //
-  //         setState(() {});
-  //       }
-  //     },
-  //     child: CustomTextField(
-  //       isEnabled: false,
-  //       textEditingController: _orderDateController,
-  //       labelText: 'วันสั่งซื้อ',
-  //       inputType: TextInputType.number,
-  //       suffix: const Icon(Icons.calendar_month_rounded),
-  //     ),
-  //   );
-  // }
-
-  // _expireDate() {
-  //   return InkWell(
-  //     onTap: () async {
-  //       _selectedExpireDate = await datePicker(context);
-  //
-  //       if (_selectedExpireDate != null) {
-  //         _expireDateController.text =
-  //             DateFormat('dd/MM/yyyy').format(_selectedExpireDate!);
-  //
-  //         setState(() {});
-  //       }
-  //     },
-  //     child: CustomTextField(
-  //       isEnabled: false,
-  //       textEditingController: _expireDateController,
-  //       labelText: 'วันหมดอายุ',
-  //       inputType: TextInputType.number,
-  //       suffix: const Icon(Icons.calendar_month_rounded),
-  //     ),
-  //   );
-  // }
-
   _confirmAndCancelButton() {
     return Row(
       children: [
         Expanded(
           child: CustomSubmitButton(
             onTap: () {
-              Get.back();
+              if (widget.isFromHomePage) {
+                Get.back();
+              } else {
+                if (widget.isEdit) {
+                  Get.back();
+                  Get.back();
+                } else {
+                  Get.back();
+                }
+              }
             },
             title: 'ยกเลิก',
             fontColor: Colors.black,
@@ -333,26 +269,61 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
           child: CustomSubmitButton(
             onTap: widget.isEdit
                 ? () async {
-                    // DateTime orderDate = DateFormat("dd/MM/yyyy")
-                    //     .parse(_orderDateController.text);
-                    // DateTime expireDate = DateFormat("dd/MM/yyyy")
-                    //     .parse(_expireDateController.text);
-
-                    await _homeController.editProduct(
-                      _homeController.selectedProductId ?? 0,
-                      _productNameController.text,
-                      double.parse(_priceController.text),
-                      double.parse(_costController.text),
-                      _homeController.selectedProductTypeList.first.id,
-                    );
+                    if (_productNameController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(title: 'กรุณากรอกชื่อสินค้า'),
+                      );
+                    } else if (_homeController
+                        .selectedProductTypeList.isEmpty) {
+                      Get.dialog(
+                        const CustomAlertDialog(
+                            title: 'กรุณาเลือกหมวดหมู่สินค้า'),
+                      );
+                    } else if (_costController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(title: 'กรุณากรอกต้นทุน'),
+                      );
+                    } else if (_priceController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(title: 'กรุณากรอกราคาขาย'),
+                      );
+                    } else {
+                      await _homeController.editProduct(
+                        _homeController.selectedProductId ?? 0,
+                        _productNameController.text,
+                        double.parse(_priceController.text),
+                        double.parse(_costController.text),
+                        _homeController.selectedProductTypeList.first.id,
+                      );
+                    }
                   }
                 : () async {
-                    await _homeController.addProduct(
-                      _productNameController.text,
-                      double.parse(_priceController.text),
-                      double.parse(_costController.text),
-                      _homeController.selectedProductTypeList.first.id,
-                    );
+                    if (_productNameController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(title: 'กรุณากรอกชื่อสินค้า'),
+                      );
+                    } else if (_homeController
+                        .selectedProductTypeList.isEmpty) {
+                      Get.dialog(
+                        const CustomAlertDialog(
+                            title: 'กรุณาเลือกหมวดหมู่สินค้า'),
+                      );
+                    } else if (_costController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(title: 'กรุณากรอกต้นทุน'),
+                      );
+                    } else if (_priceController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(title: 'กรุณากรอกราคาขาย'),
+                      );
+                    } else {
+                      await _homeController.addProduct(
+                        _productNameController.text,
+                        double.parse(_priceController.text),
+                        double.parse(_costController.text),
+                        _homeController.selectedProductTypeList.first.id,
+                      );
+                    }
                   },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,

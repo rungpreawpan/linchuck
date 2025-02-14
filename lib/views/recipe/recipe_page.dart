@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/components/delete_dialog.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/recipe/add_recipe_page.dart';
 import 'package:lin_chuck/views/recipe/controller/recipe_controller.dart';
+import 'package:lin_chuck/views/recipe/model/recipe_model.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/edit_delete_popup.dart';
 import 'package:lin_chuck/widget/main_template.dart';
@@ -16,7 +19,8 @@ class RecipePage extends StatefulWidget {
 }
 
 class _RecipePageState extends State<RecipePage> {
-  final RecipeController _recipeController = Get.put(RecipeController());
+  final HomeController _homeController = Get.find();
+  final RecipeController _recipeController = Get.find();
 
   String selectedItem = '';
 
@@ -29,6 +33,9 @@ class _RecipePageState extends State<RecipePage> {
 
   _prepareData() async {
     await _recipeController.getUnit();
+    await _recipeController.getRecipe();
+
+    setState(() {});
   }
 
   @override
@@ -53,6 +60,16 @@ class _RecipePageState extends State<RecipePage> {
               ),
             ),
           ],
+          showActionButton: true,
+          actionButton: InkWell(
+            onTap: () async {
+              await _prepareData();
+            },
+            child: const Icon(
+              Icons.refresh_rounded,
+              color: primaryColor,
+            ),
+          ),
         ),
         _loading(),
       ],
@@ -62,7 +79,8 @@ class _RecipePageState extends State<RecipePage> {
   _addRecipeButton() {
     return InkWell(
       onTap: () {
-        // print('test');
+        _homeController.selectedProductList.clear();
+
         Get.to(() => const AddRecipePage());
       },
       child: Container(
@@ -92,14 +110,24 @@ class _RecipePageState extends State<RecipePage> {
         children: [
           _recipeRow(
             isHeader: true,
+            index: 0,
             title0: 'สูตร',
           ),
           const Divider(color: Colors.black),
           Expanded(
             child: ListView.separated(
-              itemCount: 5,
+              itemCount: _recipeController.recipeList
+                  .map((e) => e.productId)
+                  .toSet()
+                  .toList()
+                  .length,
               itemBuilder: (context, index) {
-                return _recipeRow(title0: 'test $index');
+                RecipeModel item = _recipeController.recipeList[index];
+
+                return _recipeRow(
+                  index: item.productId ?? 0,
+                  title0: item.productName ?? '',
+                );
               },
               separatorBuilder: (context, index) {
                 return const Divider();
@@ -113,6 +141,7 @@ class _RecipePageState extends State<RecipePage> {
 
   _recipeRow({
     bool isHeader = false,
+    required int index,
     required String title0,
   }) {
     return Padding(
@@ -138,26 +167,30 @@ class _RecipePageState extends State<RecipePage> {
               : EditDeletePopup(
                   selectedItem: selectedItem,
                   onEdit: () async {
-                    // _employeeController.selectedEmployeeId = index;
-                    //
-                    // bool? result =
-                    // await Get.to(() => const AddEmployeePage(isEdit: true));
-                    //
-                    // if (result != null) {
-                    //   await _employeeController.getEmployee();
-                    //
-                    //   setState(() {});
-                    // }
+                    _recipeController.selectedRecipeId = index;
+
+                    bool? result =
+                        await Get.to(() => const AddRecipePage(isEdit: true));
+
+                    if (result != null) {
+                      await _recipeController.getRecipe();
+
+                      setState(() {});
+                    }
                   },
                   onDelete: () async {
-                    // _employeeController.selectedEmployeeId = index;
-                    // await _employeeController
-                    //     .deleteEmployee(_employeeController.selectedEmployeeId ?? 0);
-                    // Get.back();
-                    //
-                    // await _employeeController.getEmployee();
-                    // Get.back();
-                    // setState(() {});
+                    _recipeController.selectedRecipeId = index;
+                    bool? result = await Get.dialog(const DeleteDialog());
+
+                    if (result != null) {
+                      await _recipeController.deleteRecipe(
+                          _recipeController.selectedRecipeId ?? 0);
+                      Get.back();
+
+                      await _recipeController.getRecipe();
+                      Get.back();
+                      setState(() {});
+                    }
                   },
                 ),
         ],

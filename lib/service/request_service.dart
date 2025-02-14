@@ -10,6 +10,7 @@ import 'package:lin_chuck/utils/alert.dart';
 enum HttpMethod {
   get,
   post,
+  patch,
   delete,
 }
 
@@ -81,6 +82,14 @@ class RequestService {
 
     switch (method) {
       case HttpMethod.post:
+        response = await _dio.post(
+          path,
+          data: data,
+          options: options,
+        );
+        break;
+
+      case HttpMethod.patch:
         response = await _dio.post(
           path,
           data: data,

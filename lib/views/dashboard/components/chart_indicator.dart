@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lin_chuck/constant/value_constant.dart';
 
 class Indicator extends StatelessWidget {
   final Color color;
@@ -25,7 +24,7 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: <Widget>[
+      children: [
         Container(
           width: size,
           height: size,

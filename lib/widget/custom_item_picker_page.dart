@@ -9,6 +9,7 @@ import 'package:lin_chuck/widget/custom_text_field.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomItemPicker extends StatefulWidget {
+  final bool isIngredientPage;
   final String title;
   final String? hintText;
   final double? hintSize;
@@ -23,6 +24,7 @@ class CustomItemPicker extends StatefulWidget {
 
   const CustomItemPicker({
     super.key,
+    this.isIngredientPage = false,
     required this.title,
     this.hintText,
     this.hintSize,
@@ -143,7 +145,13 @@ class _CustomItemPickerState extends State<CustomItemPicker> {
             itemCount: _filteredItems.length,
             itemBuilder: (context, index) {
               var item = _filteredItems[index];
-              bool isSelected = widget.selectedItems.contains(item);
+              bool isSelected;
+              if (widget.isIngredientPage) {
+                isSelected =
+                    widget.selectedItems.map((e) => e.ingredientName).contains(item.ingredientName);
+              } else {
+                isSelected = widget.selectedItems.contains(item);
+              }
 
               return InkWell(
                 onTap: widget.enabledSelect

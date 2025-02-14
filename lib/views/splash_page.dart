@@ -22,7 +22,7 @@ class _SplashPageState extends State<SplashPage> {
   final IntroController _introController = Get.put(IntroController());
   final AppInfoController _appInfoController = Get.put(AppInfoController());
 
-  FlutterSecureStorage storage = FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   void initState() {

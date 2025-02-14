@@ -4,6 +4,7 @@ class PromotionModel {
   int? promotionAmount;
   String? startDate;
   String? endDate;
+  int? productId;
 
   PromotionModel({
     this.promotionId,
@@ -11,6 +12,7 @@ class PromotionModel {
     this.promotionAmount,
     this.startDate,
     this.endDate,
+    this.productId,
   });
 
   factory PromotionModel.fromJSON(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class PromotionModel {
       promotionAmount: json['discount_amount'] ?? 0,
       startDate: json['start_date'] ?? '',
       endDate: json['end_date'] ?? '',
+      productId: json['product_id'] ?? 0,
     );
   }
 }

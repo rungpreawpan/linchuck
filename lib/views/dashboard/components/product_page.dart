@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/components/chart_indicator.dart';
-import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
-import 'package:lin_chuck/views/sell/model/sell_model.dart';
+import 'package:lin_chuck/views/dashboard/components/chart_indicator.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
+import 'package:lin_chuck/views/dashboard/model/dashboard_model.dart';
 
 class ProductPage extends StatefulWidget {
-  final SellModel sellData;
+  final DashboardModel dashboardData;
 
   const ProductPage({
     super.key,
-    required this.sellData,
+    required this.dashboardData,
   });
 
   @override
@@ -22,7 +22,7 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final SellController _sellController = Get.find();
+  final DashboardController _dashboardController = Get.find();
 
   int touchedIndex = -1;
 
@@ -50,9 +50,9 @@ class _ProductPageState extends State<ProductPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: _sellController.sellData!.sellProduct!.map(
+            children: _dashboardController.dashboardData!.sellProduct!.map(
               (e) {
-                int index = _sellController.sellData!.sellProduct!.indexOf(e);
+                int index = _dashboardController.dashboardData!.sellProduct!.indexOf(e);
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: marginX2),
@@ -102,11 +102,11 @@ class _ProductPageState extends State<ProductPage> {
   List<PieChartSectionData> showingSections() {
     double total = 0;
 
-    for (SellProductModel product in _sellController.sellData!.sellProduct!) {
+    for (SellProductModel product in _dashboardController.dashboardData!.sellProduct!) {
       total += product.count!;
     }
 
-    return List.generate(_sellController.sellData!.sellProduct!.length, (i) {
+    return List.generate(_dashboardController.dashboardData!.sellProduct!.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
@@ -114,9 +114,9 @@ class _ProductPageState extends State<ProductPage> {
 
       return PieChartSectionData(
         color: colorList[i],
-        value: _sellController.sellData!.sellProduct![i].count!.toDouble(),
+        value: _dashboardController.dashboardData!.sellProduct![i].count!.toDouble(),
         title:
-            '${(_sellController.sellData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
+            '${(_dashboardController.dashboardData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
         radius: radius,
         titleStyle: TextStyle(
           fontSize: fontSize,

@@ -241,9 +241,14 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
       children: [
         Expanded(
           child: CustomSubmitButton(
-            onTap: () {
-              Get.back();
-            },
+            onTap: widget.isEdit
+                ? () {
+                    Get.back();
+                    Get.back();
+                  }
+                : () {
+                    Get.back();
+                  },
             title: 'ยกเลิก',
             showBorder: true,
             borderColor: primaryColor,

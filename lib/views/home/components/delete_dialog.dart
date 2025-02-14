@@ -27,7 +27,7 @@ class DeleteDialog extends StatelessWidget {
           children: [
             Image.asset(
               'assets/icons/delete.png',
-              width: 120.0,
+              width: 100.0,
             ),
             const SizedBox(height: marginX2),
             const TextFontStyle(
@@ -61,9 +61,8 @@ class DeleteDialog extends StatelessWidget {
         Expanded(
           child: CustomSubmitButton(
             onTap: () {
-              Get.back();
+              Get.back(result: true);
 
-              //TODO:
               if (onOk != null) {
                 onOk!();
               }

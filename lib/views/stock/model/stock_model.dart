@@ -9,6 +9,7 @@ class StockModel {
   String? lotNumber;
   String? orderDate;
   String? expireDate;
+  int recipeQty;
 
   StockModel({
     this.ingredientsId,
@@ -21,6 +22,7 @@ class StockModel {
     this.lotNumber,
     this.orderDate,
     this.expireDate,
+    this.recipeQty = 1,
   });
 
   factory StockModel.fromJSON(Map<String, dynamic> json) {

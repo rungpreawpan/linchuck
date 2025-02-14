@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/category/add_category_page.dart';
+import 'package:lin_chuck/views/home/components/delete_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
@@ -10,7 +11,12 @@ import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CategoryPage extends StatefulWidget {
-  const CategoryPage({super.key});
+  final bool isFromHomePage;
+
+  const CategoryPage({
+    super.key,
+    this.isFromHomePage = false,
+  });
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
@@ -76,11 +82,10 @@ class _CategoryPageState extends State<CategoryPage> {
   _addCategoryButton() {
     return InkWell(
       onTap: () async {
-        bool? result = await Get.to(() => const AddCategoryPage());
+        bool? result = await Get.to(() => AddCategoryPage(isFromHomePage: widget.isFromHomePage));
 
         if (result != null) {
-          //TODO:
-          // await _homeController.getProduct();
+          await _homeController.getProductType();
 
           setState(() {});
         }
@@ -190,11 +195,11 @@ class _CategoryPageState extends State<CategoryPage> {
                   selectedItem: selectedItem,
                   onEdit: () async {
                     _homeController.selectedProductTypeId = index;
-
                     bool? result =
                         await Get.to(() => const AddCategoryPage(isEdit: true));
 
                     if (result != null) {
+                      Get.back();
                       await _homeController.getProductType();
 
                       setState(() {});
@@ -202,12 +207,16 @@ class _CategoryPageState extends State<CategoryPage> {
                   },
                   onDelete: () async {
                     _homeController.selectedProductTypeId = index;
-                    await _homeController
-                        .deleteProductType(_homeController.selectedProductTypeId ?? 0);
-                    Get.back();
+                    bool? result = await Get.dialog(const DeleteDialog());
 
-                    await _homeController.getProductType();
-                    setState(() {});
+                    if (result != null) {
+                      await _homeController.deleteProductType(
+                          _homeController.selectedProductTypeId ?? 0);
+
+                      await _homeController.getProductType();
+                      Get.back();
+                      setState(() {});
+                    }
                   },
                 ),
         ],

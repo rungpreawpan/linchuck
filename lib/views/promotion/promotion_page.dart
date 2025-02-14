@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/home/components/delete_dialog.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/promotion/add_promotion_page.dart';
 import 'package:lin_chuck/views/promotion/controller/promotion_controller.dart';
 import 'package:lin_chuck/views/promotion/model/promotion_model.dart';
@@ -19,6 +22,7 @@ class PromotionPage extends StatefulWidget {
 
 class _PromotionPageState extends State<PromotionPage> {
   final PromotionController _promotionController = Get.find();
+  final HomeController _homeController = Get.find();
 
   String selectedItem = '';
 
@@ -31,6 +35,7 @@ class _PromotionPageState extends State<PromotionPage> {
 
   _prepareData() async {
     await _promotionController.getPromotion();
+    await _homeController.getProduct();
 
     setState(() {});
   }
@@ -129,11 +134,17 @@ class _PromotionPageState extends State<PromotionPage> {
                 String endDate = DateFormat('dd/MM/yyyy')
                     .format(DateTime.parse(item.endDate!));
 
+                String? productName;
+                for (ProductModel sellProduct in _homeController.productList) {
+                  if (item.productId == sellProduct.id) {
+                    productName = sellProduct.name;
+                  }
+                }
+
                 return _promotionRow(
                   index: item.promotionId ?? 0,
                   title0: item.promotionName ?? '-',
-                  title1: 'test todo',
-                  //TODO
+                  title1: productName ?? '-',
                   title2: item.promotionAmount != null
                       ? '${item.promotionAmount} บาท'
                       : '-',
@@ -205,13 +216,17 @@ class _PromotionPageState extends State<PromotionPage> {
                   onEdit: () {},
                   onDelete: () async {
                     _promotionController.selectedPromotionId = index;
-                    await _promotionController.deletePromotion(
-                        _promotionController.selectedPromotionId ?? 0);
-                    Get.back();
+                    bool? result = await Get.dialog(const DeleteDialog());
 
-                    await _promotionController.getPromotion();
-                    Get.back();
-                    setState(() {});
+                    if (result != null) {
+                      await _promotionController.deletePromotion(
+                          _promotionController.selectedPromotionId ?? 0);
+                      Get.back();
+
+                      await _promotionController.getPromotion();
+                      Get.back();
+                      setState(() {});
+                    }
                   },
                 ),
         ],

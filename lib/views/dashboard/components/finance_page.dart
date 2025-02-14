@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class FinancePage extends StatefulWidget {
@@ -13,7 +13,7 @@ class FinancePage extends StatefulWidget {
 }
 
 class _FinancePageState extends State<FinancePage> {
-  final SellController _sellController = Get.find();
+  final DashboardController _dashboardController = Get.find();
 
   double? jan;
   double? feb;
@@ -36,32 +36,32 @@ class _FinancePageState extends State<FinancePage> {
   }
 
   _prepareData() async {
-    await _sellController.getFinance();
+    await _dashboardController.getFinance();
 
-    if (_sellController.janData?.profit != null &&
-        _sellController.febData?.profit != null &&
-        _sellController.marData?.profit != null &&
-        _sellController.aprData?.profit != null &&
-        _sellController.mayData?.profit != null &&
-        _sellController.junData?.profit != null &&
-        _sellController.julData?.profit != null &&
-        _sellController.augData?.profit != null &&
-        _sellController.sepData?.profit != null &&
-        _sellController.octData?.profit != null &&
-        _sellController.novData?.profit != null &&
-        _sellController.decData?.profit != null) {
-      jan = (_sellController.janData!.profit! / 3000);
-      feb = _sellController.febData!.profit! / 3000;
-      mar = _sellController.marData!.profit! / 3000;
-      apr = _sellController.aprData!.profit! / 3000;
-      may = _sellController.mayData!.profit! / 3000;
-      jun = _sellController.junData!.profit! / 3000;
-      jul = _sellController.julData!.profit! / 3000;
-      aug = _sellController.augData!.profit! / 3000;
-      sep = _sellController.sepData!.profit! / 3000;
-      oct = _sellController.octData!.profit! / 3000;
-      nov = _sellController.novData!.profit! / 3000;
-      dec = _sellController.decData!.profit! / 3000;
+    if (_dashboardController.janData?.profit != null &&
+        _dashboardController.febData?.profit != null &&
+        _dashboardController.marData?.profit != null &&
+        _dashboardController.aprData?.profit != null &&
+        _dashboardController.mayData?.profit != null &&
+        _dashboardController.junData?.profit != null &&
+        _dashboardController.julData?.profit != null &&
+        _dashboardController.augData?.profit != null &&
+        _dashboardController.sepData?.profit != null &&
+        _dashboardController.octData?.profit != null &&
+        _dashboardController.novData?.profit != null &&
+        _dashboardController.decData?.profit != null) {
+      jan = (_dashboardController.janData!.profit! / 3000);
+      feb = _dashboardController.febData!.profit! / 3000;
+      mar = _dashboardController.marData!.profit! / 3000;
+      apr = _dashboardController.aprData!.profit! / 3000;
+      may = _dashboardController.mayData!.profit! / 3000;
+      jun = _dashboardController.junData!.profit! / 3000;
+      jul = _dashboardController.julData!.profit! / 3000;
+      aug = _dashboardController.augData!.profit! / 3000;
+      sep = _dashboardController.sepData!.profit! / 3000;
+      oct = _dashboardController.octData!.profit! / 3000;
+      nov = _dashboardController.novData!.profit! / 3000;
+      dec = _dashboardController.decData!.profit! / 3000;
     }
 
     setState(() {});

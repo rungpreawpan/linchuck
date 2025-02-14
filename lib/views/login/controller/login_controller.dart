@@ -14,8 +14,6 @@ class LoginController extends GetxController {
 
   List<UserModel> userList = [];
 
-  // UserModel? user;
-
   verifyLogin(String email, String password) async {
     if (email == '') {
       Get.dialog(

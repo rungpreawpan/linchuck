@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/home/components/delete_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/selected_product_model.dart';
@@ -73,14 +72,6 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
                   if (quantity != 1) {
                     quantity -= 1;
                     setState(() {});
-                  } else {
-                    Get.dialog(
-                      DeleteDialog(
-                        onOk: () {
-                          Get.back();
-                        },
-                      ),
-                    );
                   }
                 },
                 onAdd: () {

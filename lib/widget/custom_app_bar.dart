@@ -4,6 +4,7 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
+  final double bottomPadding;
   final bool showBackIcon;
   final bool showActionButton;
   final Widget actionButton;
@@ -12,6 +13,7 @@ class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
     super.key,
     required this.title,
+    this.bottomPadding = 30.0,
     this.showBackIcon = false,
     this.showActionButton = false,
     this.actionButton = const SizedBox(),
@@ -23,7 +25,10 @@ class CustomAppBar extends StatelessWidget {
     return SizedBox(
       width: Get.width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30.0),
+        padding: EdgeInsets.only(
+          top: 30.0,
+          bottom: bottomPadding,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
-import 'package:lin_chuck/views/sell/model/sell_model.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
+import 'package:lin_chuck/views/dashboard/model/dashboard_model.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CostPage extends StatefulWidget {
-  final SellModel sellData;
+  final DashboardModel sellData;
 
   const CostPage({
     super.key,
@@ -18,7 +18,7 @@ class CostPage extends StatefulWidget {
 }
 
 class _CostPageState extends State<CostPage> {
-  final SellController _sellController = Get.find();
+  final DashboardController _dashboardController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _CostPageState extends State<CostPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(15.0),
       ),
-      child: _sellController.sellData != null
+      child: _dashboardController.dashboardData != null
           ? Column(
               children: [
                 _summaryData(),
@@ -84,9 +84,9 @@ class _CostPageState extends State<CostPage> {
   _costList() {
     return Expanded(
       child: ListView.separated(
-        itemCount: _sellController.sellData!.sellProduct!.length,
+        itemCount: _dashboardController.dashboardData!.sellProduct!.length,
         itemBuilder: (context, index) {
-          SellProductModel? item = _sellController.sellData!.sellProduct![index];
+          SellProductModel? item = _dashboardController.dashboardData!.sellProduct![index];
 
           return _costCard(
             title: item.name ?? '',

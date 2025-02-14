@@ -25,7 +25,7 @@ class ProductModel {
       productCost: json['product_cost'] ?? 0,
       productTypeId: json['product_type_id'] ?? 0,
       productImage: json['product_image'] ?? '',
-      promotionId: json['promotion_id'] ?? 0,
+      promotionId: json['promotion_id'],
     );
   }
 }

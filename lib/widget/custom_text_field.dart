@@ -5,9 +5,11 @@ import 'package:lin_chuck/constant/value_constant.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? textEditingController;
+  final FocusNode? focusNode;
   final int maxLine;
   final int? maxLength;
   final TextInputType inputType;
+  final TextAlign textAlign;
   final bool obscureText;
   final void Function(String)? onChanged;
   final bool isEnabled;
@@ -28,9 +30,11 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     this.textEditingController,
+    this.focusNode,
     this.maxLine = 1,
     this.maxLength,
     this.inputType = TextInputType.text,
+    this.textAlign = TextAlign.start,
     this.obscureText = false,
     this.onChanged,
     this.isEnabled = true,
@@ -53,6 +57,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: textEditingController,
+      focusNode: focusNode,
       maxLines: maxLine,
       maxLength: maxLength,
       keyboardType: inputType,
@@ -60,6 +65,7 @@ class CustomTextField extends StatelessWidget {
           ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
           : [],
       textInputAction: TextInputAction.done,
+      textAlign: textAlign,
       obscureText: obscureText,
       style: TextStyle(
         color: Colors.black,

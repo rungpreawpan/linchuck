@@ -90,7 +90,6 @@ class WelcomePage extends StatelessWidget {
                 size: fontSizeXXL,
                 weight: FontWeight.bold,
               ),
-              //TODO: edit icon
               Icon(
                 Icons.phone,
                 size: 35.0,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/category/category_page.dart';
 import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
@@ -14,7 +15,10 @@ import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/views/home/model/selected_product_model.dart';
 import 'package:lin_chuck/views/promotion/controller/promotion_controller.dart';
+import 'package:lin_chuck/views/promotion/model/promotion_model.dart';
+import 'package:lin_chuck/views/recipe/controller/recipe_controller.dart';
 import 'package:lin_chuck/views/sell_product/sell_product_page.dart';
+import 'package:lin_chuck/views/stock/controller/stock_controller.dart';
 import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_button.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
@@ -34,7 +38,9 @@ class _HomePageState extends State<HomePage> {
   final HomeController _homeController = Get.put(HomeController());
   final EmployeeController _employeeController = Get.put(EmployeeController());
   final PromotionController _promotionController =
-  Get.put(PromotionController());
+      Get.put(PromotionController());
+  final RecipeController _recipeController = Get.put(RecipeController());
+  final StockController _stockController = Get.put(StockController());
 
   FlutterSecureStorage storage = const FlutterSecureStorage();
 
@@ -68,6 +74,8 @@ class _HomePageState extends State<HomePage> {
     await _getFilterProduct();
     await _employeeController.getOneEmployee(int.parse(userId.toString()));
     await _promotionController.getPromotion();
+    await _recipeController.getUnit();
+    await _stockController.getIngredient();
 
     setState(() {});
   }
@@ -177,8 +185,16 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       ProductModel item = _filterProductList[index];
 
+                      int? discount;
+                      for (PromotionModel promotion in _promotionController.promotionList) {
+                        if (item.promotionId == promotion.promotionId) {
+                          discount = promotion.promotionAmount;
+                        }
+                      }
+
                       return _menuCard(
                         product: item,
+                        discount: discount,
                         showSweet: item.productTypeId == 2,
                       );
                     },
@@ -267,6 +283,7 @@ class _HomePageState extends State<HomePage> {
 
   _menuCard({
     required ProductModel product,
+    int? discount,
     bool showSweet = false,
   }) {
     return InkWell(
@@ -293,17 +310,43 @@ class _HomePageState extends State<HomePage> {
         children: [
           //TODO: change to image.file
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.image_not_supported_outlined,
-                  color: Colors.grey.shade700,
-                ),
-              ),
+            child: ClipRRect(
+              child: product.promotionId == null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    )
+                  : Banner(
+                      message: discount != null ? 'ลด $discount.-' : '',
+                      location: BannerLocation.topEnd,
+                      color: Colors.red,
+                      textStyle: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: GoogleFonts.kanit().fontFamily,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(height: marginX2),
@@ -332,7 +375,6 @@ class _HomePageState extends State<HomePage> {
   _paymentTypeButton({
     required Function() onTap,
     required String imagePath,
-    // required IconData icon,
     required bool isSelected,
   }) {
     return InkWell(
@@ -619,11 +661,11 @@ class _HomePageState extends State<HomePage> {
               onTap: data == 'สินค้า'
                   ? () {
                       Get.back();
-                      Get.to(() => const SellProductPage());
+                      Get.to(() => const SellProductPage(isFromHomePage: true));
                     }
                   : () {
                       Get.back();
-                      Get.to(() => const CategoryPage());
+                      Get.to(() => const CategoryPage(isFromHomePage: true));
                     },
               child: TextFontStyle(
                 data,

@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/sell/components/chart_indicator.dart';
-import 'package:lin_chuck/views/sell/controller/sell_controller.dart';
-import 'package:lin_chuck/views/sell/model/sell_model.dart';
+import 'package:lin_chuck/views/dashboard/components/chart_indicator.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
+import 'package:lin_chuck/views/dashboard/model/dashboard_model.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class OverviewPage extends StatefulWidget {
-  final SellModel sellData;
+  final DashboardModel dashboardData;
 
   const OverviewPage({
     super.key,
-    required this.sellData,
+    required this.dashboardData,
   });
 
   @override
@@ -23,7 +23,7 @@ class OverviewPage extends StatefulWidget {
 }
 
 class _OverviewPageState extends State<OverviewPage> {
-  final SellController _sellController = Get.find();
+  final DashboardController _dashboardController = Get.find();
 
   double? jan;
   double? feb;
@@ -46,32 +46,32 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   _prepareData() async {
-    await _sellController.getFinance();
+    await _dashboardController.getFinance();
 
-    if (_sellController.janData?.sales != null &&
-        _sellController.febData?.sales != null &&
-        _sellController.marData?.sales != null &&
-        _sellController.aprData?.sales != null &&
-        _sellController.mayData?.sales != null &&
-        _sellController.junData?.sales != null &&
-        _sellController.julData?.sales != null &&
-        _sellController.augData?.sales != null &&
-        _sellController.sepData?.sales != null &&
-        _sellController.octData?.sales != null &&
-        _sellController.novData?.sales != null &&
-        _sellController.decData?.sales != null) {
-      jan = (_sellController.janData!.sales! / 3000);
-      feb = _sellController.febData!.sales! / 3000;
-      mar = _sellController.marData!.sales! / 3000;
-      apr = _sellController.aprData!.sales! / 3000;
-      may = _sellController.mayData!.sales! / 3000;
-      jun = _sellController.junData!.sales! / 3000;
-      jul = _sellController.julData!.sales! / 3000;
-      aug = _sellController.augData!.sales! / 3000;
-      sep = _sellController.sepData!.sales! / 3000;
-      oct = _sellController.octData!.sales! / 3000;
-      nov = _sellController.novData!.sales! / 3000;
-      dec = _sellController.decData!.sales! / 3000;
+    if (_dashboardController.janData?.sales != null &&
+        _dashboardController.febData?.sales != null &&
+        _dashboardController.marData?.sales != null &&
+        _dashboardController.aprData?.sales != null &&
+        _dashboardController.mayData?.sales != null &&
+        _dashboardController.junData?.sales != null &&
+        _dashboardController.julData?.sales != null &&
+        _dashboardController.augData?.sales != null &&
+        _dashboardController.sepData?.sales != null &&
+        _dashboardController.octData?.sales != null &&
+        _dashboardController.novData?.sales != null &&
+        _dashboardController.decData?.sales != null) {
+      jan = (_dashboardController.janData!.sales! / 3000);
+      feb = _dashboardController.febData!.sales! / 3000;
+      mar = _dashboardController.marData!.sales! / 3000;
+      apr = _dashboardController.aprData!.sales! / 3000;
+      may = _dashboardController.mayData!.sales! / 3000;
+      jun = _dashboardController.junData!.sales! / 3000;
+      jul = _dashboardController.julData!.sales! / 3000;
+      aug = _dashboardController.augData!.sales! / 3000;
+      sep = _dashboardController.sepData!.sales! / 3000;
+      oct = _dashboardController.octData!.sales! / 3000;
+      nov = _dashboardController.novData!.sales! / 3000;
+      dec = _dashboardController.decData!.sales! / 3000;
     }
 
     setState(() {});
@@ -120,25 +120,25 @@ class _OverviewPageState extends State<OverviewPage> {
       children: [
         _dataBox(
           title: 'รายการขาย',
-          value: widget.sellData.allOrder.toString(),
+          value: widget.dashboardData.allOrder.toString(),
           unit: 'รายการ',
         ),
         const SizedBox(width: marginX2),
         _dataBox(
           title: 'ยอดขาย',
-          value: widget.sellData.sales.toString(),
+          value: widget.dashboardData.sales.toString(),
           unit: 'บาท',
         ),
         const SizedBox(width: marginX2),
         _dataBox(
           title: 'ต้นทุน',
-          value: widget.sellData.allCosts.toString(),
+          value: widget.dashboardData.allCosts.toString(),
           unit: 'บาท',
         ),
         const SizedBox(width: marginX2),
         _dataBox(
           title: 'กำไร',
-          value: widget.sellData.profit.toString(),
+          value: widget.dashboardData.profit.toString(),
           unit: 'บาท',
         ),
       ],
@@ -442,9 +442,9 @@ class _OverviewPageState extends State<OverviewPage> {
             const SizedBox(height: margin),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: _sellController.sellData!.sellProduct!.map(
+              children: _dashboardController.dashboardData!.sellProduct!.map(
                 (e) {
-                  int index = _sellController.sellData!.sellProduct!.indexOf(e);
+                  int index = _dashboardController.dashboardData!.sellProduct!.indexOf(e);
 
                   return Indicator(
                     color: colorList[index],
@@ -463,12 +463,12 @@ class _OverviewPageState extends State<OverviewPage> {
   List<PieChartSectionData> showingSections() {
     double total = 0;
 
-    for (SellProductModel product in _sellController.sellData!.sellProduct!) {
+    for (SellProductModel product in _dashboardController.dashboardData!.sellProduct!) {
       total += product.count!;
     }
 
     return List.generate(
-      _sellController.sellData!.sellProduct!.length,
+      _dashboardController.dashboardData!.sellProduct!.length,
       (i) {
         final isTouched = i == touchedIndex;
         final fontSize = isTouched ? 25.0 : 16.0;
@@ -477,9 +477,9 @@ class _OverviewPageState extends State<OverviewPage> {
 
         return PieChartSectionData(
           color: colorList[i],
-          value: _sellController.sellData!.sellProduct![i].count!.toDouble(),
+          value: _dashboardController.dashboardData!.sellProduct![i].count!.toDouble(),
           title:
-              '${(_sellController.sellData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
+              '${(_dashboardController.dashboardData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
           radius: radius,
           titleStyle: TextStyle(
             fontSize: fontSize,

@@ -15,22 +15,25 @@ dependencies:
   cupertino_icons: ^1.0.6
   get: ^4.6.6
   permission_handler: ^11.3.1
-  device_info_plus: ^10.1.0
+  device_info_plus: ^11.3.0
   flutter_secure_storage: ^9.2.2
   google_fonts: ^6.2.1
   url_launcher: ^6.3.0
   dropdown_button2: ^2.3.9
   package_info_plus: ^8.0.2
   loading_animation_widget: ^1.2.1
-  flutter_slidable: ^3.1.1
+  flutter_slidable: ^4.0.0
   image_picker: ^1.1.2
   fl_chart: ^0.69.0
   dio: ^5.7.0
   connectivity_plus: ^6.0.5
   intl: ^0.19.0
-  flutter_localization: ^0.2.2
+  flutter_localization: ^0.3.1
   shared_preferences: ^2.3.2
   flutter_keyboard_visibility: ^6.0.0
+  pdf: ^3.11.2
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -54,7 +57,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.1
 
 flutter:
@@ -65,4 +68,4 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/data/
-
+    - assets/font/Sarabun/

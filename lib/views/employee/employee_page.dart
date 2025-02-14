@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/employee/add_employee_page.dart';
 import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
+import 'package:lin_chuck/views/home/components/delete_dialog.dart';
 import 'package:lin_chuck/views/login/model/user_model.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/edit_delete_popup.dart';
@@ -259,13 +260,17 @@ class _EmployeePageState extends State<EmployeePage> {
                   },
                   onDelete: () async {
                     _employeeController.selectedEmployeeId = index;
-                    await _employeeController.deleteEmployee(
-                        _employeeController.selectedEmployeeId ?? 0);
-                    Get.back();
+                    bool? result = await Get.dialog(const DeleteDialog());
 
-                    await _employeeController.getEmployee();
-                    Get.back();
-                    setState(() {});
+                    if (result != null) {
+                      await _employeeController.deleteEmployee(
+                          _employeeController.selectedEmployeeId ?? 0);
+                      Get.back();
+
+                      await _employeeController.getEmployee();
+                      Get.back();
+                      setState(() {});
+                    }
                   },
                 ),
         ],

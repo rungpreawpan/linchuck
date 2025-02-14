@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
+import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
@@ -10,10 +11,12 @@ import 'package:lin_chuck/widget/main_template.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
 class AddCategoryPage extends StatefulWidget {
+  final bool isFromHomePage;
   final bool isEdit;
 
   const AddCategoryPage({
     super.key,
+    this.isFromHomePage = false,
     this.isEdit = false,
   });
 
@@ -98,7 +101,16 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
         Expanded(
           child: CustomSubmitButton(
             onTap: () {
-              Get.back();
+              if (widget.isFromHomePage) {
+                Get.back();
+              } else {
+                if (widget.isEdit) {
+                  Get.back();
+                  Get.back();
+                } else {
+                  Get.back();
+                }
+              }
             },
             title: 'ยกเลิก',
             fontColor: Colors.black,
@@ -112,14 +124,28 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
           child: CustomSubmitButton(
             onTap: widget.isEdit
                 ? () async {
-                    await _homeController.editProductType(
-                      _homeController.selectedProductId ?? 0,
-                      _productTypeController.text,
-                    );
+                    if (_productTypeController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(
+                            title: 'กรุณากรอกชื่อหมวดหมู่สินค้า'),
+                      );
+                    } else {
+                      await _homeController.editProductType(
+                        _homeController.selectedProductId ?? 0,
+                        _productTypeController.text,
+                      );
+                    }
                   }
                 : () async {
-                    await _homeController
-                        .addProductType(_productTypeController.text);
+                    if (_productTypeController.text == '') {
+                      Get.dialog(
+                        const CustomAlertDialog(
+                            title: 'กรุณากรอกชื่อหมวดหมู่สินค้า'),
+                      );
+                    } else {
+                      await _homeController
+                          .addProductType(_productTypeController.text);
+                    }
                   },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,

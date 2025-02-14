@@ -3,25 +3,25 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:lin_chuck/service/request_service.dart';
 import 'package:lin_chuck/utils/alert.dart';
-import 'package:lin_chuck/views/sell/model/sell_model.dart';
+import 'package:lin_chuck/views/dashboard/model/dashboard_model.dart';
 
-class SellController extends GetxController {
+class DashboardController extends GetxController {
   var isLoading = false.obs;
 
-  SellModel? sellData;
+  DashboardModel? dashboardData;
 
-  SellModel? janData;
-  SellModel? febData;
-  SellModel? marData;
-  SellModel? aprData;
-  SellModel? mayData;
-  SellModel? junData;
-  SellModel? julData;
-  SellModel? augData;
-  SellModel? sepData;
-  SellModel? octData;
-  SellModel? novData;
-  SellModel? decData;
+  DashboardModel? janData;
+  DashboardModel? febData;
+  DashboardModel? marData;
+  DashboardModel? aprData;
+  DashboardModel? mayData;
+  DashboardModel? junData;
+  DashboardModel? julData;
+  DashboardModel? augData;
+  DashboardModel? sepData;
+  DashboardModel? octData;
+  DashboardModel? novData;
+  DashboardModel? decData;
 
   getAllData(String startDate, String endDate) async {
     bool isOnline = await RequestService().checkInternetConnection();
@@ -43,7 +43,7 @@ class SellController extends GetxController {
 
       if (response != null) {
         var dataJSON = response.data;
-        sellData = SellModel.fromJSON(dataJSON);
+        dashboardData = DashboardModel.fromJSON(dataJSON);
       }
     } catch (e) {
       log(e.toString());
@@ -73,7 +73,7 @@ class SellController extends GetxController {
 
       if (janResponse != null) {
         var dataJSON = janResponse.data;
-        janData = SellModel.fromJSON(dataJSON);
+        janData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// febuary
@@ -84,7 +84,7 @@ class SellController extends GetxController {
 
       if (febResponse != null) {
         var dataJSON = febResponse.data;
-        febData = SellModel.fromJSON(dataJSON);
+        febData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// march
@@ -95,7 +95,7 @@ class SellController extends GetxController {
 
       if (marResponse != null) {
         var dataJSON = marResponse.data;
-        marData = SellModel.fromJSON(dataJSON);
+        marData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// april
@@ -106,7 +106,7 @@ class SellController extends GetxController {
 
       if (aprResponse != null) {
         var dataJSON = aprResponse.data;
-        aprData = SellModel.fromJSON(dataJSON);
+        aprData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// may
@@ -117,7 +117,7 @@ class SellController extends GetxController {
 
       if (mayResponse != null) {
         var dataJSON = mayResponse.data;
-        mayData = SellModel.fromJSON(dataJSON);
+        mayData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// june
@@ -128,7 +128,7 @@ class SellController extends GetxController {
 
       if (junResponse != null) {
         var dataJSON = junResponse.data;
-        junData = SellModel.fromJSON(dataJSON);
+        junData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// july
@@ -139,7 +139,7 @@ class SellController extends GetxController {
 
       if (julResponse != null) {
         var dataJSON = julResponse.data;
-        julData = SellModel.fromJSON(dataJSON);
+        julData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// August
@@ -150,7 +150,7 @@ class SellController extends GetxController {
 
       if (augResponse != null) {
         var dataJSON = augResponse.data;
-        augData = SellModel.fromJSON(dataJSON);
+        augData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// september
@@ -161,7 +161,7 @@ class SellController extends GetxController {
 
       if (sepResponse != null) {
         var dataJSON = sepResponse.data;
-        sepData = SellModel.fromJSON(dataJSON);
+        sepData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// october
@@ -172,7 +172,7 @@ class SellController extends GetxController {
 
       if (octResponse != null) {
         var dataJSON = octResponse.data;
-        octData = SellModel.fromJSON(dataJSON);
+        octData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// november
@@ -183,7 +183,7 @@ class SellController extends GetxController {
 
       if (novResponse != null) {
         var dataJSON = novResponse.data;
-        novData = SellModel.fromJSON(dataJSON);
+        novData = DashboardModel.fromJSON(dataJSON);
       }
 
       /// december
@@ -194,7 +194,7 @@ class SellController extends GetxController {
 
       if (decResponse != null) {
         var dataJSON = decResponse.data;
-        decData = SellModel.fromJSON(dataJSON);
+        decData = DashboardModel.fromJSON(dataJSON);
       }
     } catch (e) {
       log(e.toString());
