@@ -67,10 +67,7 @@ class _PromotionPageState extends State<PromotionPage> {
             onTap: () async {
               await _prepareData();
             },
-            child: const Icon(
-              Icons.refresh_rounded,
-              color: primaryColor,
-            ),
+            child: const Icon(Icons.refresh_rounded),
           ),
         ),
         _loading(),

@@ -47,7 +47,7 @@ class _PayByPromptPayState extends State<PayByPromptPay> {
         user: widget.user,
         totalPrice: widget.total,
         payType: 'promptpay',
-        payImage: 'test',//base64Image,
+        payImage: base64Image,
       );
 
      _homeController.orderDetailPayment = payment;

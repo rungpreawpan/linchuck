@@ -54,10 +54,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             onTap: () async {
               await _prepareDate();
             },
-            child: const Icon(
-              Icons.refresh_rounded,
-              color: primaryColor,
-            ),
+            child: const Icon(Icons.refresh_rounded),
           ),
         ),
         _loading(),
@@ -70,7 +67,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
       child: ListView.separated(
         itemCount: _receiptController.paymentList.reversed.length,
         itemBuilder: (context, index) {
-          PaymentModel item = _receiptController.paymentList.reversed.toList()[index];
+          PaymentModel item =
+              _receiptController.paymentList.reversed.toList()[index];
           int employeeId = 0;
           int orderId = 0;
           String receiptNo = '';

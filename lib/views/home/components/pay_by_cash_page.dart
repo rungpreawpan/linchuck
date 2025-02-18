@@ -7,6 +7,7 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 
 class PayByCashPage extends StatefulWidget {
   final double total;
+  final double discountAmount;
   final Function() cancelOrder;
   final UserModel? user;
   final Function() onConfirm;
@@ -14,6 +15,7 @@ class PayByCashPage extends StatefulWidget {
   const PayByCashPage({
     super.key,
     required this.total,
+    required this.discountAmount,
     required this.cancelOrder,
     required this.user,
     required this.onConfirm,
@@ -304,7 +306,7 @@ class _PayByCashPageState extends State<PayByCashPage> {
                   ],
                 ),
                 TextFontStyle(
-                  widget.total.toString(),
+                  (widget.total - widget.discountAmount).toString(),
                   color: Colors.white,
                   size: 55.0,
                   weight: FontWeight.bold,
@@ -379,7 +381,7 @@ class _PayByCashPageState extends State<PayByCashPage> {
     double total = widget.total;
     double received = double.parse(result);
 
-    change = received - total;
+    change = received - total + widget.discountAmount;
     _homeController.changeMoney = change;
     return change.toString();
   }

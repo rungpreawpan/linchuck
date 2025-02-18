@@ -23,7 +23,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final DashboardController _dashboardController = Get.put(DashboardController());
+  final DashboardController _dashboardController =
+      Get.put(DashboardController());
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   _prepareData() async {
-    await _dashboardController.getAllData('2024-01-01 00:00:00',
+    await _dashboardController.getAllData('${DateTime.now().year}-01-01 00:00:00',
         DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()));
 
     setState(() {});
@@ -57,16 +58,17 @@ class _DashboardPageState extends State<DashboardPage> {
         MainTemplate(
           appBarTitle: 'ยอดขาย',
           showActionButton: true,
+          bottomPadding: 20.0,
           actionButton: _actionButton(),
           contentWidget: [
             Expanded(
               child: Column(
                 children: [
                   _dataList(),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: marginX2),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(marginX2),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(20.0),
@@ -118,7 +120,6 @@ class _DashboardPageState extends State<DashboardPage> {
         InkWell(
           onTap: () {
             Get.dialog(RequestPdfDialog());
-            // Get.to(() => HomeScreen());
           },
           child: Icon(Icons.file_present_outlined),
         ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -78,7 +80,6 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
               ),
               const SizedBox(height: marginX2),
               _selectProduct(),
-              //TODO: ถ้าเลือกเป็นpercentให้แสดงด้วยว่าลดกี่บาท
               const Divider(
                 color: Colors.grey,
                 height: 30.0,
@@ -101,6 +102,27 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
                 title: 'ลดเป็นเปอร์เซ็นต์',
                 controller: _percentagePriceController,
                 unit: '%',
+              ),
+              Visibility(
+                visible: _homeController.selectedProductList.isNotEmpty &&
+                    _percentagePriceController.text != '' &&
+                    isPercentage,
+                child: Column(
+                  children: [
+                    const SizedBox(height: margin),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextFontStyle(
+                          _homeController.selectedProductList.isNotEmpty
+                              ? 'ลดเป็นจำนวนเงิน ${_homeController.selectedProductList.first.productPrice! * int.parse(_percentagePriceController.text != '' ? _percentagePriceController.text : '0') / 100} บาท'
+                              : '',
+                          size: fontSizeM,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const Divider(
                 color: Colors.grey,
@@ -223,9 +245,28 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
                     height: 60.0,
                     width: 90.0,
                     decoration: BoxDecoration(
-                      color: Colors.grey,
+                      color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    child: _homeController.selectedProductList.isNotEmpty &&
+                            _homeController
+                                    .selectedProductList.first.productImage !=
+                                null &&
+                            _homeController.selectedProductList.first
+                                    .productImage!.length >
+                                6
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image.memory(
+                              base64Decode(_homeController
+                                  .selectedProductList.first.productImage!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(Icons.image_not_supported_outlined);
+                              },
+                            ),
+                          )
+                        : Icon(Icons.image_not_supported_outlined),
                   ),
                   const SizedBox(width: 20.0),
                 ],
@@ -294,7 +335,18 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
           child: CustomTextField(
             isEnabled: isSelected,
             textEditingController: controller,
+            inputType: TextInputType.number,
             hintText: '0',
+            onChanged: (value) {
+              if (_homeController.selectedProductList.isNotEmpty &&
+                  value != '') {
+                if (_homeController.selectedProductList.first.productPrice! <
+                    int.parse(int.parse(value).toStringAsFixed(0))) {
+                  Get.dialog(CustomAlertDialog(title: 'กรุณากรอกส่วนลดใหม่'));
+                }
+              }
+              setState(() {});
+            },
             suffix: SizedBox(
               width: 50.0,
               child: Center(
@@ -305,7 +357,6 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
                 ),
               ),
             ),
-            // suffix: TextFontStyle('test'),
           ),
         ),
       ],
@@ -370,14 +421,21 @@ class _AddPromotionPageState extends State<AddPromotionPage> {
                   discountAmount = double.parse(_fixedPriceController.text);
                 }
 
-                await _promotionController.createPromotion(
-                  promotionName: _promotionNameController.text,
-                  productId: _homeController.selectedProductList.first.id ?? 0,
-                  discountAmount: int.parse(discountAmount.toStringAsFixed(0)),
-                  startDate: _startDate.toString(),
-                  endDate: _endDate.toString(),
-                );
-                _homeController.selectedProductList.clear();
+                if (discountAmount >
+                    _homeController.selectedProductList.first.productPrice!) {
+                  Get.dialog(CustomAlertDialog(title: 'กรุณากรอกส่วนลดใหม่'));
+                } else {
+                  await _promotionController.createPromotion(
+                    promotionName: _promotionNameController.text,
+                    productId:
+                        _homeController.selectedProductList.first.id ?? 0,
+                    discountAmount:
+                        int.parse(discountAmount.toStringAsFixed(0)),
+                    startDate: _startDate.toString(),
+                    endDate: _endDate.toString(),
+                  );
+                  _homeController.selectedProductList.clear();
+                }
               }
             },
             title: 'ยืนยัน',

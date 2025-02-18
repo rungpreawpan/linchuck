@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
+import 'package:lin_chuck/views/dashboard/controller/dashboard_controller.dart';
+import 'package:lin_chuck/views/dashboard/model/dashboard_model.dart';
+import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 import 'package:lin_chuck/widget/custom_select_date.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
@@ -22,11 +25,17 @@ class RequestPdfDialog extends StatefulWidget {
 }
 
 class _RequestPdfDialogState extends State<RequestPdfDialog> {
+  final DashboardController _dashboardController = Get.find();
+
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
   DateTime? _startDate;
   DateTime? _endDate;
+
+  bool loadingComplete = false;
+
+  List<SummaryOrderModel> order = [];
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +98,7 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
         child: CustomTextField(
           isEnabled: false,
           textEditingController: _startDateController,
-          labelText: 'วันที่เริ่ม',
+          labelText: 'วันที่เริ่มต้น',
           suffix: const Icon(Icons.calendar_month_rounded),
         ),
       ),
@@ -141,7 +150,7 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'รายงานยอดขาย',
+                  'รายงานยอดขายประจำวันที่',
                   style: pw.TextStyle(
                     font: fontBold,
                     fontSize: 16.0,
@@ -155,15 +164,9 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
               ],
             ),
             pw.Text(
-              '5 กันยายน 2025',
-              style: pw.TextStyle(
-                font: fontBold,
-                fontSize: 16.0,
-              ),
-            ),
-            pw.SizedBox(height: 30.0),
-            pw.Text(
-              'CODE&KAFF - พัฒนาการ',
+              _startDate != null && _endDate != null
+                  ? '${DateFormat('dd/MM/yyyy').format(_startDate!)} - ${DateFormat('dd/MM/yyyy').format(_endDate!)}'
+                  : '',
               style: pw.TextStyle(
                 font: fontBold,
                 fontSize: 16.0,
@@ -177,10 +180,14 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
                 fontSize: 14.0,
               ),
             ),
+            pw.SizedBox(height: 5.0),
             pw.Table.fromTextArray(
+              headers: ['รายรับทั้งหมด', 'คำสั่งซื้อ'],
               data: [
-                ['รายรับทั้งหมด', 'คำสั่งซื้อ'],
-                ['5000บาท', '25 รายการ'],
+                [
+                  '${_dashboardController.reportData?.sales?.toStringAsFixed(2)} บาท',
+                  '${_dashboardController.reportData?.allOrder ?? 0} รายการ'
+                ],
               ],
               headerStyle: pw.TextStyle(
                 font: fontBold,
@@ -190,6 +197,7 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
                 font: fontRegular,
                 fontSize: 14.0,
               ),
+              cellAlignment: pw.Alignment.center,
             ),
             pw.SizedBox(height: 30.0),
             pw.Text(
@@ -199,18 +207,27 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
                 fontSize: 14.0,
               ),
             ),
+            pw.SizedBox(height: 5.0),
             pw.Table.fromTextArray(
-              data: [
-                [
-                  'ลำดับ',
-                  'วันที่สั่งซื้อ',
-                  'รหัสใบเสร็จ',
-                  'วิธีชำระเงิน',
-                  'พนักงานขาย',
-                  'ยอดขาย (บาท)'
-                ],
-                ['1', '1/1/2025', '123456', 'Promptpay', 'A', '100'],
+              headers: [
+                'ลำดับ',
+                'วันที่สั่งซื้อ',
+                'รหัสใบเสร็จ',
+                'วิธีชำระเงิน',
+                'พนักงานขาย',
+                'ยอดขาย (บาท)'
               ],
+              data: order.asMap().entries
+                  .map((e) => [
+                        e.key + 1,
+                        DateFormat('dd/MM/yyyy')
+                            .format(DateTime.parse(e.value.orderDate!)),
+                        e.value.receiptNo,
+                        e.value.paymentType,
+                        e.value.username,
+                        e.value.total.toString(),
+                      ])
+                  .toList(),
               headerStyle: pw.TextStyle(
                 font: fontBold,
                 fontSize: 14.0,
@@ -218,16 +235,16 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
               ),
               cellStyle: pw.TextStyle(
                 font: fontRegular,
-                fontSize: 14.0,
+                fontSize: 12.0,
                 fontWeight: pw.FontWeight.bold,
               ),
+              cellAlignment: pw.Alignment.center,
             ),
           ],
         ),
       ),
     );
 
-    // Get the directory for saving the file
     final directory = await getApplicationDocumentsDirectory();
     final filePath = "${directory.path}/รายงานยอดขาย.pdf";
     final file = File(filePath);
@@ -239,8 +256,33 @@ class _RequestPdfDialogState extends State<RequestPdfDialog> {
 
   _genPDF() {
     return CustomSubmitButton(
-      onTap: () {
-        generateAndSavePDF(context);
+      onTap: () async {
+        if (_startDate == null) {
+          Get.dialog(CustomAlertDialog(title: 'กรุณาเลือกวันที่เริ่มต้น'));
+        } else if (_endDate == null) {
+          Get.dialog(CustomAlertDialog(title: 'กรุณาเลือกวันที่สิ้นสุด'));
+        } else {
+          loadingComplete = true;
+          order.clear();
+
+          await _dashboardController.getReportData(
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(_startDate!),
+              DateFormat('yyyy-MM-dd 23:59:59').format(_endDate!));
+
+          if (_dashboardController.reportData?.order != null &&
+              _dashboardController.reportData!.order!.isNotEmpty) {
+            for (SummaryOrderModel data
+                in _dashboardController.reportData!.order!) {
+              order.add(data);
+            }
+          }
+
+          loadingComplete = false;
+
+          if (!loadingComplete) {
+            generateAndSavePDF(context);
+          }
+        }
       },
       title: 'ออกรายงาน',
       backgroundColor: primaryColor,

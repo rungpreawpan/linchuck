@@ -93,6 +93,8 @@ class _OverviewPageState extends State<OverviewPage> {
     Colors.primaries[Random().nextInt(Colors.primaries.length)],
     Colors.primaries[Random().nextInt(Colors.primaries.length)],
     Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
+    Colors.primaries[Random().nextInt(Colors.primaries.length)],
   ];
 
   @override
@@ -444,10 +446,11 @@ class _OverviewPageState extends State<OverviewPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: _dashboardController.dashboardData!.sellProduct!.map(
                 (e) {
-                  int index = _dashboardController.dashboardData!.sellProduct!.indexOf(e);
+                  int index = _dashboardController.dashboardData!.sellProduct!
+                      .indexOf(e);
 
                   return Indicator(
-                    color: colorList[index],
+                    color: colorList.toSet().toList()[index],
                     text: e.name ?? '',
                     isSquare: true,
                   );
@@ -463,7 +466,8 @@ class _OverviewPageState extends State<OverviewPage> {
   List<PieChartSectionData> showingSections() {
     double total = 0;
 
-    for (SellProductModel product in _dashboardController.dashboardData!.sellProduct!) {
+    for (SellProductModel product
+        in _dashboardController.dashboardData!.sellProduct!) {
       total += product.count!;
     }
 
@@ -476,8 +480,9 @@ class _OverviewPageState extends State<OverviewPage> {
         const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
         return PieChartSectionData(
-          color: colorList[i],
-          value: _dashboardController.dashboardData!.sellProduct![i].count!.toDouble(),
+          color: colorList.toSet().toList()[i],
+          value: _dashboardController.dashboardData!.sellProduct![i].count!
+              .toDouble(),
           title:
               '${(_dashboardController.dashboardData!.sellProduct![i].count!.toDouble() / total * 100).toStringAsFixed(2)}%',
           radius: radius,

@@ -279,7 +279,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
               int? result = await Get.dialog(
                 AddIngredientDialog(qty: item.recipeQty),
               );
-//TODO:ให้พิมเลขได้ ๙แก้บัคหน้าอื่นๆ
               if (result != null && result != 0) {
                 item.recipeQty = result;
                 setState(() {});

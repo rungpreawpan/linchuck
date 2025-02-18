@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/service/request_service.dart';
 import 'package:lin_chuck/utils/alert.dart';
@@ -11,11 +12,13 @@ import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/views/home/model/selected_product_model.dart';
 import 'package:lin_chuck/views/home/model/sweet_model.dart';
 import 'package:lin_chuck/views/home/order_complete_page.dart';
+import 'package:lin_chuck/views/login/model/user_model.dart';
 import 'package:lin_chuck/views/receipt/model/receipt_model.dart';
 import 'package:lin_chuck/widget/custom_alert_dialog.dart';
 
 class HomeController extends GetxController {
   var isLoading = false.obs;
+  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   List<SweetModel> sweetList = [];
   SweetModel? selectedSweet;
@@ -44,6 +47,8 @@ class HomeController extends GetxController {
   double? changeMoney;
 
   File? promptPayImage;
+
+  UserModel? user;
 
   getSweet() async {
     bool isOnline = await RequestService().checkInternetConnection();
@@ -265,10 +270,8 @@ class HomeController extends GetxController {
     String? name,
     double? price,
     double? cost,
-    // int? quantity,
+    String? productImage,
     int? productTypeId,
-    // String? orderDate,
-    // String? expireDate,
   ) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
@@ -289,11 +292,8 @@ class HomeController extends GetxController {
           'product_name': name,
           'product_price': price,
           'product_cost': cost,
-          // 'product_quantity': quantity,
           'product_type_id': productTypeId,
-          'product_image': 'test', //TODO:
-          // 'order_date': orderDate,
-          // 'expire_date': expireDate,
+          'product_image': productImage,
         },
       );
 
@@ -312,10 +312,8 @@ class HomeController extends GetxController {
     String? name,
     double? price,
     double? cost,
-    // int? quantity,
     int? productTypeId,
-    // String? orderDate,
-    // String? expireDate,
+    String? productImage,
   ) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
@@ -336,11 +334,8 @@ class HomeController extends GetxController {
           'product_name': name,
           'product_price': price,
           'product_cost': cost,
-          // 'product_quantity': quantity,
           'product_type_id': productTypeId,
-          'product_image': 'test', //TODO:
-          // 'order_date': orderDate,
-          // 'expire_date': expireDate,
+          'product_image': productImage,
         },
       );
 
@@ -391,14 +386,14 @@ class HomeController extends GetxController {
     }
   }
 
-  createPayment(
-    int userId,
-    double totalPrice,
-    String payType,
-    String payImage,
-    double cashReceive,
-    double cashReturn,
-  ) async {
+  createPayment({
+    required int userId,
+    required double totalPrice,
+    required String payType,
+    String? payImage,
+    double? cashReceive,
+    double? cashReturn,
+  }) async {
     bool isOnline = await RequestService().checkInternetConnection();
 
     if (!isOnline) {
@@ -433,7 +428,7 @@ class HomeController extends GetxController {
                 "payment": {
                   "total_price": totalPrice,
                   "pay_type": payType,
-                  "pay_image": payImage,
+                  "pay_img": payImage,
                 }
               },
       );
@@ -521,6 +516,77 @@ class HomeController extends GetxController {
       if (response != null) {
         var dataJSON = response.data;
         receipt = ReceiptModel.fromJSON(dataJSON);
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  getOneUser(int? id) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/user/$id',
+        method: HttpMethod.get,
+      );
+
+      if (response != null) {
+        var dataJSON = response.data;
+        user = UserModel.fromJSON(dataJSON);
+
+        user?.image != null
+            ? await storage.write(key: 'image', value: user!.image)
+            : null;
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  updateUser(int? id, String? profileImage) async {
+    bool isOnline = await RequestService().checkInternetConnection();
+
+    if (!isOnline) {
+      showAlert('ไม่มีสัญญาณอินเตอร์เน็ต');
+      isLoading.value = false;
+
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var response = await RequestService().request(
+        '/user/$id',
+        method: HttpMethod.post,
+        data: {
+          'image': profileImage,
+        },
+      );
+
+      if (response != null) {
+        Get.dialog(
+          CustomAlertDialog(
+            title: 'อัพเดทรูปภาพสำเร็จ',
+            onOk: () {
+              Get.back(result: true);
+            },
+          ),
+        );
       }
     } catch (e) {
       log(e.toString());

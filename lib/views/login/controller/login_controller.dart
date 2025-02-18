@@ -64,7 +64,9 @@ class LoginController extends GetxController {
 
         await storage.write(key: 'intro', value: 'true');
         await storage.write(key: 'login', value: 'true');
-        await storage.write(key: 'user_id', value: userList.first.id.toString());
+        await storage.write(
+            key: 'user_id', value: userList.first.id.toString());
+        await storage.write(key: 'userId', value: userList.first.id.toString());
         await storage.write(key: 'firstname', value: userList.first.firstname);
         await storage.write(key: 'lastname', value: userList.first.lastname);
         await storage.write(key: 'position', value: userList.first.role);

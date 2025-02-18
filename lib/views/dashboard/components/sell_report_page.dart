@@ -377,6 +377,18 @@ class _SellReportPageState extends State<SellReportPage> {
       case 6:
         text = '60';
         break;
+      case 7:
+        text = '70';
+        break;
+      case 8:
+        text = '80';
+        break;
+      case 9:
+        text = '90';
+        break;
+      case 10:
+        text = '100';
+        break;
       default:
         return Container();
     }
@@ -436,7 +448,7 @@ class _SellReportPageState extends State<SellReportPage> {
       minX: 0,
       maxX: 11,
       minY: 0,
-      maxY: 6,
+      maxY: 10,
       lineBarsData: [
         LineChartBarData(
           spots: [

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -15,7 +17,6 @@ import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/views/home/model/selected_product_model.dart';
 import 'package:lin_chuck/views/promotion/controller/promotion_controller.dart';
-import 'package:lin_chuck/views/promotion/model/promotion_model.dart';
 import 'package:lin_chuck/views/recipe/controller/recipe_controller.dart';
 import 'package:lin_chuck/views/sell_product/sell_product_page.dart';
 import 'package:lin_chuck/views/stock/controller/stock_controller.dart';
@@ -56,6 +57,9 @@ class _HomePageState extends State<HomePage> {
   bool payByPromptPay = false;
 
   double total = 0.0;
+  double discountAmount = 0.0;
+
+  var isLoading = false.obs;
 
   @override
   void initState() {
@@ -65,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _prepareData() async {
+    isLoading.value = true;
     userId = await storage.read(key: 'user_id');
 
     await _homeController.getSweet();
@@ -76,6 +81,7 @@ class _HomePageState extends State<HomePage> {
     await _promotionController.getPromotion();
     await _recipeController.getUnit();
     await _stockController.getIngredient();
+    isLoading.value = false;
 
     setState(() {});
   }
@@ -116,8 +122,11 @@ class _HomePageState extends State<HomePage> {
           showBackButton: currentPage == 1 ? true : false,
           backFunction: currentPage == 1
               ? () {
-                  currentPage = 0;
+                  if (_homeController.orderDetailPayment != null) {
+                    _homeController.orderDetailPayment = null;
+                  }
 
+                  currentPage = 0;
                   setState(() {});
                 }
               : null,
@@ -185,16 +194,9 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       ProductModel item = _filterProductList[index];
 
-                      int? discount;
-                      for (PromotionModel promotion in _promotionController.promotionList) {
-                        if (item.promotionId == promotion.promotionId) {
-                          discount = promotion.promotionAmount;
-                        }
-                      }
-
                       return _menuCard(
                         product: item,
-                        discount: discount,
+                        discount: item.discountAmount,
                         showSweet: item.productTypeId == 2,
                       );
                     },
@@ -236,20 +238,26 @@ class _HomePageState extends State<HomePage> {
                   visible: payByCash,
                   child: PayByCashPage(
                     total: total,
+                    discountAmount: discountAmount,
                     user: _employeeController.selectedEmployee,
                     onConfirm: () {
-                      SelectedPaymentModel payment = SelectedPaymentModel(
-                        user: _employeeController.selectedEmployee,
-                        totalPrice: total,
-                        payType: 'cash',
-                        cashReceive:
-                            double.parse(_homeController.receivedMoney ?? '0'),
-                        cashReturn: _homeController.changeMoney,
-                      );
+                      if (_homeController.changeMoney != null &&
+                          _homeController.changeMoney! < 0) {
+                        Get.dialog(
+                            CustomAlertDialog(title: 'กรุณากรอกเงินที่ได้รับ'));
+                      } else {
+                        SelectedPaymentModel payment = SelectedPaymentModel(
+                          user: _employeeController.selectedEmployee,
+                          totalPrice: total,
+                          payType: 'cash',
+                          cashReceive: double.parse(
+                              _homeController.receivedMoney ?? '0'),
+                          cashReturn: _homeController.changeMoney,
+                        );
 
-                      _homeController.orderDetailPayment = payment;
-
-                      setState(() {});
+                        _homeController.orderDetailPayment = payment;
+                        setState(() {});
+                      }
                     },
                     cancelOrder: () {
                       Get.dialog(
@@ -261,6 +269,7 @@ class _HomePageState extends State<HomePage> {
                             _homeController.changeMoney = null;
                             _homeController.orderDetailPayment = null;
                             _homeController.orderDetailList.clear();
+                            total = 0.0;
 
                             setState(() {});
                           },
@@ -288,19 +297,49 @@ class _HomePageState extends State<HomePage> {
   }) {
     return InkWell(
       onTap: () async {
-        bool? result = await Get.dialog(
+        SelectedProductModel? result = await Get.dialog(
           AddEditProductDialog(
             product: product,
             showSweet: showSweet,
+            qty: 1,
           ),
         );
 
         if (result != null) {
+          discountAmount = 0.0;
           total = 0.0;
+
+          bool productExists = false;
+
+          List<SelectedProductModel> updatedList = [];
+
+          for (SelectedProductModel order in _homeController.orderDetailList) {
+            if (result.product!.id! == order.product!.id!) {
+              productExists = true;
+              updatedList.add(
+                SelectedProductModel(
+                  product: order.product,
+                  quantity: order.quantity! + result.quantity!,
+                ),
+              );
+            } else {
+              updatedList.add(order);
+            }
+          }
+
+          if (!productExists) {
+            updatedList.add(result);
+          }
+
+          _homeController.orderDetailList = updatedList;
 
           for (SelectedProductModel product
               in _homeController.orderDetailList) {
             total += product.product!.productPrice! * product.quantity!;
+            if (product.product?.promotionId != null) {
+              discountAmount +=
+                  product.product!.discountAmount! * product.quantity!;
+            }
           }
 
           setState(() {});
@@ -308,7 +347,6 @@ class _HomePageState extends State<HomePage> {
       },
       child: Column(
         children: [
-          //TODO: change to image.file
           Expanded(
             child: ClipRRect(
               child: product.promotionId == null
@@ -318,9 +356,20 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: Center(
-                        child: Icon(
-                          Icons.image_not_supported_outlined,
-                          color: Colors.grey.shade700,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: product.productImage != null &&
+                                  product.productImage!.length > 6
+                              ? SizedBox.expand(
+                                  child: Image.memory(
+                                    base64Decode(product.productImage ?? ''),
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Center(
+                                  child:
+                                      Icon(Icons.image_not_supported_outlined),
+                                ),
                         ),
                       ),
                     )
@@ -339,11 +388,20 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.grey.shade300,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: Center(
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            color: Colors.grey.shade700,
-                          ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: product.productImage != null &&
+                                  product.productImage!.length > 6
+                              ? SizedBox.expand(
+                                  child: Image.memory(
+                                    base64Decode(product.productImage ?? ''),
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Center(
+                                  child:
+                                      Icon(Icons.image_not_supported_outlined),
+                                ),
                         ),
                       ),
                     ),
@@ -396,68 +454,134 @@ class _HomePageState extends State<HomePage> {
   }
 
   _orderListCard() {
-    return Container(
-      width: Get.width / 3.5,
-      padding: const EdgeInsets.all(marginX2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15.0),
-        gradient: const LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            darkReceipt,
-            lightReceipt,
+    return ClipRRect(
+      child: Container(
+        width: Get.width / 3.5,
+        padding: const EdgeInsets.all(marginX2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          gradient: const LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              darkReceipt,
+              lightReceipt,
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: _homeController.orderDetailList.isNotEmpty
+                  ? ListView.separated(
+                      itemCount: _homeController.orderDetailList.length,
+                      itemBuilder: (context, index) {
+                        SelectedProductModel item =
+                            _homeController.orderDetailList[index];
+
+                        return _selectedProduct(
+                          product: item.product?.name ?? '',
+                          quantity: item.quantity ?? 0,
+                          price: item.product != null
+                              ? double.parse(
+                                  item.product!.productPrice.toString())
+                              : 0,
+                          onEdit: (context) async {
+                            SelectedProductModel? result = await Get.dialog(
+                              AddEditProductDialog(
+                                isEdit: true,
+                                qty: item.quantity ?? 1,
+                              ),
+                            );
+
+                            if (result != null) {
+                              SelectedProductModel editOrder =
+                                  SelectedProductModel(
+                                product: item.product,
+                                quantity: result.quantity,
+                              );
+
+                              _homeController.orderDetailList[index] =
+                                  editOrder;
+
+                              discountAmount = 0.0;
+                              total = 0.0;
+                              for (SelectedProductModel order
+                                  in _homeController.orderDetailList) {
+                                total += order.product!.productPrice! *
+                                    order.quantity!;
+                                if (order.product?.promotionId != null) {
+                                  discountAmount +=
+                                      order.product!.discountAmount! *
+                                          order.quantity!;
+                                }
+                              }
+
+                              setState(() {});
+                            }
+                          },
+                          onDelete: (context) async {
+                            bool? result =
+                                await Get.dialog(const DeleteDialog());
+
+                            if (result != null) {
+                              _homeController.orderDetailList.removeAt(index);
+
+                              discountAmount = 0.0;
+                              total = 0.0;
+                              if (_homeController.orderDetailList.isEmpty) {
+                                total = 0.0;
+                                discountAmount = 0.0;
+                              } else {
+                                for (SelectedProductModel order
+                                    in _homeController.orderDetailList) {
+                                  total += order.product!.productPrice! *
+                                      order.quantity!;
+                                  if (order.product?.promotionId != null) {
+                                    discountAmount +=
+                                        order.product!.discountAmount! *
+                                            order.quantity!;
+                                  }
+                                }
+                              }
+
+                              setState(() {});
+                            }
+                          },
+                          sweet: item.sweet != null
+                              ? '${item.sweet!.name} (${item.sweet!.percent}%)'
+                              : '',
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(height: marginX2);
+                      },
+                    )
+                  : const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextFontStyle(
+                            'กรุณาเพิ่ม',
+                            size: fontSizeM,
+                            weight: FontWeight.bold,
+                            color: Colors.white,
+                            textAlign: TextAlign.center,
+                          ),
+                          TextFontStyle(
+                            'สินค้าที่ต้องการ',
+                            size: fontSizeM,
+                            weight: FontWeight.bold,
+                            color: Colors.white,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+            _total(),
           ],
         ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: _homeController.orderDetailList.isNotEmpty
-                ? ListView.separated(
-                    itemCount: _homeController.orderDetailList.length,
-                    itemBuilder: (context, index) {
-                      SelectedProductModel item =
-                          _homeController.orderDetailList[index];
-
-                      return _selectedProduct(
-                        product: item.product?.name ?? '',
-                        quantity: item.quantity ?? 0,
-                        price:
-                            double.parse(item.product!.productPrice.toString()),
-                        sweet: item.sweet != null
-                            ? '${item.sweet!.name} (${item.sweet!.percent}%)'
-                            : '',
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(height: marginX2);
-                    },
-                  )
-                : const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextFontStyle(
-                          'กรุณาเพิ่ม',
-                          size: fontSizeM,
-                          weight: FontWeight.bold,
-                          color: Colors.white,
-                          textAlign: TextAlign.center,
-                        ),
-                        TextFontStyle(
-                          'สินค้าที่ต้องการ',
-                          size: fontSizeM,
-                          weight: FontWeight.bold,
-                          color: Colors.white,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-          ),
-          _total(),
-        ],
       ),
     );
   }
@@ -466,6 +590,8 @@ class _HomePageState extends State<HomePage> {
     required String product,
     required int quantity,
     required double price,
+    required void Function(BuildContext)? onEdit,
+    required void Function(BuildContext)? onDelete,
     String sweet = '',
   }) {
     return Slidable(
@@ -473,19 +599,13 @@ class _HomePageState extends State<HomePage> {
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: (context) {
-              Get.dialog(
-                const AddEditProductDialog(),
-              );
-            },
+            onPressed: onEdit,
             backgroundColor: Colors.grey,
             foregroundColor: Colors.white,
             icon: Icons.edit,
           ),
           SlidableAction(
-            onPressed: (context) {
-              Get.dialog(const DeleteDialog()); //TODO:
-            },
+            onPressed: onDelete,
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             icon: Icons.delete,
@@ -499,7 +619,6 @@ class _HomePageState extends State<HomePage> {
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,13 +711,47 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const TextFontStyle(
-                  'รวม',
+                  'ราคารวม',
                   color: Colors.white,
                   size: fontSizeM,
                   weight: FontWeight.bold,
                 ),
                 TextFontStyle(
                   total.toString(),
+                  color: Colors.white,
+                  size: fontSizeM,
+                  weight: FontWeight.bold,
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const TextFontStyle(
+                  'ส่วนลด',
+                  color: Colors.white,
+                  size: fontSizeM,
+                  weight: FontWeight.bold,
+                ),
+                TextFontStyle(
+                  discountAmount.toString(),
+                  color: Colors.white,
+                  size: fontSizeM,
+                  weight: FontWeight.bold,
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const TextFontStyle(
+                  'ราคาสุทธิ',
+                  color: Colors.white,
+                  size: fontSizeM,
+                  weight: FontWeight.bold,
+                ),
+                TextFontStyle(
+                  (total - discountAmount).toString(),
                   color: Colors.white,
                   size: fontSizeM,
                   weight: FontWeight.bold,
@@ -632,14 +785,43 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     } else {
-                      await _homeController.createPayment(
-                        _employeeController.selectedEmployee?.id ?? 0,
-                        total,
-                        _homeController.orderDetailPayment?.payType ?? '',
-                        _homeController.orderDetailPayment?.payImage ?? '',
-                        _homeController.orderDetailPayment?.cashReceive ?? 0,
-                        _homeController.orderDetailPayment?.cashReturn ?? 0,
-                      );
+                      if (payByCash) {
+                        if (_homeController.orderDetailPayment?.cashReceive !=
+                                null &&
+                            total - discountAmount >
+                                _homeController
+                                    .orderDetailPayment!.cashReceive!) {
+                          Get.dialog(CustomAlertDialog(
+                              title: 'กรุณาแก้ไขเงินที่ได้รับ'));
+                        } else {
+                          await _homeController.createPayment(
+                            userId:
+                                _employeeController.selectedEmployee?.id ?? 0,
+                            totalPrice: total,
+                            payType: 'cash',
+                            payImage: null,
+                            cashReceive: _homeController
+                                    .orderDetailPayment?.cashReceive ??
+                                0,
+                            cashReturn: _homeController
+                                    .orderDetailPayment?.cashReturn ??
+                                0,
+                          );
+                        }
+                      } else {
+                        _homeController.orderDetailPayment?.cashReceive =
+                            total - discountAmount;
+
+                        await _homeController.createPayment(
+                          userId: _employeeController.selectedEmployee?.id ?? 0,
+                          totalPrice:
+                              _homeController.orderDetailPayment?.cashReceive ??
+                                  0,
+                          payType: 'promptpay',
+                          payImage:
+                              _homeController.orderDetailPayment?.payImage,
+                        );
+                      }
                     }
                   },
             title: currentPage == 0 ? 'ชำระเงิน' : 'บันทึกใบเสร็จ',
@@ -652,41 +834,54 @@ class _HomePageState extends State<HomePage> {
   }
 
   _popUp() {
-    return PopupMenuButton(
-      itemBuilder: (BuildContext context) {
-        return popupItems.map((data) {
-          return PopupMenuItem<String>(
-            value: data,
-            child: InkWell(
-              onTap: data == 'สินค้า'
-                  ? () {
-                      Get.back();
-                      Get.to(() => const SellProductPage(isFromHomePage: true));
-                    }
-                  : () {
-                      Get.back();
-                      Get.to(() => const CategoryPage(isFromHomePage: true));
-                    },
-              child: TextFontStyle(
-                data,
-                size: fontSizeM,
-              ),
-            ),
-          );
-        }).toList();
-      },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      offset: const Offset(0, 30),
-      child: const Icon(Icons.tune_rounded),
+    return Row(
+      children: [
+        InkWell(
+          onTap: () async {
+            await _prepareData();
+          },
+          child: const Icon(Icons.refresh_rounded),
+        ),
+        const SizedBox(width: marginX2),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) {
+            return popupItems.map((data) {
+              return PopupMenuItem<String>(
+                value: data,
+                child: InkWell(
+                  onTap: data == 'สินค้า'
+                      ? () {
+                          Get.back();
+                          Get.to(() =>
+                              const SellProductPage(isFromHomePage: true));
+                        }
+                      : () {
+                          Get.back();
+                          Get.to(
+                              () => const CategoryPage(isFromHomePage: true));
+                        },
+                  child: TextFontStyle(
+                    data,
+                    size: fontSizeM,
+                  ),
+                ),
+              );
+            }).toList();
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          offset: const Offset(0, 30),
+          child: const Icon(Icons.tune_rounded),
+        ),
+      ],
     );
   }
 
   _loading() {
     return Obx(() {
       return Visibility(
-        visible: _homeController.isLoading.value,
+        visible: isLoading.value,
         child: const CustomLoading(),
       );
     });

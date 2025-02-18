@@ -1,14 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
-import 'package:lin_chuck/views/home/components/select_category_dialog.dart';
 import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/home/model/product_type_model.dart';
 import 'package:lin_chuck/widget/custom_alert_dialog.dart';
+import 'package:lin_chuck/widget/custom_item_picker_cell.dart';
+import 'package:lin_chuck/widget/custom_item_picker_page.dart';
 import 'package:lin_chuck/widget/custom_loading.dart';
 import 'package:lin_chuck/widget/custom_submit_button.dart';
 import 'package:lin_chuck/widget/custom_text_field.dart';
@@ -38,6 +40,7 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
   final TextEditingController _costController = TextEditingController();
 
   File? _imageFile;
+  String? _imageBase64;
 
   @override
   void initState() {
@@ -66,6 +69,7 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
         _productTypeController.text = productTypeName ?? '-';
         _priceController.text = item?.productPrice.toString() ?? '0';
         _costController.text = item?.productCost.toString() ?? '0';
+        _imageBase64 = item?.productImage;
       }
     }
 
@@ -160,21 +164,38 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
         );
       },
       child: _imageFile == null
-          ? Container(
-              height: 250.0,
-              width: 400.0,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                border: Border.all(color: Colors.grey.shade700),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.add,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-            )
+          ? _imageBase64 != null && _imageBase64!.length > 6
+              ? Container(
+                  height: 250.0,
+                  width: 400.0,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    border: Border.all(color: Colors.grey.shade700),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.memory(
+                      base64Decode(_imageBase64!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              : Container(
+                  height: 250.0,
+                  width: 400.0,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    border: Border.all(color: Colors.grey.shade700),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                )
           : Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade700),
@@ -220,9 +241,34 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
   _productType() {
     return InkWell(
       onTap: () async {
-        bool? result = await Get.dialog(
-          const SelectCategoryDialog(),
-          barrierDismissible: false,
+        List? result = await Get.to(
+          () => CustomItemPicker(
+            title: 'เลือกหมวดหมู่สินค้า',
+            items: _homeController.productTypeList,
+            selectedItems: _homeController.selectedProductTypeList,
+            itemWidget: (item, isSelected) {
+              ProductTypeModel castedItem = item as ProductTypeModel;
+
+              return CustomItemPickerCell(
+                title: castedItem.name ?? '-',
+                isSelected: isSelected,
+              );
+            },
+            onSearch: (searchText) {
+              if (searchText != '') {
+                return _homeController.productTypeList
+                    .where((productType) => productType.name!
+                        .toLowerCase()
+                        .contains(searchText.toLowerCase()))
+                    .toList();
+              } else {
+                return _homeController.productTypeList;
+              }
+            },
+            hintText: 'ค้นหาหมวดหมู่สินค้า',
+            pickMultipleItem: false,
+            isProductTypePage: true,
+          ),
         );
 
         if (result != null) {
@@ -288,14 +334,42 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
                         const CustomAlertDialog(title: 'กรุณากรอกราคาขาย'),
                       );
                     } else {
-                      await _homeController.editProduct(
-                        _homeController.selectedProductId ?? 0,
-                        _productNameController.text,
-                        double.parse(_priceController.text),
-                        double.parse(_costController.text),
-                        _homeController.selectedProductTypeList.first.id,
-                      );
+                      if (_imageFile != null) {
+                        String base64String =
+                            await _convertToBase64(_imageFile);
+
+                        await _homeController.editProduct(
+                          _homeController.selectedProductId ?? 0,
+                          _productNameController.text,
+                          double.parse(_priceController.text),
+                          double.parse(_costController.text),
+                          _homeController.selectedProductTypeList.first.id,
+                          base64String,
+                        );
+                      } else {
+                        if (_imageBase64 != null) {
+                          await _homeController.editProduct(
+                            _homeController.selectedProductId ?? 0,
+                            _productNameController.text,
+                            double.parse(_priceController.text),
+                            double.parse(_costController.text),
+                            _homeController.selectedProductTypeList.first.id,
+                            _imageBase64,
+                          );
+                        } else {
+                          await _homeController.editProduct(
+                            _homeController.selectedProductId ?? 0,
+                            _productNameController.text,
+                            double.parse(_priceController.text),
+                            double.parse(_costController.text),
+                            _homeController.selectedProductTypeList.first.id,
+                            null,
+                          );
+                        }
+                      }
                     }
+
+                    _homeController.selectedProductList.clear();
                   }
                 : () async {
                     if (_productNameController.text == '') {
@@ -317,13 +391,29 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
                         const CustomAlertDialog(title: 'กรุณากรอกราคาขาย'),
                       );
                     } else {
-                      await _homeController.addProduct(
-                        _productNameController.text,
-                        double.parse(_priceController.text),
-                        double.parse(_costController.text),
-                        _homeController.selectedProductTypeList.first.id,
-                      );
+                      if (_imageFile != null) {
+                        String base64String =
+                            await _convertToBase64(_imageFile);
+
+                        await _homeController.addProduct(
+                          _productNameController.text,
+                          double.parse(_priceController.text),
+                          double.parse(_costController.text),
+                          base64String,
+                          _homeController.selectedProductTypeList.first.id,
+                        );
+                      } else {
+                        await _homeController.addProduct(
+                          _productNameController.text,
+                          double.parse(_priceController.text),
+                          double.parse(_costController.text),
+                          null,
+                          _homeController.selectedProductTypeList.first.id,
+                        );
+                      }
                     }
+
+                    _homeController.selectedProductList.clear();
                   },
             title: 'ยืนยัน',
             backgroundColor: primaryColor,
@@ -331,6 +421,13 @@ class _AddSellProductPageState extends State<AddSellProductPage> {
         ),
       ],
     );
+  }
+
+  Future<String> _convertToBase64(File? imageFile) async {
+    List<int> imageBytes = await imageFile!.readAsBytes();
+    String base64String = base64Encode(imageBytes);
+
+    return base64String;
   }
 
   _loading() {

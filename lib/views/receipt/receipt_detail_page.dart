@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -116,7 +118,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                     : '',
                 size: fontSizeM,
               ),
-               TextFontStyle(
+              TextFontStyle(
                 'No. ${widget.receiptNo}',
                 size: fontSizeM,
               ),
@@ -142,28 +144,54 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
           const SizedBox(height: marginX2),
           const CustomDashLine(),
           const SizedBox(height: marginX2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const TextFontStyle(
+                'ยอดรวม',
+                size: fontSizeM,
+              ),
+              TextFontStyle(
+                '${_receiptController.payment?.totalPrice?.toDouble()} บาท',
+                size: fontSizeM,
+              ),
+            ],
+          ),
           _paymentType(
-            isPromptPay: _receiptController.payment?.payType == 'promtpay',
-            total: _receiptController.payment?.totalPrice?.toDouble() ?? 0,
+            isPromptPay: _receiptController.payment?.payType == 'promptpay',
+            total: _receiptController.payment?.cashReceive != null &&
+                    _receiptController.payment?.cashReturn != null
+                ? (_receiptController.payment!.cashReceive! -
+                        _receiptController.payment!.cashReturn!)
+                    .toDouble()
+                : 0,
+            discountAmount: _receiptController.payment?.totalPrice != null &&
+                    _receiptController.payment?.cashReceive != null &&
+                    _receiptController.payment?.cashReturn != null
+                ? (_receiptController.payment!.totalPrice! -
+                        (_receiptController.payment!.cashReceive! -
+                            _receiptController.payment!.cashReturn!))
+                    .toDouble()
+                : 0,
             cashReceive:
                 _receiptController.payment?.cashReceive?.toDouble() ?? 0,
             cashReturn: _receiptController.payment?.cashReturn?.toDouble() ?? 0,
             promptPayImage: '',
           ),
-          const SizedBox(height: marginX2),
-          const CustomDashLine(),
-          const SizedBox(height: 24.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const TextFontStyle(
-                'ยอดรวมทั้งหมด',
+                'ยอดเงินสุทธิ',
                 color: primaryColor,
                 size: fontSizeM,
                 weight: FontWeight.bold,
               ),
               TextFontStyle(
-                '${_receiptController.payment?.totalPrice?.toDouble() ?? 0} บาท',
+                _receiptController.payment?.cashReceive != null &&
+                        _receiptController.payment?.cashReturn != null
+                    ? '${(_receiptController.payment!.cashReceive! - _receiptController.payment!.cashReturn!).toDouble()} บาท'
+                    : '0',
                 color: primaryColor,
                 size: fontSizeM,
                 weight: FontWeight.bold,
@@ -186,16 +214,16 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
           OrderDetailModel item = _receiptController.orderDetailByIdList[index];
           int noOfOrder = index + 1;
           String productName = '';
-          int cost = 0;
+          int price = 0;
           int total = 0;
           String sweetLevel = '';
 
           for (ProductModel product in _homeController.productList) {
             if (product.id == item.productId) {
               productName = product.name ?? '';
-              cost = product.productCost ?? 0;
-              total = (item.quantity != null && product.productCost != null)
-                  ? (item.quantity!) * (product.productCost!)
+              price = product.productPrice ?? 0;
+              total = (item.quantity != null && product.productPrice != null)
+                  ? (item.quantity!) * (product.productPrice!)
                   : 0;
             }
           }
@@ -210,7 +238,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
             index: noOfOrder,
             menu: productName,
             quantity: item.quantity ?? 0,
-            cost: cost,
+            cost: price,
             total: total.toDouble(),
             isSweet: item.sweetId != null,
             sweetLevel: sweetLevel,
@@ -285,7 +313,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   _employeeCard(String employeeName) {
     return Row(
       children: [
-       const  TextFontStyle(
+        const TextFontStyle(
           'พนักงาน:',
           size: fontSizeM,
         ),
@@ -301,6 +329,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   _paymentType({
     required bool isPromptPay,
     required double total,
+    required double discountAmount,
     required double cashReceive,
     required double cashReturn,
     required String promptPayImage,
@@ -309,6 +338,19 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              const TextFontStyle(
+                'ส่วนลด',
+                size: fontSizeM,
+              ),
+              const Spacer(),
+              TextFontStyle(
+                '$discountAmount บาท',
+                size: fontSizeM,
+              ),
+            ],
+          ),
           Row(
             children: [
               const TextFontStyle(
@@ -351,6 +393,19 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
           Row(
             children: [
               const TextFontStyle(
+                'ส่วนลด',
+                size: fontSizeM,
+              ),
+              const Spacer(),
+              TextFontStyle(
+                '$discountAmount บาท',
+                size: fontSizeM,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const TextFontStyle(
                 'เงินที่ได้รับ',
                 size: fontSizeM,
               ),
@@ -381,19 +436,31 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
 
   _promptPayImage() {
     return Container(
-      padding: const EdgeInsets.all(20.0),
       margin: const EdgeInsets.symmetric(
         horizontal: 150.0,
         vertical: 30.0,
       ),
-      color: Colors.grey,
+      color: Colors.grey.shade300,
       height: Get.height,
+      width: Get.width,
       child: Stack(
         children: [
-          //TODO: show promptpay image
+          _receiptController.payment?.payImage != null
+              ? SizedBox.expand(
+                  child: Image.memory(
+                    base64Decode(_receiptController.payment!.payImage!),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.image_not_supported_outlined);
+                    },
+                  ),
+                )
+              : Center(
+                  child: Icon(Icons.image_not_supported_outlined),
+                ),
           Positioned(
-            top: margin,
-            right: margin,
+            top: marginX2,
+            right: marginX2,
             child: InkWell(
               onTap: () {
                 showPromptPayImage = !showPromptPayImage;

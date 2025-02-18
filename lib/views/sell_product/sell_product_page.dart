@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
@@ -57,11 +59,11 @@ class _SellProductPageState extends State<SellProductPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      _addStockButton(),
+                      _addProductButton(),
                     ],
                   ),
                   const SizedBox(height: marginX2),
-                  _stockList(),
+                  _productList(),
                 ],
               ),
             ),
@@ -72,10 +74,7 @@ class _SellProductPageState extends State<SellProductPage> {
             onTap: () async {
               await _prepareData();
             },
-            child: const Icon(
-              Icons.refresh_rounded,
-              color: primaryColor,
-            ),
+            child: const Icon(Icons.refresh_rounded),
           ),
         ),
         _loading(),
@@ -83,7 +82,7 @@ class _SellProductPageState extends State<SellProductPage> {
     );
   }
 
-  _addStockButton() {
+  _addProductButton() {
     return InkWell(
       onTap: () async {
         _homeController.selectedProductTypeList.clear();
@@ -116,14 +115,15 @@ class _SellProductPageState extends State<SellProductPage> {
     );
   }
 
-  _stockList() {
+  _productList() {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _stockRow(
+          _productRow(
             isHeader: true,
             index: 0,
+            title0: '',
             title1: 'สินค้า',
             title2: 'หมวดหมู่',
             title3: 'ราคา',
@@ -151,8 +151,9 @@ class _SellProductPageState extends State<SellProductPage> {
                   }
                 }
 
-                return _stockRow(
+                return _productRow(
                   index: item.id ?? 0,
+                  title0: item.productImage ?? '',
                   title1: item.name ?? '',
                   title2: productType,
                   title3: item.productPrice.toString(),
@@ -169,9 +170,10 @@ class _SellProductPageState extends State<SellProductPage> {
     );
   }
 
-  _stockRow({
+  _productRow({
     bool isHeader = false,
     required int index,
+    required String title0,
     required String title1,
     required String title2,
     required String title3,
@@ -179,6 +181,7 @@ class _SellProductPageState extends State<SellProductPage> {
   }) {
     return Row(
       children: [
+        //TODO: show image base64
         SizedBox(
           width: 150.0,
           child: !isHeader
@@ -186,8 +189,20 @@ class _SellProductPageState extends State<SellProductPage> {
                   height: 80.0,
                   width: 150.0,
                   decoration: BoxDecoration(
-                    color: Colors.grey,
+                    color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: title0.length > 6
+                        ? Image.memory(
+                            base64Decode(title0),
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.image_not_supported_outlined);
+                            },
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.image_not_supported_outlined),
                   ),
                 )
               : null,
@@ -244,6 +259,7 @@ class _SellProductPageState extends State<SellProductPage> {
                   );
 
                   if (result != null) {
+                    Get.back();
                     await _homeController.getProduct();
 
                     setState(() {});

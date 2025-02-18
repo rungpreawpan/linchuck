@@ -64,11 +64,7 @@ class _OrderCompletePageState extends State<OrderCompletePage> {
                 size: 28.0,
                 weight: FontWeight.bold,
               ),
-              TextFontStyle(
-                '${_homeController.orderDetailPayment?.totalPrice} บาท',
-                size: 60.0,
-                weight: FontWeight.bold,
-              ),
+              _total(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -143,6 +139,25 @@ class _OrderCompletePageState extends State<OrderCompletePage> {
         ),
       ],
     );
+  }
+
+  _total() {
+    if ( _homeController.orderDetailPayment?.payType == 'cash') {
+      return  TextFontStyle(
+        _homeController.orderDetailPayment?.cashReceive != null &&
+            _homeController.orderDetailPayment?.cashReturn != null
+            ? '${(_homeController.orderDetailPayment!.cashReceive! - _homeController.orderDetailPayment!.cashReturn!).toString()} บาท'
+            : '0',
+        size: 60.0,
+        weight: FontWeight.bold,
+      );
+    }else {
+      return  TextFontStyle(
+       '${_homeController.orderDetailPayment?.cashReceive ?? 0} บาท',
+        size: 60.0,
+        weight: FontWeight.bold,
+      );
+    }
   }
 
   _newOrderButton() {

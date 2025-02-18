@@ -10,6 +10,7 @@ import 'package:lin_chuck/widget/text_font_style.dart';
 
 class CustomItemPicker extends StatefulWidget {
   final bool isIngredientPage;
+  final bool isProductTypePage;
   final String title;
   final String? hintText;
   final double? hintSize;
@@ -25,6 +26,7 @@ class CustomItemPicker extends StatefulWidget {
   const CustomItemPicker({
     super.key,
     this.isIngredientPage = false,
+    this.isProductTypePage = false,
     required this.title,
     this.hintText,
     this.hintSize,
@@ -149,6 +151,9 @@ class _CustomItemPickerState extends State<CustomItemPicker> {
               if (widget.isIngredientPage) {
                 isSelected =
                     widget.selectedItems.map((e) => e.ingredientName).contains(item.ingredientName);
+              } else if (widget.isProductTypePage) {
+                isSelected =
+                    widget.selectedItems.map((e) => e.name).contains(item.name);
               } else {
                 isSelected = widget.selectedItems.contains(item);
               }

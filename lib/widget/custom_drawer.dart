@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -6,12 +8,14 @@ import 'package:lin_chuck/controller/app_info_controller.dart';
 import 'package:lin_chuck/views/category/category_page.dart';
 import 'package:lin_chuck/views/dashboard/dashboard_page.dart';
 import 'package:lin_chuck/views/employee/employee_page.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
 import 'package:lin_chuck/views/home/home_page.dart';
 import 'package:lin_chuck/views/login/login_page.dart';
 import 'package:lin_chuck/views/promotion/promotion_page.dart';
 import 'package:lin_chuck/views/receipt/receipt_page.dart';
 import 'package:lin_chuck/views/recipe/recipe_page.dart';
 import 'package:lin_chuck/views/stock/stock_page.dart';
+import 'package:lin_chuck/widget/change_profile_image_dialog.dart';
 import 'package:lin_chuck/widget/custom_ok_cancel_dialog.dart';
 import 'package:lin_chuck/widget/text_font_style.dart';
 
@@ -23,9 +27,11 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
+  final HomeController _homeController = Get.find();
   final AppInfoController _appInfoController = Get.find();
   FlutterSecureStorage storage = const FlutterSecureStorage();
 
+  String? userId;
   String? firstname;
   String? lastname;
   String? profileImage;
@@ -41,11 +47,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
   _prepareData() async {
     _appInfoController.getDeviceInfo();
 
+    userId = await storage.read(key: 'userId');
     firstname = await storage.read(key: 'firstname');
     lastname = await storage.read(key: 'lastname');
     profileImage = await storage.read(key: 'image');
 
-    String? roleEng = await storage.read(key: 'role'); //TODO:
+    String? roleEng = await storage.read(key: 'position');
     if (roleEng == 'employee') {
       role = 'พนักงาน';
     } else {
@@ -84,12 +91,38 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey.shade300,
-          radius: 55.0,
-          child: Icon(
-            Icons.image_not_supported_outlined,
-            color: Colors.grey.shade700,
+        InkWell(
+          onTap: () async {
+            bool? result = await Get.dialog(
+              ChangeProfileImageDialog(
+                userId: int.parse(userId ?? '0'),
+                imageBase64: profileImage,
+              ),
+            );
+
+            if (result != null) {
+              await _homeController.getOneUser(int.parse(userId ?? '0'));
+              setState(() {});
+            }
+          },
+          child: Container(
+            height: 110.0,
+            width: 110.0,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(55.0),
+            ),
+            child: profileImage != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(55.0),
+                    child: Image.memory(
+                      base64Decode(profileImage!),
+                    ),
+                  )
+                : Icon(
+                    Icons.image_not_supported_outlined,
+                    color: Colors.grey.shade700,
+                  ),
           ),
         ),
         const SizedBox(height: marginX2),

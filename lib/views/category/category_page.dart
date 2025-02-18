@@ -68,10 +68,7 @@ class _CategoryPageState extends State<CategoryPage> {
             onTap: () async {
               await _prepareData();
             },
-            child: const Icon(
-              Icons.refresh_rounded,
-              color: primaryColor,
-            ),
+            child: const Icon(Icons.refresh_rounded),
           ),
         ),
         _loading(),
@@ -82,7 +79,8 @@ class _CategoryPageState extends State<CategoryPage> {
   _addCategoryButton() {
     return InkWell(
       onTap: () async {
-        bool? result = await Get.to(() => AddCategoryPage(isFromHomePage: widget.isFromHomePage));
+        bool? result = await Get.to(
+            () => AddCategoryPage(isFromHomePage: widget.isFromHomePage));
 
         if (result != null) {
           await _homeController.getProductType();

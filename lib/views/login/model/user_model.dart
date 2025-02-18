@@ -34,7 +34,7 @@ class UserModel {
       email: json['email'] ?? '',
       password: json['password'] ?? '',
       role: json['role'] ?? '',
-      image: json['image'] ?? '',
+      image: json['image'],
       createOn: json['create_on'] ?? '',
       updateOn: json['update_on'] ?? '',
       lastLogin: json['last_login'] ?? '',

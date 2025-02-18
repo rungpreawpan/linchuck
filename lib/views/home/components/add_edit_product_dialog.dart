@@ -13,12 +13,14 @@ class AddEditProductDialog extends StatefulWidget {
   final bool isEdit;
   final bool showSweet;
   final ProductModel? product;
+  final int qty;
 
   const AddEditProductDialog({
     super.key,
     this.isEdit = false,
     this.showSweet = false,
     this.product,
+    required this.qty,
   });
 
   @override
@@ -34,9 +36,12 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
   void initState() {
     super.initState();
 
+    quantity = widget.qty;
     if (!widget.isEdit) {
       _setNormalSweet();
     }
+
+    setState(() {});
   }
 
   _setNormalSweet() async {
@@ -168,16 +173,29 @@ class _AddEditProductDialogState extends State<AddEditProductDialog> {
         const SizedBox(width: marginX2),
         Expanded(
           child: CustomSubmitButton(
-            onTap: () {
-              SelectedProductModel orderDetail = SelectedProductModel(
-                product: widget.product,
-                sweet: widget.showSweet ? _homeController.selectedSweet : null,
-                quantity: quantity,
-              );
-              _homeController.orderDetailList.add(orderDetail);
+            onTap: widget.isEdit
+                ? () {
+                    SelectedProductModel orderDetail = SelectedProductModel(
+                      product: widget.product,
+                      sweet: widget.showSweet
+                          ? _homeController.selectedSweet
+                          : null,
+                      quantity: quantity,
+                    );
 
-              Get.back(result: true);
-            },
+                    Get.back(result: orderDetail);
+                  }
+                : () {
+                    SelectedProductModel orderDetail = SelectedProductModel(
+                      product: widget.product,
+                      sweet: widget.showSweet
+                          ? _homeController.selectedSweet
+                          : null,
+                      quantity: quantity,
+                    );
+
+                    Get.back(result: orderDetail);
+                  },
             title: 'บันทึก',
             backgroundColor: primaryColor,
           ),

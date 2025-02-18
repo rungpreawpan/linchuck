@@ -5,6 +5,7 @@ class DashboardModel {
   double? profit;
   List<SellProductModel>? sellProduct;
   List<SellTypesModel>? sellTypes;
+  List<SummaryOrderModel>? order;
 
   DashboardModel({
     this.allOrder,
@@ -13,6 +14,7 @@ class DashboardModel {
     this.profit,
     this.sellProduct,
     this.sellTypes,
+    this.order,
   });
 
   factory DashboardModel.fromJSON(Map<String, dynamic> json) {
@@ -34,6 +36,9 @@ class DashboardModel {
           .toList(),
       sellTypes: List.from(json['types'])
           .map((e) => SellTypesModel.fromJSON(e))
+          .toList(),
+      order: List.from(json['order'])
+          .map((e) => SummaryOrderModel.fromJSON(e))
           .toList(),
     );
   }
@@ -81,6 +86,35 @@ class SellTypesModel {
       id: json['id'] ?? 0,
       name: json['type'] ?? '',
       count: json['count'] ?? 0,
+    );
+  }
+}
+
+class SummaryOrderModel {
+  int? id;
+  String? orderDate;
+  String? receiptNo;
+  String? paymentType;
+  String? username;
+  int? total;
+
+  SummaryOrderModel({
+    this.id,
+    this.orderDate,
+    this.receiptNo,
+    this.paymentType,
+    this.username,
+    this.total,
+  });
+
+  factory SummaryOrderModel.fromJSON(Map<String, dynamic> json) {
+    return SummaryOrderModel(
+      id: json['id'] ?? 0,
+      orderDate: json['order_date'] ?? '',
+      paymentType: json['payment_type'] ?? '',
+      receiptNo: json['receipt_no'] ?? '',
+      username: json['user_name'] ?? '',
+      total: json['total'] ?? 0,
     );
   }
 }

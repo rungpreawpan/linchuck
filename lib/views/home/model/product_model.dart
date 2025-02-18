@@ -6,6 +6,7 @@ class ProductModel {
   int? productTypeId;
   String? productImage;
   int? promotionId;
+  int? discountAmount;
 
   ProductModel({
     this.id,
@@ -15,6 +16,7 @@ class ProductModel {
     this.productTypeId,
     this.productImage,
     this.promotionId,
+    this.discountAmount,
   });
 
   factory ProductModel.fromJSON(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class ProductModel {
       productTypeId: json['product_type_id'] ?? 0,
       productImage: json['product_image'] ?? '',
       promotionId: json['promotion_id'],
+      discountAmount: json['discount_amount'],
     );
   }
 }

@@ -61,10 +61,7 @@ class _StockPageState extends State<StockPage> {
         onTap: () async {
           await _prepareData();
         },
-        child: const Icon(
-          Icons.refresh_rounded,
-          color: primaryColor,
-        ),
+        child: const Icon(Icons.refresh_rounded),
       ),
     );
   }
