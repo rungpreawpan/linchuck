@@ -40,7 +40,12 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   final EmployeeController _employeeController = Get.find();
   final HomeController _homeController = Get.find();
 
+  var isLoading = false.obs;
+
   bool showPromptPayImage = false;
+
+  List<int> totalList = [];
+  double totalAmount = 0.0;
 
   @override
   void initState() {
@@ -50,6 +55,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   }
 
   _prepareData() async {
+    isLoading.value = true;
     await _receiptController.getOnePayment(widget.payment.paymentId ?? 0);
     await _receiptController.getOneReceipt(widget.receiptId);
     await _receiptController.getOneOrder(widget.orderId);
@@ -58,7 +64,29 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
     await _homeController.getProduct();
     await _homeController.getSweet();
 
+    _getDiscount();
+
+    isLoading.value = false;
     setState(() {});
+  }
+
+  _getDiscount() {
+    int total = 0;
+    totalList.clear();
+
+    for (OrderDetailModel order in _receiptController.orderDetailByIdList) {
+      for (ProductModel product in _homeController.productList) {
+        if (order.productId == product.id) {
+          total = (order.quantity != null && product.productPrice != null)
+              ? (order.quantity!) * (product.productPrice!)
+              : 0;
+
+          totalList.add(total);
+        }
+      }
+    }
+
+    totalAmount = totalList.reduce((a, b) => a + b).toDouble();
   }
 
   @override
@@ -152,7 +180,9 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                 size: fontSizeM,
               ),
               TextFontStyle(
-                '${_receiptController.payment?.totalPrice?.toDouble()} บาท',
+                _receiptController.payment?.payType == 'promptpay'
+                    ? '${totalAmount.toString()} บาท'
+                    : '${_receiptController.payment?.totalPrice?.toDouble()} บาท',
                 size: fontSizeM,
               ),
             ],
@@ -165,16 +195,10 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                         _receiptController.payment!.cashReturn!)
                     .toDouble()
                 : 0,
-            discountAmount: _receiptController.payment?.totalPrice != null &&
-                    _receiptController.payment?.cashReceive != null &&
-                    _receiptController.payment?.cashReturn != null
-                ? (_receiptController.payment!.totalPrice! -
-                        (_receiptController.payment!.cashReceive! -
-                            _receiptController.payment!.cashReturn!))
-                    .toDouble()
-                : 0,
-            cashReceive:
-                _receiptController.payment?.cashReceive?.toDouble() ?? 0,
+            discountAmount: _discount(),
+            cashReceive: _receiptController.payment?.payType == 'promptpay'
+                ? totalAmount - _discount()
+                : _receiptController.payment?.cashReceive?.toDouble() ?? 0,
             cashReturn: _receiptController.payment?.cashReturn?.toDouble() ?? 0,
             promptPayImage: '',
           ),
@@ -188,10 +212,11 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                 weight: FontWeight.bold,
               ),
               TextFontStyle(
-                _receiptController.payment?.cashReceive != null &&
-                        _receiptController.payment?.cashReturn != null
-                    ? '${(_receiptController.payment!.cashReceive! - _receiptController.payment!.cashReturn!).toDouble()} บาท'
-                    : '0',
+                '${_total().toString()} บาท',
+                // _receiptController.payment?.cashReceive != null &&
+                //         _receiptController.payment?.cashReturn != null
+                //     ? '${(_receiptController.payment!.cashReceive! - _receiptController.payment!.cashReturn!).toDouble()} บาท'
+                //     : '0',
                 color: primaryColor,
                 size: fontSizeM,
                 weight: FontWeight.bold,
@@ -203,6 +228,47 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
         ],
       ),
     );
+  }
+
+  double _discount() {
+    if (_receiptController.payment?.payType == 'cash') {
+      if (_receiptController.payment?.totalPrice != null &&
+          _receiptController.payment?.cashReceive != null &&
+          _receiptController.payment?.cashReturn != null) {
+        return (_receiptController.payment!.totalPrice! -
+                (_receiptController.payment!.cashReceive! -
+                    _receiptController.payment!.cashReturn!))
+            .toDouble();
+      } else {
+        return 0;
+      }
+    } else {
+      if (_receiptController.payment?.totalPrice != null) {
+        return (totalAmount - _receiptController.payment!.totalPrice!).toDouble();
+      } else {
+        return 0;
+      }
+    }
+  }
+
+  _total() {
+    if (_receiptController.payment?.payType == 'cash') {
+      if (_receiptController.payment?.totalPrice != null &&
+          _receiptController.payment?.cashReceive != null &&
+          _receiptController.payment?.cashReturn != null) {
+        return (_receiptController.payment!.cashReceive! -
+                _receiptController.payment!.cashReturn!)
+            .toDouble();
+      } else {
+        return 0;
+      }
+    } else {
+      if (_receiptController.payment?.totalPrice != null) {
+        return _receiptController.payment!.totalPrice!;
+      } else {
+        return 0;
+      }
+    }
   }
 
   _productList() {
@@ -359,7 +425,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
               ),
               const Spacer(),
               TextFontStyle(
-                '$total บาท',
+                '$cashReceive บาท',
                 size: fontSizeM,
               ),
             ],
@@ -493,9 +559,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   _loading() {
     return Obx(() {
       return Visibility(
-        visible: _receiptController.isLoading.value &&
-            _homeController.isLoading.value &&
-            _employeeController.isLoading.value,
+        visible: isLoading.value,
         child: const CustomLoading(),
       );
     });
