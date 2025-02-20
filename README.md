@@ -42,6 +42,7 @@ const String baseURL = "http://<IP Address>:3000/";
 ## 🏃‍♂️ 3. การรันโปรเจกต์
 
 ### 3.1 รันแอปพลิเคชัน
+ควรเลือก Emulator หรือ Device ที่เป็น Tablet 
 ```
 flutter run
 ```
@@ -54,3 +55,8 @@ flutter run
 npm install
 npm start
 ```
+
+## 📬 ติดต่อผู้พัฒนา
+หากพบปัญหาหรือมีข้อสงสัย สามารถติดต่อได้ที่
+📧 Email: 2463110383@tni.ac.th สำหรับปัญหาด้านแอปพลิเคชัน
+📧 Email: 2463110110@tni.ac.th สำหรับปัญหาด้าน API
