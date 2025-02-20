@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lin_chuck/constant/value_constant.dart';
 import 'package:lin_chuck/views/employee/controller/employee_controller.dart';
+import 'package:lin_chuck/views/home/controller/home_controller.dart';
+import 'package:lin_chuck/views/home/model/product_model.dart';
 import 'package:lin_chuck/views/receipt/controller/receipt_controller.dart';
+import 'package:lin_chuck/views/receipt/model/order_detail_model.dart';
 import 'package:lin_chuck/views/receipt/model/order_model.dart';
 import 'package:lin_chuck/views/receipt/model/payment_model.dart';
 import 'package:lin_chuck/views/receipt/model/receipt_model.dart';
@@ -165,7 +168,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           weight: FontWeight.bold,
                         ),
                         TextFontStyle(
-                          '$total บาท',
+                          '${_total()} บาท',
                           color: primaryColor,
                           size: fontSizeM,
                           weight: FontWeight.bold,
@@ -184,6 +187,26 @@ class _ReceiptPageState extends State<ReceiptPage> {
         ),
       ),
     );
+  }
+
+  _total() {
+    if (_receiptController.payment?.payType == 'cash') {
+      if (_receiptController.payment?.totalPrice != null &&
+          _receiptController.payment?.cashReceive != null &&
+          _receiptController.payment?.cashReturn != null) {
+        return (_receiptController.payment!.cashReceive! -
+            _receiptController.payment!.cashReturn!)
+            .toDouble();
+      } else {
+        return 0;
+      }
+    } else {
+      if (_receiptController.payment?.totalPrice != null) {
+        return _receiptController.payment!.totalPrice!;
+      } else {
+        return 0;
+      }
+    }
   }
 
   _loading() {

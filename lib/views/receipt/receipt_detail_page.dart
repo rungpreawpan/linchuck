@@ -64,13 +64,13 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
     await _homeController.getProduct();
     await _homeController.getSweet();
 
-    _getDiscount();
+    _getTotal();
 
     isLoading.value = false;
     setState(() {});
   }
 
-  _getDiscount() {
+  _getTotal() {
     int total = 0;
     totalList.clear();
 
@@ -212,11 +212,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                 weight: FontWeight.bold,
               ),
               TextFontStyle(
-                '${_total().toString()} บาท',
-                // _receiptController.payment?.cashReceive != null &&
-                //         _receiptController.payment?.cashReturn != null
-                //     ? '${(_receiptController.payment!.cashReceive! - _receiptController.payment!.cashReturn!).toDouble()} บาท'
-                //     : '0',
+                '${_total()} บาท',
                 color: primaryColor,
                 size: fontSizeM,
                 weight: FontWeight.bold,
