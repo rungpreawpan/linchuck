@@ -26,6 +26,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
   final ReceiptController _receiptController = Get.put(ReceiptController());
   final EmployeeController _employeeController = Get.find();
 
+  var isLoading = false.obs;
+
   @override
   void initState() {
     super.initState();
@@ -34,12 +36,14 @@ class _ReceiptPageState extends State<ReceiptPage> {
   }
 
   _prepareDate() async {
+    isLoading.value = true;
     await _receiptController.getReceipt();
     await _receiptController.getPayment();
     await _receiptController.getOrder();
     await _receiptController.getOrderDetail();
     await _employeeController.getEmployee();
 
+    isLoading.value = false;
     setState(() {});
   }
 
@@ -96,7 +100,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 ? DateFormat('dd/MM/yyyy HH:mm')
                     .format(DateTime.parse(item.createOn!))
                 : '-',
-            total: item.totalPrice != null ? item.totalPrice.toString() : '0',
+            total: _total(item).toString(),
             employeeId: employeeId,
             orderId: orderId,
           );
@@ -168,7 +172,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           weight: FontWeight.bold,
                         ),
                         TextFontStyle(
-                          '${_total()} บาท',
+                          '$total บาท',
                           color: primaryColor,
                           size: fontSizeM,
                           weight: FontWeight.bold,
@@ -189,20 +193,18 @@ class _ReceiptPageState extends State<ReceiptPage> {
     );
   }
 
-  _total() {
-    if (_receiptController.payment?.payType == 'cash') {
-      if (_receiptController.payment?.totalPrice != null &&
-          _receiptController.payment?.cashReceive != null &&
-          _receiptController.payment?.cashReturn != null) {
-        return (_receiptController.payment!.cashReceive! -
-            _receiptController.payment!.cashReturn!)
-            .toDouble();
+  _total(PaymentModel? item) {
+    if (item?.payType == 'cash') {
+      if (item?.totalPrice != null &&
+          item?.cashReceive != null &&
+          item?.cashReturn != null) {
+        return (item!.cashReceive! - item!.cashReturn!).toDouble();
       } else {
         return 0;
       }
     } else {
-      if (_receiptController.payment?.totalPrice != null) {
-        return _receiptController.payment!.totalPrice!;
+      if (item?.totalPrice != null) {
+        return item!.totalPrice!;
       } else {
         return 0;
       }
@@ -212,7 +214,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
   _loading() {
     return Obx(() {
       return Visibility(
-        visible: _receiptController.isLoading.value,
+        visible: isLoading.value,
         child: const CustomLoading(),
       );
     });
